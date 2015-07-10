@@ -2,6 +2,10 @@ package net.climaxmc.game.games.paintball.kits;
 
 import net.climaxmc.kit.Kit;
 import net.climaxmc.kit.Perk;
+import org.spongepowered.api.Game;
+import org.spongepowered.api.Server;
+import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.item.inventory.ItemStackBuilder;
 
 public class BasicKit extends Kit {
     public BasicKit() {
@@ -9,7 +13,7 @@ public class BasicKit extends Kit {
     }
 
     @Override
-    public void apply(/*Player player*/) {
+    public void apply(Player player) {
 
     }
 }

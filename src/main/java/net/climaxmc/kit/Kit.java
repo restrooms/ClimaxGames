@@ -1,5 +1,7 @@
 package net.climaxmc.kit;
 
+import org.spongepowered.api.entity.player.Player;
+
 import java.awt.image.VolatileImage;
 
 /**
@@ -79,5 +81,5 @@ public abstract class Kit {
         return cost;
     }
 
-    public abstract void apply(/*Player player*/);
+    public abstract void apply(Player player);
 }
