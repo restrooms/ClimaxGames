@@ -12,7 +12,7 @@ public class GameStateChangeEvent {
     /**
      * Defines a change of game state
      *
-     * @param game Game that changed state
+     * @param game  Game that changed state
      * @param state State that game changed to
      */
     public GameStateChangeEvent(Game game, Game.GameState state) {

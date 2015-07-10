@@ -2,8 +2,6 @@ package net.climaxmc.kit;
 
 import org.spongepowered.api.entity.player.Player;
 
-import java.awt.image.VolatileImage;
-
 /**
  * Represents a kit
  */
@@ -16,27 +14,26 @@ public abstract class Kit {
     /**
      * Defines a kit
      *
-     * @param name Name of kit
+     * @param name        Name of kit
      * @param description Description of kit
-     * @param perks Perks of kit
+     * @param perks       Perks of kit
      */
     public Kit(String name, String[] description, Perk[] perks) {
-        this.name = name;
-        this.description = description;
-        this.perks = perks;
-        this.cost = 0;
+        this(name, description, perks, 0);
     }
 
     /**
      * Defines a kit
      *
-     * @param name Name of kit
+     * @param name        Name of kit
      * @param description Description of kit
-     * @param cost Cost of kit
-     * @param perks Perks of kit
+     * @param cost        Cost of kit
+     * @param perks       Perks of kit
      */
     public Kit(String name, String[] description, Perk[] perks, int cost) {
-        this(name, description, perks);
+        this.name = name;
+        this.description = description;
+        this.perks = perks;
         this.cost = cost;
     }
 

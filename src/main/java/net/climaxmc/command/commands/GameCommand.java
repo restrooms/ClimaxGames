@@ -9,7 +9,7 @@ import org.spongepowered.api.util.command.args.CommandContext;
 
 public class GameCommand extends Command {
     public GameCommand(ClimaxGames plugin) {
-        super(plugin, new String[] {"game"}, Rank.ADMINISTRATOR);
+        super(plugin, new String[]{"game"}, Rank.ADMINISTRATOR);
     }
 
     @Override

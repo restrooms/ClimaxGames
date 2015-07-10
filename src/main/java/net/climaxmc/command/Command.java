@@ -22,6 +22,44 @@ public abstract class Command implements CommandExecutor {
     private String[] names;
     private Rank rank;
 
+    /**
+     * Defines a command
+     *
+     * @param plugin Main plugin class
+     * @param name   Name of command
+     */
+    public Command(ClimaxGames plugin, String name) {
+        this(plugin, new String[]{name}, Rank.DEFAULT);
+    }
+
+    /**
+     * Defines a command
+     *
+     * @param plugin Main plugin class
+     * @param names  Names of command (includes aliases)
+     */
+    public Command(ClimaxGames plugin, String[] names) {
+        this(plugin, names, Rank.DEFAULT);
+    }
+
+    /**
+     * Defines a command
+     *
+     * @param plugin Main plugin class
+     * @param name   Name of command
+     * @param rank   Rank of command
+     */
+    public Command(ClimaxGames plugin, String name, Rank rank) {
+        this(plugin, new String[]{name}, rank);
+    }
+
+    /**
+     * Defines a command
+     *
+     * @param plugin Main plugin class
+     * @param names  Names of command (includes aliases)
+     * @param rank   Rank of command
+     */
     public Command(ClimaxGames plugin, String[] names, Rank rank) {
         this.plugin = plugin;
         this.names = names;
