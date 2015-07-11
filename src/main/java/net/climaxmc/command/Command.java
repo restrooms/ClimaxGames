@@ -10,6 +10,7 @@ import org.spongepowered.api.util.command.CommandException;
 import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
 import org.spongepowered.api.util.command.args.CommandContext;
+import org.spongepowered.api.util.command.args.CommandElement;
 import org.spongepowered.api.util.command.spec.CommandExecutor;
 import org.spongepowered.api.util.command.spec.CommandSpec;
 
@@ -17,7 +18,7 @@ import org.spongepowered.api.util.command.spec.CommandSpec;
  * Represents a command
  */
 public abstract class Command implements CommandExecutor {
-    private CommandSpec commandSpec = CommandSpec.builder().executor(this).build();
+    protected CommandSpec commandSpec = CommandSpec.builder().executor(this).build();
     protected ClimaxGames plugin;
     private String[] names;
     private Rank rank;
@@ -29,7 +30,17 @@ public abstract class Command implements CommandExecutor {
      * @param name   Name of command
      */
     public Command(ClimaxGames plugin, String name) {
-        this(plugin, new String[]{name}, Rank.DEFAULT);
+        this(plugin, name, Rank.DEFAULT);
+    }
+
+    /**
+     * Defines a command
+     *
+     * @param plugin Main plugin class
+     * @param name   Name of command
+     */
+    public Command(ClimaxGames plugin, String name, CommandElement[] args) {
+        this(plugin, name, Rank.DEFAULT);
     }
 
     /**
