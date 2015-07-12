@@ -15,6 +15,8 @@ public class ClimaxGames {
     @Inject
     private Game game;
 
+    private net.climaxmc.game.Game minigame;
+
     @Subscribe
     public void onServerStart(ServerStartingEvent event) {
 
@@ -41,5 +43,14 @@ public class ClimaxGames {
      */
     public Game getGame() {
         return game;
+    }
+
+    /**
+     * Gets the current minigame of the server
+     *
+     * @return Current minigame
+     */
+    public net.climaxmc.game.Game getMinigame() {
+        return minigame;
     }
 }

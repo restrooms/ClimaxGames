@@ -1,5 +1,6 @@
 package net.climaxmc.game;
 
+import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
 
@@ -7,6 +8,7 @@ import net.climaxmc.kit.Kit;
  * Represents a game
  */
 public abstract class Game {
+    private ClimaxGames plugin;
     private String name;
     private Kit[] kits;
     private GameState state;
@@ -17,7 +19,8 @@ public abstract class Game {
      * @param name Name of game
      * @param kits Kits of game
      */
-    public Game(String name, Kit[] kits) {
+    public Game(ClimaxGames plugin, String name, Kit[] kits) {
+        this.plugin = plugin;
         this.name = name;
         this.kits = kits;
         this.state = GameState.READY;
@@ -63,10 +66,9 @@ public abstract class Game {
     public void setState(GameState state) {
         this.state = state;
 
-        GameStateChangeEvent gameStateChangeEvent = new GameStateChangeEvent(this, state);
-        //TODO: Trigger event here
+        plugin.getGame().getEventManager().post(new GameStateChangeEvent(this, state));
 
-        System.out.println(name + " state set to " + state.toString());
+        plugin.getLogger().info(name + " state set to " + state.toString());
     }
 
     /**

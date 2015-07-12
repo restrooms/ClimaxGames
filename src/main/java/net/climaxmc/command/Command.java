@@ -88,13 +88,11 @@ public abstract class Command implements CommandExecutor {
                 throw new CommandException(F.denyPermissions(rank));
             }
 
-            execute(player, context);
+            return execute(player, context);
         } else {
             throw new CommandException(Texts.of("You must be a player to execute that command."));
         }
-
-        return CommandResult.success();
     }
 
-    public abstract void execute(Player player, CommandContext context) throws CommandException;
+    public abstract CommandResult execute(Player player, CommandContext context) throws CommandException;
 }

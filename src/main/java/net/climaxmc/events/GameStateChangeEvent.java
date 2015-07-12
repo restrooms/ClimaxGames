@@ -1,11 +1,15 @@
 package net.climaxmc.events;
 
 import net.climaxmc.game.Game;
+import org.spongepowered.api.event.AbstractEvent;
+import org.spongepowered.api.event.Cancellable;
 
 /**
  * Represents a change of game state
  */
-public class GameStateChangeEvent {
+public class GameStateChangeEvent extends AbstractEvent implements Cancellable {
+    private boolean cancelled = false;
+
     private Game game;
     private Game.GameState state;
 
@@ -36,5 +40,15 @@ public class GameStateChangeEvent {
      */
     public Game.GameState getState() {
         return state;
+    }
+
+    @Override
+    public boolean isCancelled() {
+        return cancelled;
+    }
+
+    @Override
+    public void setCancelled(boolean cancel) {
+        cancelled = cancel;
     }
 }
