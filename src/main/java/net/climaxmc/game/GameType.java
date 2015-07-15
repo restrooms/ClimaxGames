@@ -7,6 +7,7 @@ public enum GameType {
 
     private Class<? extends Game> game;
     private String name;
+    private boolean enabled = false;
 
     GameType(Class<? extends Game> game, String name) {
         this.game = game;
@@ -29,5 +30,21 @@ public enum GameType {
      */
     public String getName() {
         return name;
+    }
+
+    /**
+     * Get if the game is enabled
+     *
+     * @return Game is enabled
+     */
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    /**
+     * Set the game enabled
+     */
+    public void setEnabled(boolean enable) {
+        enabled = enable;
     }
 }

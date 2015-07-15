@@ -8,11 +8,9 @@ import org.spongepowered.api.event.entity.player.PlayerRespawnEvent;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
-public class GamePlayerManager implements Manager {
-    private GameManager manager;
+public class GamePlayerManager extends Manager {
+    GamePlayerManager() {
 
-    public GamePlayerManager(GameManager manager) {
-        this.manager = manager;
     }
 
     @Subscribe

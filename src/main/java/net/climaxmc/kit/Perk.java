@@ -1,9 +1,13 @@
 package net.climaxmc.kit;
 
+import net.climaxmc.ClimaxGames;
+
 /**
  * Represents a kit perk
  */
 public abstract class Perk {
+    protected static ClimaxGames plugin = ClimaxGames.getInstance();
+
     private String name;
 
     /**

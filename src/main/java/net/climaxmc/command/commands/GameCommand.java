@@ -20,18 +20,20 @@ public class GameCommand extends Command {
             return usage;
         }
 
+        Game game = plugin.getManager().getGame();
+
         if (args[0].equalsIgnoreCase("start")) {
-            if (!plugin.getMinigame().getState().equals(Game.GameState.READY)) {
+            if (!game.getState().equals(Game.GameState.READY)) {
                 return Texts.builder("The game has already started.").style(TextStyles.BOLD).build();
             }
 
-            plugin.getMinigame().setState(Game.GameState.STARTING);
+            game.setState(Game.GameState.STARTING);
         } else if (args[0].equalsIgnoreCase("stop")) {
-            if (!plugin.getMinigame().getState().equals(Game.GameState.IN_GAME)) {
+            if (!game.getState().equals(Game.GameState.IN_GAME)) {
                 return Texts.builder("The game has not started yet.").style(TextStyles.BOLD).build();
             }
 
-            plugin.getMinigame().setState(Game.GameState.ENDING);
+            game.setState(Game.GameState.ENDING);
         }
 
         return usage;

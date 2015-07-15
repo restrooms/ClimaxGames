@@ -16,13 +16,10 @@ import org.spongepowered.api.util.command.CommandSource;
 
 import java.util.Set;
 
-public class GameCommandManager implements Manager {
-    private GameManager manager;
+public class GameCommandManager extends Manager {
     private Set<Command> commands;
 
-    public GameCommandManager(GameManager manager) {
-        this.manager = manager;
-
+    GameCommandManager() {
         initializeCommands();
     }
 
@@ -36,14 +33,16 @@ public class GameCommandManager implements Manager {
     public void onCommand(CommandEvent event) {
         CommandSource source = event.getSource();
 
-        if (!(source instanceof Player)) {
-            source.sendMessage(Texts.of("You must be a player to execute that command."));
-            return;
-        }
-
         for (Command command : commands) {
             for (String name : command.getNames()) {
                 if (name.equalsIgnoreCase(event.getCommand())) {
+                    if (!(source instanceof Player)) {
+                        source.sendMessage(Texts.of("You must be a player to execute that command."));
+                        event.setResult(CommandResult.success());
+                        event.setCancelled(true);
+                        return;
+                    }
+
                     Player player = (Player) source;
                     PlayerData playerData = new PlayerData(player);
 

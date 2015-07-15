@@ -1,11 +1,16 @@
 package net.climaxmc.kit;
 
+import net.climaxmc.ClimaxGames;
 import org.spongepowered.api.entity.player.Player;
+import org.spongepowered.api.item.inventory.ItemStackBuilder;
 
 /**
  * Represents a kit
  */
 public abstract class Kit {
+    protected static ClimaxGames plugin = ClimaxGames.getInstance();
+    protected static ItemStackBuilder itemBuilder = plugin.getGame().getRegistry().getItemBuilder();
+
     private String name;
     private String[] description;
     private int cost;
@@ -35,6 +40,10 @@ public abstract class Kit {
         this.description = description;
         this.perks = perks;
         this.cost = cost;
+
+        for (Perk perk : perks) {
+            ClimaxGames.getInstance().getGame().getEventManager().register(ClimaxGames.getInstance(), perk);
+        }
     }
 
     @Override

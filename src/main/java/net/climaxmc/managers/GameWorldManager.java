@@ -1,9 +1,7 @@
 package net.climaxmc.managers;
 
-public class GameWorldManager implements Manager {
-    private GameManager manager;
+public class GameWorldManager extends Manager {
+    GameWorldManager() {
 
-    public GameWorldManager(GameManager manager) {
-        this.manager = manager;
     }
 }
