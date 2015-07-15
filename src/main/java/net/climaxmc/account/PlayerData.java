@@ -1,5 +1,6 @@
-package net.climaxmc.utilities;
+package net.climaxmc.account;
 
+import net.climaxmc.utilities.Rank;
 import org.spongepowered.api.entity.player.Player;
 
 /**

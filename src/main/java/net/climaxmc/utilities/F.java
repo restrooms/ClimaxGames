@@ -5,7 +5,7 @@ import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
 public class F {
-    public static Text prefix(String prefix) {
+    private static Text prefix(String prefix) {
         return Texts.builder(prefix + "> ").color(TextColors.BLUE).build();
     }
 

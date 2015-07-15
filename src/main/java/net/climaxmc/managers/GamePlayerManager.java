@@ -1,4 +1,4 @@
-package net.climaxmc.game.managers;
+package net.climaxmc.managers;
 
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.entity.player.PlayerDeathEvent;
@@ -8,13 +8,11 @@ import org.spongepowered.api.event.entity.player.PlayerRespawnEvent;
 import org.spongepowered.api.text.Texts;
 import org.spongepowered.api.text.format.TextColors;
 
-public class GamePlayerManager {
+public class GamePlayerManager implements Manager {
     private GameManager manager;
 
     public GamePlayerManager(GameManager manager) {
         this.manager = manager;
-
-        manager.getPlugin().getGame().getEventManager().register(manager.getPlugin(), this);
     }
 
     @Subscribe

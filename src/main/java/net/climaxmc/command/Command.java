@@ -1,98 +1,73 @@
 package net.climaxmc.command;
 
 import net.climaxmc.ClimaxGames;
-import net.climaxmc.utilities.F;
-import net.climaxmc.utilities.PlayerData;
 import net.climaxmc.utilities.Rank;
 import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.util.command.CommandException;
-import org.spongepowered.api.util.command.CommandResult;
-import org.spongepowered.api.util.command.CommandSource;
-import org.spongepowered.api.util.command.args.CommandContext;
-import org.spongepowered.api.util.command.args.CommandElement;
-import org.spongepowered.api.util.command.spec.CommandExecutor;
-import org.spongepowered.api.util.command.spec.CommandSpec;
+import org.spongepowered.api.text.Text;
 
 /**
  * Represents a command
  */
-public abstract class Command implements CommandExecutor {
-    protected CommandSpec commandSpec = CommandSpec.builder().executor(this).build();
-    protected ClimaxGames plugin;
-    private String[] names;
-    private Rank rank;
+public abstract class Command {
+    protected ClimaxGames plugin = ClimaxGames.getInstance();
+    protected String[] names;
+    protected Rank rank;
+    protected Text usage;
 
     /**
      * Defines a command
      *
-     * @param plugin Main plugin class
-     * @param name   Name of command
-     */
-    public Command(ClimaxGames plugin, String name) {
-        this(plugin, name, Rank.DEFAULT);
-    }
-
-    /**
-     * Defines a command
-     *
-     * @param plugin Main plugin class
-     * @param name   Name of command
-     */
-    public Command(ClimaxGames plugin, String name, CommandElement[] args) {
-        this(plugin, name, Rank.DEFAULT);
-    }
-
-    /**
-     * Defines a command
-     *
-     * @param plugin Main plugin class
      * @param names  Names of command (includes aliases)
      */
-    public Command(ClimaxGames plugin, String[] names) {
-        this(plugin, names, Rank.DEFAULT);
+    public Command(String[] names, Text usage) {
+        this(names, Rank.DEFAULT, usage);
     }
 
     /**
      * Defines a command
      *
-     * @param plugin Main plugin class
-     * @param name   Name of command
-     * @param rank   Rank of command
-     */
-    public Command(ClimaxGames plugin, String name, Rank rank) {
-        this(plugin, new String[]{name}, rank);
-    }
-
-    /**
-     * Defines a command
-     *
-     * @param plugin Main plugin class
      * @param names  Names of command (includes aliases)
      * @param rank   Rank of command
      */
-    public Command(ClimaxGames plugin, String[] names, Rank rank) {
-        this.plugin = plugin;
+    public Command(String[] names, Rank rank, Text usage) {
         this.names = names;
         this.rank = rank;
-
-        plugin.getGame().getCommandDispatcher().register(plugin, commandSpec, names);
+        this.usage = usage;
     }
 
-    public CommandResult execute(CommandSource source, CommandContext context) throws CommandException {
-        if (source instanceof Player) {
-            Player player = (Player) source;
-            PlayerData playerData = new PlayerData(player);
+    /**
+     * Executes the command
+     *
+     * @param player Player that executed command
+     * @param args Arguments of command
+     * @return Result of execution
+     */
+    public abstract Text execute(Player player, String[] args);
 
-            if (!playerData.hasRank(Rank.ADMINISTRATOR)) {
-                throw new CommandException(F.denyPermissions(rank));
-            }
-
-            return execute(player, context);
-        } else {
-            throw new CommandException(Texts.of("You must be a player to execute that command."));
-        }
+    /**
+     * Get the command names
+     *
+     * @return Command names
+     */
+    public String[] getNames() {
+        return names;
     }
 
-    public abstract CommandResult execute(Player player, CommandContext context) throws CommandException;
+    /**
+     * Get the command rank
+     *
+     * @return Command rank
+     */
+    public Rank getRank() {
+        return rank;
+    }
+
+    /**
+     * Gets the command usage
+     *
+     * @return Command usage
+     */
+    public Text getUsage() {
+        return usage;
+    }
 }
