@@ -8,7 +8,7 @@ import net.climaxmc.kit.Kit;
  * Represents a game
  */
 public abstract class Game {
-    private ClimaxGames plugin;
+    private ClimaxGames plugin = ClimaxGames.getInstance();
     private String name;
     private Kit[] kits;
     private GameState state;
@@ -19,8 +19,7 @@ public abstract class Game {
      * @param name Name of game
      * @param kits Kits of game
      */
-    public Game(ClimaxGames plugin, String name, Kit[] kits) {
-        this.plugin = plugin;
+    public Game(String name, Kit[] kits) {
         this.name = name;
         this.kits = kits;
         this.state = GameState.READY;

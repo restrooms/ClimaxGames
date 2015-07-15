@@ -17,7 +17,7 @@ public abstract class Command {
     /**
      * Defines a command
      *
-     * @param names  Names of command (includes aliases)
+     * @param names Names of command (includes aliases)
      */
     public Command(String[] names, Text usage) {
         this(names, Rank.DEFAULT, usage);
@@ -26,8 +26,8 @@ public abstract class Command {
     /**
      * Defines a command
      *
-     * @param names  Names of command (includes aliases)
-     * @param rank   Rank of command
+     * @param names Names of command (includes aliases)
+     * @param rank  Rank of command
      */
     public Command(String[] names, Rank rank, Text usage) {
         this.names = names;
@@ -39,7 +39,7 @@ public abstract class Command {
      * Executes the command
      *
      * @param player Player that executed command
-     * @param args Arguments of command
+     * @param args   Arguments of command
      * @return Result of execution
      */
     public abstract Text execute(Player player, String[] args);

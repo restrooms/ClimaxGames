@@ -1,20 +1,19 @@
 package net.climaxmc.managers;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import net.climaxmc.account.PlayerData;
 import net.climaxmc.command.Command;
 import net.climaxmc.command.commands.GameCommand;
 import net.climaxmc.utilities.F;
-import net.climaxmc.account.PlayerData;
 import net.climaxmc.utilities.Rank;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.message.CommandEvent;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.text.Texts;
+import org.spongepowered.api.util.command.CommandResult;
 import org.spongepowered.api.util.command.CommandSource;
 
-import java.util.List;
 import java.util.Set;
 
 public class GameCommandManager implements Manager {
@@ -52,11 +51,14 @@ public class GameCommandManager implements Manager {
                         player.sendMessage(F.denyPermissions(command.getRank()));
                     }
 
-                    Text result = command.execute(player, event.getArguments().split(""));
+                    Text result = command.execute(player, event.getArguments().split(" "));
 
                     if (result != null) {
                         player.sendMessage(result);
                     }
+
+                    event.setResult(CommandResult.success());
+                    event.setCancelled(true);
                 }
             }
         }

@@ -5,5 +5,11 @@ public class GameCreationManager implements Manager {
 
     public GameCreationManager(GameManager manager) {
         this.manager = manager;
+
+        initializeGame();
+    }
+
+    private void initializeGame() {
+
     }
 }

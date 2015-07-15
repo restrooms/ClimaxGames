@@ -1,13 +1,8 @@
 package net.climaxmc.managers;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.climaxmc.ClimaxGames;
-import net.climaxmc.events.GameStateChangeEvent;
-import net.climaxmc.game.Game;
-import org.spongepowered.api.event.Subscribe;
 
-import java.util.List;
 import java.util.Set;
 
 public class GameManager implements Manager {
@@ -26,13 +21,6 @@ public class GameManager implements Manager {
         );
 
         managers.forEach(manager -> plugin.getGame().getEventManager().register(plugin, manager));
-    }
-
-    @Subscribe
-    public void onGameStarting(GameStateChangeEvent event) {
-        if (!event.getState().equals(Game.GameState.STARTING)) {
-            return;
-        }
     }
 
     protected ClimaxGames getPlugin() {

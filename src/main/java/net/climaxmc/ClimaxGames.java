@@ -12,14 +12,22 @@ import org.spongepowered.api.text.Texts;
 
 @Plugin(id = "ClimaxGames", name = "ClimaxGames", version = "1.0")
 public class ClimaxGames {
+    private static ClimaxGames instance;
     @Inject
     private Logger logger;
     @Inject
     private org.spongepowered.api.Game game;
-
-    private static ClimaxGames instance;
     private net.climaxmc.game.Game minigame;
     private GameManager manager;
+
+    /**
+     * Get the plugin instance
+     *
+     * @return Plugin instance
+     */
+    public static ClimaxGames getInstance() {
+        return instance;
+    }
 
     @Subscribe
     public void onServerStarting(ServerStartingEvent event) {
@@ -43,15 +51,6 @@ public class ClimaxGames {
      */
     public Logger getLogger() {
         return logger;
-    }
-
-    /**
-     * Get the plugin instance
-     *
-     * @return Plugin instance
-     */
-    public static ClimaxGames getInstance() {
-        return instance;
     }
 
     /**
