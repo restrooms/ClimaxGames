@@ -16,6 +16,7 @@ public class GamePlayerManager extends Manager {
     @Subscribe
     public void onPlayerJoin(PlayerJoinEvent event) {
         event.setNewMessage(Texts.builder("Join").color(TextColors.DARK_AQUA).append(Texts.builder("\u00bb " + event.getEntity().getName()).color(TextColors.DARK_GRAY).build()).build());
+        manager.getGame().getKits()[0].apply(event.getEntity());
     }
 
     @Subscribe
