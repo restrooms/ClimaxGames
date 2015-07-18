@@ -1,6 +1,8 @@
 package net.climaxmc.kit;
 
 import net.climaxmc.ClimaxGames;
+import org.spongepowered.api.entity.ArmorEquipable;
+import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.item.inventory.ItemStackBuilder;
 
@@ -87,5 +89,5 @@ public abstract class Kit {
         return cost;
     }
 
-    public abstract void apply(Player player);
+    public abstract void apply(ArmorEquipable entity);
 }

@@ -2,6 +2,7 @@ package net.climaxmc;
 
 import com.google.inject.Inject;
 import net.climaxmc.managers.GameManager;
+import net.climaxmc.updater.Updater;
 import org.slf4j.Logger;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.event.Subscribe;
@@ -21,12 +22,14 @@ public class ClimaxGames {
     private static ClimaxGames instance;
 
     private GameManager manager;
+    private Updater updater;
 
     @Subscribe
     public void onServerStarting(ServerStartingEvent event) {
         instance = this;
 
         manager = new GameManager();
+        updater = new Updater(this);
     }
 
     @Subscribe
