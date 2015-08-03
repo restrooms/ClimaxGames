@@ -1,23 +1,20 @@
 package net.climaxmc.utilities;
 
-import org.spongepowered.api.text.format.TextColor;
-import org.spongepowered.api.text.format.TextColors;
-
 /**
  * Represents a rank
  */
 public enum Rank {
-    OWNER("Owner", TextColors.RED, Integer.MAX_VALUE),
-    DEVELOPER("Dev", TextColors.GOLD, 120),
-    ADMINISTRATOR("Admin", TextColors.RED, 100),
-    MODERATOR("Mod", TextColors.LIGHT_PURPLE, 80),
-    BUILDER("Builder", TextColors.AQUA, 60),
-    HELPER("Helper", TextColors.GREEN, 40),
-    TRUSTED("Trusted", TextColors.DARK_AQUA, 20),
+    OWNER("Owner", C.RED, Integer.MAX_VALUE),
+    DEVELOPER("Dev", C.GOLD, 120),
+    ADMINISTRATOR("Admin", C.RED, 100),
+    MODERATOR("Mod", C.LIGHT_PURPLE, 80),
+    BUILDER("Builder", C.AQUA, 60),
+    HELPER("Helper", C.GREEN, 40),
+    TRUSTED("Trusted", C.DARK_AQUA, 20),
     DEFAULT(null, null, 0);
 
     private String prefix;
-    private TextColor.Base color;
+    private String color;
     private int permissionLevel;
 
     /**
@@ -27,7 +24,7 @@ public enum Rank {
      * @param color           Color of the rank
      * @param permissionLevel Permission level of the rank
      */
-    Rank(String prefix, TextColor.Base color, int permissionLevel) {
+    Rank(String prefix, String color, int permissionLevel) {
         this.prefix = prefix;
         this.color = color;
         this.permissionLevel = permissionLevel;
@@ -47,7 +44,7 @@ public enum Rank {
      *
      * @return Color of rank
      */
-    public TextColor.Base getColor() {
+    public String getColor() {
         return color;
     }
 

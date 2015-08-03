@@ -21,7 +21,7 @@ public class GameManager extends Manager {
                 new GameWorldManager()
         );
 
-        managers.forEach(manager -> plugin.getGame().getEventManager().register(plugin, manager));
+        managers.forEach(manager -> plugin.getServer().getPluginManager().registerEvents(manager, plugin));
     }
 
     /**

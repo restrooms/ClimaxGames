@@ -1,46 +1,14 @@
 package net.climaxmc;
 
-import com.google.inject.Inject;
 import net.climaxmc.managers.GameManager;
 import net.climaxmc.updater.Updater;
-import org.slf4j.Logger;
-import org.spongepowered.api.Game;
-import org.spongepowered.api.event.Subscribe;
-import org.spongepowered.api.event.state.ServerAboutToStartEvent;
-import org.spongepowered.api.event.state.ServerStartingEvent;
-import org.spongepowered.api.event.state.ServerStoppingEvent;
-import org.spongepowered.api.plugin.Plugin;
-import org.spongepowered.api.text.Texts;
+import org.bukkit.plugin.java.JavaPlugin;
 
-@Plugin(id = "ClimaxGames", name = "ClimaxGames", version = "1.0")
-public class ClimaxGames {
-    @Inject
-    private Logger logger;
-    @Inject
-    private Game game;
-
+public class ClimaxGames extends JavaPlugin {
     private static ClimaxGames instance;
 
     private GameManager manager;
     private Updater updater;
-
-    @Subscribe
-    public void onServerStarting(ServerStartingEvent event) {
-        instance = this;
-
-        manager = new GameManager();
-        updater = new Updater(this);
-    }
-
-    @Subscribe
-    public void onServerPreStart(ServerAboutToStartEvent event) {
-
-    }
-
-    @Subscribe
-    public void onServerStopping(ServerStoppingEvent event) {
-        game.getServer().getOnlinePlayers().forEach(player -> player.kick(Texts.builder("Server shutting down.").build()));
-    }
 
     /**
      * Get the plugin instance
@@ -51,22 +19,17 @@ public class ClimaxGames {
         return instance;
     }
 
-    /**
-     * Gets the plugin logger
-     *
-     * @return Plugin logger
-     */
-    public Logger getLogger() {
-        return logger;
+    @Override
+    public void onEnable() {
+        instance = this;
+
+        manager = new GameManager();
+        updater = new Updater(this);
     }
 
-    /**
-     * Gets the server game (not to be confused with Minigames)
-     *
-     * @return Server game
-     */
-    public Game getGame() {
-        return game;
+    @Override
+    public void onDisable() {
+        getServer().getOnlinePlayers().forEach(player -> player.kickPlayer("Server shutting down."));
     }
 
     /**

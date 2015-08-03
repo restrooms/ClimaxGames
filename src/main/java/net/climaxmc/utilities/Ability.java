@@ -1,10 +1,8 @@
 package net.climaxmc.utilities;
 
-import org.spongepowered.api.entity.player.Player;
+import org.bukkit.entity.Player;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Ability {
@@ -38,7 +36,7 @@ public class Ability {
     /**
      * Attempt to use this ability. The player must have at least once charge for this operation
      * to be successful. The player's charge count will be decremented by the given amount.
-     * <p>
+     * <p/>
      * Otherwise, initiate the recharging cooldown and return FALSE.
      *
      * @param player - the player.
@@ -51,7 +49,7 @@ public class Ability {
     /**
      * Attempt to use this ability. The player must have at least once charge for this operation
      * to be successful. The player's charge count will be decremented by the given amount.
-     * <p>
+     * <p/>
      * Otherwise, initiate the recharging cooldown and return FALSE.
      *
      * @param player  - the player.

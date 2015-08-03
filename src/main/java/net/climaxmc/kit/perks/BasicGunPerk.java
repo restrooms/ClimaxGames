@@ -1,18 +1,8 @@
 package net.climaxmc.kit.perks;
 
-import com.flowpowered.math.vector.Vector3d;
 import com.google.common.base.Optional;
 import net.climaxmc.kit.Perk;
 import net.climaxmc.utilities.Ability;
-import org.spongepowered.api.data.DataManipulator;
-import org.spongepowered.api.data.DataManipulatorBuilder;
-import org.spongepowered.api.data.manipulator.TargetedLocationData;
-import org.spongepowered.api.data.manipulator.block.SnowedData;
-import org.spongepowered.api.data.manipulator.entity.DamageableData;
-import org.spongepowered.api.data.manipulator.entity.DamagingData;
-import org.spongepowered.api.data.manipulator.entity.VelocityData;
-import org.spongepowered.api.effect.particle.ParticleEffect;
-import org.spongepowered.api.effect.particle.ParticleTypes;
 import org.spongepowered.api.entity.Entity;
 import org.spongepowered.api.entity.EntityTypes;
 import org.spongepowered.api.entity.player.Player;

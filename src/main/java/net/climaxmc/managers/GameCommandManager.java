@@ -6,6 +6,8 @@ import net.climaxmc.command.Command;
 import net.climaxmc.command.commands.GameCommand;
 import net.climaxmc.utilities.F;
 import net.climaxmc.utilities.Rank;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.spongepowered.api.entity.player.Player;
 import org.spongepowered.api.event.Subscribe;
 import org.spongepowered.api.event.message.CommandEvent;
@@ -29,8 +31,8 @@ public class GameCommandManager extends Manager {
         );
     }
 
-    @Subscribe
-    public void onCommand(CommandEvent event) {
+    @EventHandler
+    public void onCommand(PlayerCommandPreprocessEvent event) {
         CommandSource source = event.getSource();
 
         for (Command command : commands) {

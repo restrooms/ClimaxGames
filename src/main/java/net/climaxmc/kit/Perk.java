@@ -1,11 +1,12 @@
 package net.climaxmc.kit;
 
 import net.climaxmc.ClimaxGames;
+import org.bukkit.event.Listener;
 
 /**
  * Represents a kit perk
  */
-public abstract class Perk {
+public abstract class Perk implements Listener {
     protected static ClimaxGames plugin = ClimaxGames.getInstance();
 
     private String name;

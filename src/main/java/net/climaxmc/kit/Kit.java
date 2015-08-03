@@ -1,17 +1,13 @@
 package net.climaxmc.kit;
 
 import net.climaxmc.ClimaxGames;
-import org.spongepowered.api.entity.ArmorEquipable;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.item.inventory.ItemStackBuilder;
+import org.bukkit.inventory.Inventory;
 
 /**
  * Represents a kit
  */
 public abstract class Kit {
     protected static ClimaxGames plugin = ClimaxGames.getInstance();
-    protected static ItemStackBuilder itemBuilder = plugin.getGame().getRegistry().getItemBuilder();
 
     private String name;
     private String[] description;
@@ -44,7 +40,7 @@ public abstract class Kit {
         this.cost = cost;
 
         for (Perk perk : perks) {
-            ClimaxGames.getInstance().getGame().getEventManager().register(ClimaxGames.getInstance(), perk);
+            ClimaxGames.getInstance().getServer().getPluginManager().registerEvents(perk, ClimaxGames.getInstance());
         }
     }
 
@@ -89,5 +85,5 @@ public abstract class Kit {
         return cost;
     }
 
-    public abstract void apply(ArmorEquipable entity);
+    public abstract void apply(Inventory inventory);
 }

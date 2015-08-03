@@ -1,49 +1,49 @@
 package net.climaxmc.managers;
 
 import net.climaxmc.kit.Kit;
-import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.Subscribe;
-import org.spongepowered.api.event.entity.player.*;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.text.chat.ChatTypes;
-import org.spongepowered.api.text.format.TextColors;
+import net.climaxmc.utilities.C;
+import net.climaxmc.utilities.F;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.*;
 
 public class GamePlayerManager extends Manager {
     GamePlayerManager() {
 
     }
 
-    @Subscribe
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        event.setNewMessage(Texts.builder("Join").color(TextColors.DARK_AQUA).append(Texts.builder("\u00bb " + event.getEntity().getName()).color(TextColors.DARK_GRAY).build()).build());
+        event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
     }
 
-    @Subscribe
+    @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        event.setNewMessage(Texts.builder("Quit").color(TextColors.RED).append(Texts.builder("\u00bb " + event.getEntity().getName()).color(TextColors.DARK_GRAY).build()).build());
+        event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
     }
 
-    @Subscribe
+    @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
 
     }
 
-    @Subscribe
+    @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
 
     }
 
-    @Subscribe
+    @EventHandler
     public void onPlayerSelectKit(PlayerInteractEntityEvent event) {
-        if (!event.getTargetEntity().getType().equals(EntityTypes.ZOMBIE)) {
+        if (!event.getRightClicked().getType().equals(EntityType.ZOMBIE)) {
             return;
         }
 
-        Player player = event.getEntity();
+        Player player = event.getPlayer();
         Kit kit = manager.getGame().getKits()[0];
 
-        kit.apply(player);
-        player.sendMessage(ChatTypes.ACTION_BAR, "You have selected " + kit.getName() + ".");
+        kit.apply(player.getInventory());
+        player.sendMessage(F.message("Kits", "You have selected " + kit.getName() + "."));
     }
 }
