@@ -1,15 +1,11 @@
 package net.climaxmc.kit.perks;
 
-import com.google.common.base.Optional;
 import net.climaxmc.kit.Perk;
 import net.climaxmc.utilities.Ability;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.entity.projectile.Snowball;
-import org.spongepowered.api.event.Subscribe;
-import org.spongepowered.api.event.entity.player.PlayerInteractEvent;
-import org.spongepowered.api.item.ItemTypes;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.concurrent.TimeUnit;
 
@@ -20,11 +16,11 @@ public class BasicGunPerk extends Perk {
         super("Basic Gun");
     }
 
-    @Subscribe
+    @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        Player player = event.getEntity();
+        Player player = event.getPlayer();
 
-        if (!player.getItemInHand().get().getItem().equals(ItemTypes.GOLDEN_HORSE_ARMOR)) {
+        if (!player.getItemInHand().getType().equals(Material.GOLD_BARDING)) {
             return;
         }
 
@@ -32,13 +28,6 @@ public class BasicGunPerk extends Perk {
             return;
         }*/
 
-        Optional<Entity> snowballOptional = player.getWorld().createEntity(EntityTypes.SNOWBALL, player.getLocation().getPosition());
-
-        if (snowballOptional.isPresent()) {
-            Snowball snowball = (Snowball) snowballOptional.get();
-            player.getWorld().spawnEntity(snowball);
-            //snowball.getData(TargetedLocationData.class).get().setValue(player.getLocation().add(4, 2, 0));
-            //snowball.getDamagingData().setDamage(3);
-        }
+        // TODO: CREATE SNOWBALL
     }
 }

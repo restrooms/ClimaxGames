@@ -1,11 +1,17 @@
 package net.climaxmc.kit;
 
+import lombok.Data;
 import net.climaxmc.ClimaxGames;
-import org.bukkit.inventory.Inventory;
+import net.climaxmc.utilities.C;
+import net.climaxmc.utilities.UtilEnt;
+import org.bukkit.Location;
+import org.bukkit.entity.*;
+import org.bukkit.inventory.ItemStack;
 
 /**
  * Represents a kit
  */
+@Data
 public abstract class Kit {
     protected static ClimaxGames plugin = ClimaxGames.getInstance();
 
@@ -13,6 +19,8 @@ public abstract class Kit {
     private String[] description;
     private int cost;
     private Perk[] perks;
+    private EntityType entityType;
+    private ItemStack itemInHand;
 
     /**
      * Defines a kit
@@ -20,9 +28,10 @@ public abstract class Kit {
      * @param name        Name of kit
      * @param description Description of kit
      * @param perks       Perks of kit
+     * @param entityType  Type of entity shown in game lobby
      */
-    public Kit(String name, String[] description, Perk[] perks) {
-        this(name, description, perks, 0);
+    public Kit(String name, String[] description, Perk[] perks, EntityType entityType, ItemStack itemInHand) {
+        this(name, description, perks, entityType, itemInHand, 0);
     }
 
     /**
@@ -30,13 +39,16 @@ public abstract class Kit {
      *
      * @param name        Name of kit
      * @param description Description of kit
-     * @param cost        Cost of kit
      * @param perks       Perks of kit
+     * @param entityType  Type of entity shown in game lobby
+     * @param cost        Cost of kit
      */
-    public Kit(String name, String[] description, Perk[] perks, int cost) {
+    public Kit(String name, String[] description, Perk[] perks, EntityType entityType, ItemStack itemInHand, int cost) {
         this.name = name;
         this.description = description;
         this.perks = perks;
+        this.entityType = entityType;
+        this.itemInHand = itemInHand;
         this.cost = cost;
 
         for (Perk perk : perks) {
@@ -49,41 +61,22 @@ public abstract class Kit {
         return name;
     }
 
-    /**
-     * Gets the name of the kit
-     *
-     * @return Name of kit
-     */
-    public String getName() {
-        return name;
-    }
+    public abstract void apply(Player player);
 
-    /**
-     * Gets the description of the kit
-     *
-     * @return Description of kit
-     */
-    public String[] getDescription() {
-        return description;
+    public Entity spawnEntity(Location location) {
+        if (entityType == EntityType.PLAYER) {
+            entityType = EntityType.ZOMBIE;
+        }
+        LivingEntity entity = (LivingEntity) location.getWorld().spawnEntity(location, entityType);
+        entity.setRemoveWhenFarAway(false);
+        entity.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
+        entity.setCustomNameVisible(true);
+        entity.getEquipment().setItemInHand(itemInHand);
+        if (entityType == EntityType.SKELETON && name.contains("Wither")) {
+            Skeleton skeleton = (Skeleton) entity;
+            skeleton.setSkeletonType(Skeleton.SkeletonType.WITHER);
+        }
+        UtilEnt.removeAI(entity);
+        return entity;
     }
-
-    /**
-     * Gets the perks of the kit
-     *
-     * @return Perks of kit
-     */
-    public Perk[] getPerks() {
-        return perks;
-    }
-
-    /**
-     * Gets the cost of the kit
-     *
-     * @return Cost of kit
-     */
-    public int getCost() {
-        return cost;
-    }
-
-    public abstract void apply(Inventory inventory);
 }

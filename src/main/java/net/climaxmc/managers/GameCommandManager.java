@@ -6,15 +6,9 @@ import net.climaxmc.command.Command;
 import net.climaxmc.command.commands.GameCommand;
 import net.climaxmc.utilities.F;
 import net.climaxmc.utilities.Rank;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.event.Subscribe;
-import org.spongepowered.api.event.message.CommandEvent;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.util.command.CommandResult;
-import org.spongepowered.api.util.command.CommandSource;
 
 import java.util.Set;
 
@@ -33,32 +27,24 @@ public class GameCommandManager extends Manager {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
-        CommandSource source = event.getSource();
-
+        String message = event.getMessage();
+        String[] args = message.substring(message.indexOf(' ') + 1).split(" ");
         for (Command command : commands) {
             for (String name : command.getNames()) {
-                if (name.equalsIgnoreCase(event.getCommand())) {
-                    if (!(source instanceof Player)) {
-                        source.sendMessage(Texts.of("You must be a player to execute that command."));
-                        event.setResult(CommandResult.success());
-                        event.setCancelled(true);
-                        return;
-                    }
-
-                    Player player = (Player) source;
+                if (name.equalsIgnoreCase(event.getMessage())) {
+                    Player player = event.getPlayer();
                     PlayerData playerData = new PlayerData(player);
 
                     if (!playerData.hasRank(Rank.ADMINISTRATOR)) {
                         player.sendMessage(F.denyPermissions(command.getRank()));
                     }
 
-                    Text result = command.execute(player, event.getArguments().split(" "));
+                    String result = command.execute(player, args);
 
                     if (result != null) {
                         player.sendMessage(result);
                     }
 
-                    event.setResult(CommandResult.success());
                     event.setCancelled(true);
                 }
             }

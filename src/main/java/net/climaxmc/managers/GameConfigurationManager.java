@@ -34,7 +34,7 @@ public class GameConfigurationManager extends Manager {
                         try {
                             manager.setGame(type.getGame().newInstance());
                         } catch (InstantiationException | IllegalAccessException e) {
-                            plugin.getLogger().error("Could not create game instance!");
+                            plugin.getLogger().severe("Could not create game instance!");
                         }
 
                         gameEnabled = true;
@@ -45,11 +45,11 @@ public class GameConfigurationManager extends Manager {
             in.close();
 
             if (!gameEnabled) {
-                plugin.getLogger().error("No game enabled in configuration! Shutting down server.");
-                plugin.getGame().getServer().shutdown();
+                plugin.getLogger().warning("No game enabled in configuration! Shutting down server!");
+                System.exit(0);
             }
         } catch (IOException e) {
-            plugin.getLogger().error("Could not initialize configuration!");
+            plugin.getLogger().severe("Could not initialize configuration!");
         }
     }
 
@@ -64,7 +64,7 @@ public class GameConfigurationManager extends Manager {
 
             out.close();
         } catch (IOException e) {
-            plugin.getLogger().error("Could not create/save game settings configuration!");
+            plugin.getLogger().severe("Could not create/save game settings configuration!");
         }
     }
 }

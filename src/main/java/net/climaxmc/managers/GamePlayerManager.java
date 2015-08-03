@@ -43,7 +43,7 @@ public class GamePlayerManager extends Manager {
         Player player = event.getPlayer();
         Kit kit = manager.getGame().getKits()[0];
 
-        kit.apply(player.getInventory());
+        kit.apply(player);
         player.sendMessage(F.message("Kits", "You have selected " + kit.getName() + "."));
     }
 }

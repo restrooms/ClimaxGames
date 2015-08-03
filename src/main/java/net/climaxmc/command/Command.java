@@ -2,8 +2,7 @@ package net.climaxmc.command;
 
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.utilities.Rank;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.text.Text;
+import org.bukkit.entity.Player;
 
 /**
  * Represents a command
@@ -12,14 +11,14 @@ public abstract class Command {
     protected ClimaxGames plugin = ClimaxGames.getInstance();
     protected String[] names;
     protected Rank rank;
-    protected Text usage;
+    protected String usage;
 
     /**
      * Defines a command
      *
      * @param names Names of command (includes aliases)
      */
-    public Command(String[] names, Text usage) {
+    public Command(String[] names, String usage) {
         this(names, Rank.DEFAULT, usage);
     }
 
@@ -29,7 +28,7 @@ public abstract class Command {
      * @param names Names of command (includes aliases)
      * @param rank  Rank of command
      */
-    public Command(String[] names, Rank rank, Text usage) {
+    public Command(String[] names, Rank rank, String usage) {
         this.names = names;
         this.rank = rank;
         this.usage = usage;
@@ -42,7 +41,7 @@ public abstract class Command {
      * @param args   Arguments of command
      * @return Result of execution
      */
-    public abstract Text execute(Player player, String[] args);
+    public abstract String execute(Player player, String[] args);
 
     /**
      * Get the command names
@@ -67,7 +66,7 @@ public abstract class Command {
      *
      * @return Command usage
      */
-    public Text getUsage() {
+    public String getUsage() {
         return usage;
     }
 }

@@ -1,16 +1,6 @@
 package net.climaxmc.managers;
 
-import com.google.common.base.Optional;
 import net.climaxmc.kit.Kit;
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.block.BlockTypes;
-import org.spongepowered.api.data.manipulator.DisplayNameData;
-import org.spongepowered.api.entity.Entity;
-import org.spongepowered.api.entity.EntityTypes;
-import org.spongepowered.api.entity.living.monster.Zombie;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.world.Location;
-import org.spongepowered.api.world.World;
 
 public class GameLobbyManager extends Manager {
     GameLobbyManager() {
@@ -18,7 +8,11 @@ public class GameLobbyManager extends Manager {
     }
 
     private void initializeKitSelector() {
-        Optional<World> worldOptional = plugin.getGame().getServer().getWorld("world");
+        for (Kit kit : manager.getGame().getKits()) {
+            kit.spawnEntity(plugin.getServer().getWorld("world").getSpawnLocation());
+        }
+
+        /*Optional<World> worldOptional = plugin.getGame().getServer().getWorld("world");
 
         if (worldOptional.isPresent()) {
             World world = worldOptional.get();
@@ -77,6 +71,6 @@ public class GameLobbyManager extends Manager {
             }
 
             plugin.getLogger().info("World parsing completed!");
-        }
+        }*/
     }
 }

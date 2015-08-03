@@ -29,7 +29,7 @@ public class ClimaxGames extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        getServer().getOnlinePlayers().forEach(player -> player.kickPlayer("Server shutting down."));
+
     }
 
     /**

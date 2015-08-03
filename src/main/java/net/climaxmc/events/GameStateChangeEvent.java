@@ -1,13 +1,14 @@
 package net.climaxmc.events;
 
 import net.climaxmc.game.Game;
-import org.spongepowered.api.event.AbstractEvent;
-import org.spongepowered.api.event.Cancellable;
+import org.bukkit.event.*;
 
 /**
  * Represents a change of game state
  */
-public class GameStateChangeEvent extends AbstractEvent implements Cancellable {
+public class GameStateChangeEvent extends Event implements Cancellable {
+    private static final HandlerList handlers = new HandlerList();
+
     private boolean cancelled = false;
 
     private Game game;
@@ -50,5 +51,14 @@ public class GameStateChangeEvent extends AbstractEvent implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         cancelled = cancel;
+    }
+
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
     }
 }

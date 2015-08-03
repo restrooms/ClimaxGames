@@ -1,7 +1,7 @@
 package net.climaxmc.account;
 
 import net.climaxmc.utilities.Rank;
-import org.spongepowered.api.entity.player.Player;
+import org.bukkit.entity.Player;
 
 /**
  * Represents player data

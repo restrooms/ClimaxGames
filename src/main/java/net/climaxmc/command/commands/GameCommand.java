@@ -2,12 +2,8 @@ package net.climaxmc.command.commands;
 
 import net.climaxmc.command.Command;
 import net.climaxmc.game.Game;
-import net.climaxmc.utilities.F;
-import net.climaxmc.utilities.Rank;
-import org.spongepowered.api.entity.player.Player;
-import org.spongepowered.api.text.Text;
-import org.spongepowered.api.text.Texts;
-import org.spongepowered.api.text.format.TextStyles;
+import net.climaxmc.utilities.*;
+import org.bukkit.entity.Player;
 
 public class GameCommand extends Command {
     public GameCommand() {
@@ -15,7 +11,7 @@ public class GameCommand extends Command {
     }
 
     @Override
-    public Text execute(Player player, String[] args) {
+    public String execute(Player player, String[] args) {
         if (args.length != 1) {
             return usage;
         }
@@ -24,13 +20,13 @@ public class GameCommand extends Command {
 
         if (args[0].equalsIgnoreCase("start")) {
             if (!game.getState().equals(Game.GameState.READY)) {
-                return Texts.builder("The game has already started.").style(TextStyles.BOLD).build();
+                return C.BOLD + "The game has already started.";
             }
 
             game.setState(Game.GameState.STARTING);
         } else if (args[0].equalsIgnoreCase("stop")) {
             if (!game.getState().equals(Game.GameState.IN_GAME)) {
-                return Texts.builder("The game has not started yet.").style(TextStyles.BOLD).build();
+                return C.BOLD + "The game has not started yet.";
             }
 
             game.setState(Game.GameState.ENDING);
