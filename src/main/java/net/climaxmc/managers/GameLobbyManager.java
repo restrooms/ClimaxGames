@@ -1,6 +1,8 @@
 package net.climaxmc.managers;
 
 import net.climaxmc.kit.Kit;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 
 public class GameLobbyManager extends Manager {
     GameLobbyManager() {
@@ -8,8 +10,11 @@ public class GameLobbyManager extends Manager {
     }
 
     private void initializeKitSelector() {
+        plugin.getServer().getWorld("world").getEntities().stream().filter(entity -> entity.getType().equals(EntityType.ZOMBIE)).forEach(Entity::remove);
+
+        int i = 0;
         for (Kit kit : manager.getGame().getKits()) {
-            kit.spawnEntity(plugin.getServer().getWorld("world").getSpawnLocation());
+            kit.spawnEntity(plugin.getServer().getWorld("world").getSpawnLocation().add(0, 0, i++));
         }
 
         /*Optional<World> worldOptional = plugin.getGame().getServer().getWorld("world");
@@ -50,7 +55,7 @@ public class GameLobbyManager extends Manager {
 
                             if (entityOptional.isPresent()) {
                                 Zombie zombie = (Zombie) entityOptional.get();
-                                kit.apply(zombie);
+                                kit.giveItems(zombie);
 
                                 Optional<DisplayNameData> nameDataOptional = zombie.getData(DisplayNameData.class);
                                 if (nameDataOptional.isPresent()) {

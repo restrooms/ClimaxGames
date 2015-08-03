@@ -12,4 +12,8 @@ public class F {
     public static String denyPermissions(Rank rank) {
         return prefix("Permissions") + C.GRAY + "This requires permissions rank [" + C.BLUE + rank.name() + C.GRAY + "].";
     }
+
+    public static String line() {
+        return C.DARK_GREEN + C.STRIKETHROUGH + "=============================================";
+    }
 }

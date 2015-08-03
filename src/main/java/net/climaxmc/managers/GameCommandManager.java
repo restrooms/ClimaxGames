@@ -29,17 +29,18 @@ public class GameCommandManager extends Manager {
     public void onCommand(PlayerCommandPreprocessEvent event) {
         String message = event.getMessage();
         String[] args = message.substring(message.indexOf(' ') + 1).split(" ");
-        for (Command command : commands) {
-            for (String name : command.getNames()) {
-                if (name.equalsIgnoreCase(event.getMessage())) {
+        String command = getFirstWord(message);
+        for (Command possibleCommand : commands) {
+            for (String name : possibleCommand.getNames()) {
+                if (("/" + name).equalsIgnoreCase(command)) {
                     Player player = event.getPlayer();
                     PlayerData playerData = new PlayerData(player);
 
                     if (!playerData.hasRank(Rank.ADMINISTRATOR)) {
-                        player.sendMessage(F.denyPermissions(command.getRank()));
+                        player.sendMessage(F.denyPermissions(possibleCommand.getRank()));
                     }
 
-                    String result = command.execute(player, args);
+                    String result = possibleCommand.execute(player, args);
 
                     if (result != null) {
                         player.sendMessage(result);
@@ -48,6 +49,15 @@ public class GameCommandManager extends Manager {
                     event.setCancelled(true);
                 }
             }
+        }
+    }
+
+
+    private String getFirstWord(String text) {
+        if (text.indexOf(' ') > -1) {
+            return text.substring(0, text.indexOf(' '));
+        } else {
+            return text;
         }
     }
 }

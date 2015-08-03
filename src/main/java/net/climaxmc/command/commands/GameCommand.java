@@ -24,12 +24,16 @@ public class GameCommand extends Command {
             }
 
             game.setState(Game.GameState.STARTING);
+            plugin.getServer().broadcastMessage(C.GOLD + C.BOLD + player.getName() + " started the game.");
+            return null;
         } else if (args[0].equalsIgnoreCase("stop")) {
             if (!game.getState().equals(Game.GameState.IN_GAME)) {
                 return C.BOLD + "The game has not started yet.";
             }
 
             game.setState(Game.GameState.ENDING);
+            plugin.getServer().broadcastMessage(C.GOLD + C.BOLD + player.getName() + " stopped the game.");
+            return null;
         }
 
         return usage;

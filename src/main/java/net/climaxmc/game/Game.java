@@ -1,5 +1,6 @@
 package net.climaxmc.game;
 
+import lombok.Data;
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
@@ -7,6 +8,7 @@ import net.climaxmc.kit.Kit;
 /**
  * Represents a game
  */
+@Data
 public abstract class Game {
     protected static ClimaxGames plugin = ClimaxGames.getInstance();
     private String name;
@@ -31,33 +33,6 @@ public abstract class Game {
     }
 
     /**
-     * Gets the name of the game
-     *
-     * @return Name of game
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Gets the kits of the game
-     *
-     * @return Kits of game
-     */
-    public Kit[] getKits() {
-        return kits;
-    }
-
-    /**
-     * Gets the state of the game
-     *
-     * @return State of game
-     */
-    public GameState getState() {
-        return state;
-    }
-
-    /**
      * Sets the state of the game
      *
      * @param state State to set game to
@@ -68,6 +43,15 @@ public abstract class Game {
         plugin.getServer().getPluginManager().callEvent(new GameStateChangeEvent(this, state));
 
         plugin.getLogger().info(name + " state set to " + state.toString());
+    }
+
+    /**
+     * Gets if the game has started yet
+     *
+     * @return If the game has started yet
+     */
+    public boolean hasStarted() {
+        return getState().equals(GameState.IN_GAME);
     }
 
     /**
