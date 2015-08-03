@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class ProfessionalKit extends Kit {
     public ProfessionalKit() {
-        super("Professional", new String[]{"Professional paintball kit.", "Jonhan will change the name at some point."}, new Perk[]{new ProfessionalGunPerk()}, new I(Material.DIAMOND_BARDING));
+        super("Professional", new String[]{"Professional paintball kit.", "Jonhan will change the name at some point."}, new Perk[]{new ProfessionalGunPerk()}, new I(Material.DIAMOND_BARDING), 5000);
     }
 
     @Override

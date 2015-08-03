@@ -3,7 +3,8 @@ package net.climaxmc.kit.perks;
 import net.climaxmc.kit.Perk;
 import net.climaxmc.utilities.Ability;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.Sound;
+import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -24,10 +25,14 @@ public class BasicGunPerk extends Perk {
             return;
         }
 
-        /*if (!gun.tryUse(player)) {
+        if (!gun.tryUse(player)) {
             return;
-        }*/
+        }
 
-        // TODO: CREATE SNOWBALL
+        event.setCancelled(true);
+
+        Projectile snowball = player.launchProjectile(Snowball.class);
+        snowball.setVelocity(snowball.getVelocity().multiply(2));
+        player.getWorld().playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 1.5f, 1.5f);
     }
 }

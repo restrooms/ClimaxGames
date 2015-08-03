@@ -4,12 +4,13 @@ import lombok.Data;
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
+import org.bukkit.event.Listener;
 
 /**
  * Represents a game
  */
 @Data
-public abstract class Game {
+public abstract class Game implements Listener {
     protected static ClimaxGames plugin = ClimaxGames.getInstance();
     private String name;
     private Kit[] kits;
@@ -25,6 +26,8 @@ public abstract class Game {
         this.name = name;
         this.kits = kits;
         this.state = GameState.READY;
+
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @Override

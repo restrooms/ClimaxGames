@@ -65,7 +65,7 @@ public abstract class Kit {
     public abstract void giveItems(Player player);
 
     public Entity spawnEntity(Location location) {
-        Zombie zombie = (Zombie) location.getWorld().spawnEntity(location, EntityType.ZOMBIE);
+        Zombie zombie = location.getWorld().spawn(location, Zombie.class);
         zombie.setRemoveWhenFarAway(false);
         zombie.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
         zombie.setCustomNameVisible(false);

@@ -2,6 +2,7 @@ package net.climaxmc.utilities;
 
 import org.bukkit.entity.Player;
 
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -64,7 +65,7 @@ public class Ability {
 
         // Check cooldown
         if (!status.isExpired()) {
-            player.sendMessage(F.message("Ability", "You cannot use this for " + getStatus(player).getRemainingTime(TimeUnit.SECONDS) + " seconds."));
+            player.sendMessage(F.message("Ability", "You cannot use this for " + new DecimalFormat("#.#").format(getStatus(player).getRemainingTime(TimeUnit.MILLISECONDS) / 1000D) + " seconds."));
             return false;
         }
 
