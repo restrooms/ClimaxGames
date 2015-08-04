@@ -6,7 +6,11 @@
 
     <groupId>net.climaxmc</groupId>
     <artifactId>Games</artifactId>
+    <packaging>pom</packaging>
     <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>WorldConfigGenerator</module>
+    </modules>
 
     <repositories>
         <repository>

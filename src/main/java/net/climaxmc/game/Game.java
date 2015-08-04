@@ -25,9 +25,8 @@ public abstract class Game implements Listener {
     public Game(String name, Kit[] kits) {
         this.name = name;
         this.kits = kits;
-        this.state = GameState.READY;
-
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        setState(GameState.READY);
     }
 
     @Override
@@ -42,9 +41,7 @@ public abstract class Game implements Listener {
      */
     public void setState(GameState state) {
         this.state = state;
-
         plugin.getServer().getPluginManager().callEvent(new GameStateChangeEvent(this, state));
-
         plugin.getLogger().info(name + " state set to " + state.toString());
     }
 
@@ -62,9 +59,8 @@ public abstract class Game implements Listener {
      */
     public enum GameState {
         READY,
-        STARTING,
+        PREPARE,
         IN_GAME,
-        ENDING,
-        RESETTING;
+        CLEANUP;
     }
 }

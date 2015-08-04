@@ -17,13 +17,12 @@ public class GameCommand extends Command {
         }
 
         Game game = plugin.getManager().getGame();
-
         if (args[0].equalsIgnoreCase("start")) {
             if (!game.getState().equals(Game.GameState.READY)) {
                 return C.BOLD + "The game has already started.";
             }
 
-            game.setState(Game.GameState.STARTING);
+            game.setState(Game.GameState.IN_GAME);
             plugin.getServer().broadcastMessage(C.GOLD + C.BOLD + player.getName() + " started the game.");
             return null;
         } else if (args[0].equalsIgnoreCase("stop")) {
@@ -31,7 +30,7 @@ public class GameCommand extends Command {
                 return C.BOLD + "The game has not started yet.";
             }
 
-            game.setState(Game.GameState.ENDING);
+            game.setState(Game.GameState.READY);
             plugin.getServer().broadcastMessage(C.GOLD + C.BOLD + player.getName() + " stopped the game.");
             return null;
         }

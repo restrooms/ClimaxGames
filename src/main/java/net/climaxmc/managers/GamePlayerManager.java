@@ -1,5 +1,6 @@
 package net.climaxmc.managers;
 
+import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.*;
@@ -12,26 +13,6 @@ import org.bukkit.event.player.*;
 
 public class GamePlayerManager extends Manager {
     GamePlayerManager() {
-
-    }
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event) {
-        event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
-    }
-
-    @EventHandler
-    public void onPlayerDeath(PlayerDeathEvent event) {
-
-    }
-
-    @EventHandler
-    public void onPlayerRespawn(PlayerRespawnEvent event) {
 
     }
 
@@ -84,6 +65,30 @@ public class GamePlayerManager extends Manager {
         kit.displayDescription(player);
 
         UtilChat.sendActionBar(player, F.message("Kits", "You have selected " + kit.getName() + "."));
+    }
+
+    @EventHandler
+    public void onGameStart(GameStateChangeEvent event) {
+
+    }
+
+
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent event) {
+        event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
+    }
+
+    @EventHandler
+    public void onPlayerRespawn(PlayerRespawnEvent event) {
+        Player player = event.getPlayer();
+        if (manager.getGame().getState().equals(Game.GameState.IN_GAME)) {
+            event.setRespawnLocation(plugin.getServer().getWorld(manager.getGame().getName()).getSpawnLocation());
+        }
     }
 
     @EventHandler

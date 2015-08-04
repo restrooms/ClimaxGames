@@ -1,12 +1,18 @@
 package net.climaxmc.managers;
 
 import com.google.common.collect.Sets;
+import lombok.*;
+import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
+import net.climaxmc.utilities.UtilPlayer;
+import org.bukkit.event.EventHandler;
 
 import java.util.Set;
 
 public class GameManager extends Manager {
     private Set<Manager> managers;
+    @Getter
+    @Setter(value = AccessLevel.PROTECTED)
     private Game game = null;
 
     public GameManager() {
@@ -15,30 +21,21 @@ public class GameManager extends Manager {
         managers = Sets.newHashSet(this,
                 new GameCommandManager(),
                 new GameConfigurationManager(),
-                new GameCreationManager(),
                 new GameLobbyManager(),
                 new GamePlayerManager(),
                 new GameWorldManager()
         );
 
         managers.forEach(manager -> plugin.getServer().getPluginManager().registerEvents(manager, plugin));
+
     }
 
-    /**
-     * Gets the current game
-     *
-     * @return Current game
-     */
-    public Game getGame() {
-        return game;
-    }
+    @EventHandler
+    public void onGameReadyForTeleport(GameStateChangeEvent event) {
+        if (!event.getState().equals(Game.GameState.IN_GAME)) {
+            return;
+        }
 
-    /**
-     * Set the current game
-     *
-     * @param game Game to set to
-     */
-    public void setGame(Game game) {
-        this.game = game;
+        UtilPlayer.getAll().forEach(player -> player.teleport(plugin.getServer().getWorld(game.getName()).getSpawnLocation()));
     }
 }

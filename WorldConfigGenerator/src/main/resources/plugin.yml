@@ -1,0 +1,8 @@
+name: ClimaxWorldConfigGenerator
+version: 1.0
+main: net.climaxmc.WorldConfigGenerator
+author: computerwizjared
+commands:
+  worldconfig:
+    aliases: wc
+    permission: Climax.WorldConfigGenerator
