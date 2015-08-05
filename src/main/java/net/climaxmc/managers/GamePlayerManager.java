@@ -17,6 +17,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.util.Vector;
 
 import java.util.*;
 
@@ -116,6 +117,15 @@ public class GamePlayerManager extends Manager {
     }
 
     @EventHandler
+    public void onGameStop(GameStateChangeEvent event) {
+        if (!event.getState().equals(Game.GameState.READY)) {
+            return;
+        }
+
+        UtilPlayer.getAll().forEach(UtilPlayer::reset);
+    }
+
+    @EventHandler
     public void onPlayerMoveGameStarting(PlayerMoveEvent event) {
         if (manager.getGame().getState().equals(Game.GameState.PREPARE)) {
             event.setTo(event.getFrom());
@@ -126,6 +136,7 @@ public class GamePlayerManager extends Manager {
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + player.getName());
+        UtilPlayer.reset(player);
         if (manager.getGame().getState().equals(Game.GameState.READY)) {
             manager.getGame().startCountdown();
         }
@@ -140,7 +151,13 @@ public class GamePlayerManager extends Manager {
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         if (manager.getGame().getState().equals(Game.GameState.IN_GAME)) {
-            event.setRespawnLocation(manager.getGame().getPlayerTeam(player).getSpawns().get(RandomUtils.nextInt(manager.getGame().getPlayerTeam(player).getSpawns().size())));
+            if (manager.getGame().isRespawnOnDeath()) {
+                event.setRespawnLocation(manager.getGame().getPlayerTeam(player).getSpawns().get(RandomUtils.nextInt(manager.getGame().getPlayerTeam(player).getSpawns().size())));
+            } else {
+                player.setGameMode(GameMode.SPECTATOR);
+                player.setVelocity(new Vector(0, 1.2, 0));
+                event.setRespawnLocation(player.getLocation().add(0, 0, 0));
+            }
         }
     }
 
@@ -242,7 +259,7 @@ public class GamePlayerManager extends Manager {
     @EventHandler
     public void onFireBreak(PlayerInteractEvent event) {
         if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
-            event.setCancelled(true);
+            return;
         }
 
         if (event.getClickedBlock() != null && event.getClickedBlock().getType().equals(Material.FIRE)) {

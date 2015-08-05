@@ -20,6 +20,6 @@ public class BasicKit extends Kit {
         player.getInventory().setLeggings(new I(Material.LEATHER_LEGGINGS));
         player.getInventory().setBoots(new I(Material.LEATHER_BOOTS));
         player.getInventory().addItem(new I(Material.GOLD_BARDING).name(C.GOLD + "Basic Gun"));
-        player.getInventory().addItem(new I(Material.POTION).amount(3).name(C.BLUE + "Water Bottle"));
+        player.getInventory().addItem(new I(Material.POTION).name(C.BLUE + "Revive Potion"));
     }
 }

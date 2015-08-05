@@ -19,8 +19,8 @@ public class GameLobbyManager extends Manager {
 
         int i = 0;
         for (Kit kit : manager.getGame().getKits()) {
-            if (manager.getGame().getLobbyKitEntityLocations().size() >= i) {
-                kit.spawnEntity(manager.getGame().getLobbyKitEntityLocations().get(++i));
+            if (manager.getLobbyKitEntityLocations().size() >= i) {
+                kit.spawnEntity(manager.getLobbyKitEntityLocations().get(++i));
             }
         }
     }

@@ -4,10 +4,14 @@ import lombok.*;
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
-import net.climaxmc.utilities.WorldConfig;
+import net.climaxmc.utilities.*;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
 
@@ -24,18 +28,14 @@ public abstract class Game implements Listener {
     @Setter
     private WorldConfig worldConfig = new WorldConfig("None", "None", new HashMap<>());
 
-    private List<Location> lobbyKitEntityLocations = Arrays.asList(
-            new Location(plugin.getServer().getWorld("world"), 88.5, 69, 86.5, -45, 0),
-            new Location(plugin.getServer().getWorld("world"), 96.5, 69, 86.5, 45, 0),
-            new Location(plugin.getServer().getWorld("world"), 96.5, 69, 94.5, 135, 0),
-            new Location(plugin.getServer().getWorld("world"), 88.5, 69, 94.5, -135, 0)
-    );
-
     private List<GameTeam> teams = new ArrayList<>();
+
+    private static BukkitTask endCheckTask = null;
 
     // Game specific variables
     protected int minPlayers = 1; //TODO CHANGE TO 4, ONLY 2 FOR DEBUGGING
     protected int maxPlayers = 16;
+    protected boolean respawnOnDeath = false;
 
     /**
      * Defines a game
@@ -63,6 +63,13 @@ public abstract class Game implements Listener {
         }
     }
 
+    public abstract void checkEnd();
+
+    /**
+     * Gets the team of a player
+     * @param player Player to get team of
+     * @return Player team
+     */
     public GameTeam getPlayerTeam(Player player) {
         return teams.stream().filter(team -> team.getPlayers().contains(player.getUniqueId())).findFirst().get();
     }
@@ -76,6 +83,22 @@ public abstract class Game implements Listener {
         this.state = state;
         plugin.getServer().getPluginManager().callEvent(new GameStateChangeEvent(this, state));
         plugin.getLogger().info(name + " state set to " + state.toString());
+    }
+
+    public void announceEnd(List<String> places) {
+        plugin.getServer().broadcastMessage(F.topLine());
+        plugin.getServer().broadcastMessage(C.BLUE + C.BOLD + getWorldConfig().getMapName() + C.GRAY + " \u00bb by " + C.WHITE + C.BOLD + "Arcane Builds");
+        plugin.getServer().broadcastMessage("");
+        int i = 0;
+        for (String playerName : places) {
+            if (i == 3) {
+                return;
+            }
+
+            plugin.getServer().broadcastMessage(C.BOLD + "#" + ++i + " " + C.BLUE + playerName);
+        }
+        plugin.getServer().broadcastMessage("");
+        plugin.getServer().broadcastMessage(F.bottomLine());
     }
 
     /**
@@ -94,5 +117,43 @@ public abstract class Game implements Listener {
         READY,
         PREPARE,
         IN_GAME;
+    }
+
+    public abstract static class FreeForAll extends Game {
+        protected List<String> places = new ArrayList<>();
+
+        /**
+         * Defines a free for all game
+         *
+         * @param name Name of game
+         * @param kits Kits of game
+         */
+        public FreeForAll(String name, Kit[] kits) {
+            super(name, kits);
+        }
+
+        @Override
+        public void checkEnd() {
+            if (UtilPlayer.getAll(false).size() <= 1) {
+                UtilPlayer.getAll().forEach(player -> player.playSound(player.getLocation(), Sound.LEVEL_UP, 2.0f, 1.0f));
+                announceEnd(places);
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> setState(GameState.READY), 120L);
+                plugin.getServer().getScheduler().cancelTask(endCheckTask.getTaskId());
+            }
+        }
+
+        @EventHandler
+        public void onPlayerDeathAddPlace(PlayerDeathEvent event) {
+            places.add(0, event.getEntity().getName());
+        }
+    }
+
+    @EventHandler
+    public void onGameStart(GameStateChangeEvent event) {
+        if (!event.getState().equals(GameState.IN_GAME)) {
+            return;
+        }
+
+        endCheckTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::checkEnd, 0, 20);
     }
 }

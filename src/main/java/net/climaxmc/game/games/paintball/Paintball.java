@@ -7,7 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-public class Paintball extends Game {
+public class Paintball extends Game.FreeForAll {
     public Paintball() {
         super("Paintball", new Kit[]{new BasicKit(), new AdvancedKit(), new ProfessionalKit()});
     }
