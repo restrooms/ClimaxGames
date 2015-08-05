@@ -22,7 +22,7 @@ public class GameCommand extends Command {
                 return C.BOLD + "The game has already started.";
             }
 
-            game.setState(Game.GameState.IN_GAME);
+            game.setState(Game.GameState.PREPARE);
             plugin.getServer().broadcastMessage(C.GOLD + C.BOLD + player.getName() + " started the game.");
             return null;
         } else if (args[0].equalsIgnoreCase("stop")) {

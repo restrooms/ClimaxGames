@@ -6,6 +6,7 @@ import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.WorldConfig;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import java.util.*;
@@ -60,6 +61,10 @@ public abstract class Game implements Listener {
         if (!GameCountdown.isStarted()) {
             new GameCountdown().runTaskTimer(plugin, 0, 20);
         }
+    }
+
+    public GameTeam getPlayerTeam(Player player) {
+        return teams.stream().filter(team -> team.getPlayers().contains(player.getUniqueId())).findFirst().get();
     }
 
     /**

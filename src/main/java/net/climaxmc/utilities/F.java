@@ -24,7 +24,7 @@ public class F {
     public static String bottomLine() {
         String line = "";
         for (int i = 0; i < 5; i++) {
-            line += C.RED + C.STRIKETHROUGH + "----" + C.DARK_GRAY + C.STRIKETHROUGH + "]-" + C.RESET + " ";
+            line += C.DARK_GRAY + C.STRIKETHROUGH + "-]" + C.RED + C.STRIKETHROUGH + "----" + C.RESET + " ";
         }
         return line;
     }

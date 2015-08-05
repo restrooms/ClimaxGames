@@ -12,7 +12,7 @@ import org.bukkit.util.Vector;
 import java.util.concurrent.TimeUnit;
 
 public class AdvancedGunPerk extends Perk {
-    private Ability gun = new Ability(1, 4, TimeUnit.SECONDS);
+    private Ability gun = new Ability(1, 1500, TimeUnit.MILLISECONDS);
 
     public AdvancedGunPerk() {
         super("Advanced Gun");

@@ -72,9 +72,11 @@ public class GameWorldManager extends Manager {
                 plugin.getLogger().info("Created " + manager.getGame().getName() + " world directory");
             }
         }
+    }
 
+    private void loadWorldConfig() {
         // Get world configuration
-        File worldConfigFile = new File(gameMapFolder.getPath() + File.separator + "WorldConfig.yml");
+        File worldConfigFile = new File(new File(manager.getGame().getName()).getPath() + File.separator + "WorldConfig.yml");
         if (!worldConfigFile.exists()) {
             plugin.getLogger().severe("World configuration does not exist!");
             return;
@@ -85,12 +87,13 @@ public class GameWorldManager extends Manager {
             List<Location> spawns = new ArrayList<>();
             for (String locationKey : worldConfig.getConfigurationSection("Spawns." + team).getKeys(false)) {
                 String path = "Spawns." + team + "." + locationKey + ".";
+                World world = plugin.getServer().getWorld(manager.getGame().getName());
                 double x = worldConfig.getDouble(path + "X");
                 double y = worldConfig.getDouble(path + "Y");
                 double z = worldConfig.getDouble(path + "Z");
                 float yaw = (float) worldConfig.getDouble(path + "Yaw");
                 float pitch = (float) worldConfig.getDouble(path + "Pitch");
-                spawns.add(new Location(plugin.getServer().getWorld(manager.getGame().getName()), x, y, z, yaw, pitch));
+                spawns.add(new Location(world, x, y, z, yaw, pitch));
             }
             teamSpawns.put(team, spawns);
         }
@@ -104,15 +107,20 @@ public class GameWorldManager extends Manager {
             return;
         }
 
-        World gameWorld = plugin.getServer().getWorld(manager.getGame().getName());
+        plugin.getServer().getScheduler().runTask(plugin, () -> {
+            World gameWorld = plugin.getServer().getWorld(manager.getGame().getName());
 
-        if (gameWorld != null) {
-            plugin.getServer().unloadWorld(gameWorld, false);
-        }
+            if (gameWorld != null) {
+                plugin.getServer().unloadWorld(gameWorld, false);
+            }
 
-        loadMapFolders();
+            loadMapFolders();
 
-        plugin.getServer().createWorld(new WorldCreator(manager.getGame().getName()).generatorSettings("1;0;1").type(WorldType.FLAT));
+            World world = plugin.getServer().createWorld(new WorldCreator(manager.getGame().getName()).generatorSettings("1;0;1").type(WorldType.FLAT));
+            world.setGameRuleValue("doMobSpawning", "false");
+
+            loadWorldConfig();
+        });
     }
 
     @EventHandler

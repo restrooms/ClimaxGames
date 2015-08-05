@@ -11,7 +11,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import java.util.concurrent.TimeUnit;
 
 public class BasicGunPerk extends Perk {
-    private Ability gun = new Ability(1, 4, TimeUnit.SECONDS);
+    private Ability gun = new Ability(1, 1, TimeUnit.SECONDS);
 
     public BasicGunPerk() {
         super("Basic Gun");

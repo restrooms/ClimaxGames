@@ -5,14 +5,15 @@ import net.climaxmc.game.Game;
 import net.climaxmc.game.GameTeam;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.*;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
+import org.apache.commons.lang.math.RandomUtils;
+import org.bukkit.*;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
@@ -103,8 +104,23 @@ public class GamePlayerManager extends Manager {
                 plugin.getServer().getPlayer(player).teleport(team.getSpawns().get(++i));
             }
         });
+
+        UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "4"));
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "3")), 20);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "2")), 40);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "1")), 60);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, C.BOLD + "GOOO"));
+            manager.getGame().setState(Game.GameState.IN_GAME);
+        }, 80);
     }
 
+    @EventHandler
+    public void onPlayerMoveGameStarting(PlayerMoveEvent event) {
+        if (manager.getGame().getState().equals(Game.GameState.PREPARE)) {
+            event.setTo(event.getFrom());
+        }
+    }
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
@@ -124,7 +140,7 @@ public class GamePlayerManager extends Manager {
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         if (manager.getGame().getState().equals(Game.GameState.IN_GAME)) {
-            event.setRespawnLocation(plugin.getServer().getWorld(manager.getGame().getName()).getSpawnLocation());
+            event.setRespawnLocation(manager.getGame().getPlayerTeam(player).getSpawns().get(RandomUtils.nextInt(manager.getGame().getPlayerTeam(player).getSpawns().size())));
         }
     }
 
@@ -203,6 +219,40 @@ public class GamePlayerManager extends Manager {
     public void onPlayerOpenInventory(InventoryOpenEvent event) {
         if (event.getInventory().getHolder() instanceof Villager) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPaintingBreak(HangingBreakByEntityEvent event) {
+        if (event.getRemover() instanceof Player && !((Player)event.getRemover()).getGameMode().equals(GameMode.CREATIVE)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onFireBurn(BlockBurnEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onFireSpread(BlockSpreadEvent event) {
+        event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onFireBreak(PlayerInteractEvent event) {
+        if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+            event.setCancelled(true);
+        }
+
+        if (event.getClickedBlock() != null && event.getClickedBlock().getType().equals(Material.FIRE)) {
+            event.setCancelled(true);
+        }
+
+        for (BlockFace face : BlockFace.values()) {
+            if (event.getClickedBlock() != null && event.getClickedBlock().getRelative(face) != null && event.getClickedBlock().getRelative(face).getType().equals(Material.FIRE)) {
+                event.setCancelled(true);
+            }
         }
     }
 }
