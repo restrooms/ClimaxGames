@@ -22,6 +22,10 @@ public class AdvancedGunPerk extends Perk {
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
+        if (!plugin.getManager().getGame().hasStarted()) {
+            return;
+        }
+
         if (!player.getItemInHand().getType().equals(Material.IRON_BARDING)) {
             return;
         }

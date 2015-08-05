@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class AdvancedKit extends Kit {
     public AdvancedKit() {
-        super("Advanced", new String[]{"Advanced paintball kit.", "Jonhan will change the name at some point."}, new Perk[]{new AdvancedGunPerk()}, new I(Material.IRON_BARDING), 2000);
+        super(C.GREEN + "Advanced", new String[]{"Advanced paintball kit.", "Jonhan will change the name at some point."}, new Perk[]{new AdvancedGunPerk()}, new I(Material.IRON_BARDING), 2000);
     }
 
     @Override

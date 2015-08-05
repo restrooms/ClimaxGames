@@ -8,9 +8,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
+
+import java.util.Optional;
 
 public class GamePlayerManager extends Manager {
     GamePlayerManager() {
@@ -48,6 +52,12 @@ public class GamePlayerManager extends Manager {
     private void selectKit(Player player, Entity entity) {
         Kit kit = null;
 
+        Optional<Entity> armorStandOptional = entity.getNearbyEntities(1, 1, 1).stream().filter(possibleArmorStand -> possibleArmorStand.getType().equals(EntityType.ARMOR_STAND)).findFirst();
+        if (!armorStandOptional.isPresent()) {
+            return;
+        }
+        entity = armorStandOptional.get();
+
         if (entity.getCustomName() == null) {
             return;
         }
@@ -65,7 +75,7 @@ public class GamePlayerManager extends Manager {
         kit.apply(player);
         kit.displayDescription(player);
 
-        UtilChat.sendActionBar(player, F.message("Kits", "You have selected " + kit.getName() + "."));
+        UtilChat.sendActionBar(player, F.message("Kit", "Selected: " + kit.getName()));
     }
 
     @EventHandler
@@ -76,7 +86,11 @@ public class GamePlayerManager extends Manager {
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
-        event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
+        Player player = event.getPlayer();
+        event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + player.getName());
+        if (manager.getGame().getState().equals(Game.GameState.READY)) {
+            manager.getGame().startCountdown();
+        }
     }
 
     @EventHandler
@@ -95,6 +109,23 @@ public class GamePlayerManager extends Manager {
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
         event.setFormat(ChatColor.GRAY + "%s" + ChatColor.RESET + ": " + ChatColor.translateAlternateColorCodes('&', event.getMessage()));
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (!manager.getGame().hasStarted() || event.getEntity().getWorld().getName().equals("world")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamage(EntityDamageEvent event) {
+        if (!manager.getGame().hasStarted() || event.getEntity().getWorld().getName().equals("world")) {
+            if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
+                event.getEntity().teleport(plugin.getServer().getWorld("world").getSpawnLocation());
+            }
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
@@ -130,5 +161,19 @@ public class GamePlayerManager extends Manager {
     @EventHandler
     public void onHungerChange(FoodLevelChangeEvent event) {
         event.setFoodLevel(20);
+    }
+
+    @EventHandler
+    public void onBlockBreak(BlockBreakEvent event) {
+        if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onBlockPlace(BlockPlaceEvent event) {
+        if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+            event.setCancelled(true);
+        }
     }
 }

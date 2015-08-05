@@ -67,13 +67,16 @@ public abstract class Kit {
     public Entity spawnEntity(Location location) {
         Zombie zombie = location.getWorld().spawn(location, Zombie.class);
         zombie.setRemoveWhenFarAway(false);
-        zombie.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
-        zombie.setCustomNameVisible(false);
+        //zombie.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
+        //zombie.setCustomNameVisible(true);
         zombie.getEquipment().setItemInHand(itemInHand);
         zombie.setBaby(false);
         zombie.setVillager(false);
         UtilEnt.removeAI(zombie);
-
+        ArmorStand armorStand = location.getWorld().spawn(location/*.multiply(0.9999999999999999).add(0, 0.4, 0)*/, ArmorStand.class);
+        armorStand.setVisible(false);
+        armorStand.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
+        armorStand.setCustomNameVisible(true);
         return zombie;
     }
 

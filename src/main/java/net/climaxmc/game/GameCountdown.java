@@ -1,0 +1,43 @@
+package net.climaxmc.game;
+
+import net.climaxmc.ClimaxGames;
+import net.climaxmc.utilities.*;
+import org.bukkit.scheduler.BukkitRunnable;
+
+public class GameCountdown extends BukkitRunnable {
+    private Game game = ClimaxGames.getInstance().getManager().getGame();
+    private static boolean started = false;
+    private int timer = 20;
+
+    @Override
+    public void run() {
+        if (started) {
+            cancel();
+            return;
+        }
+
+        if (UtilPlayer.getAll().size() < game.getMinPlayers()) {
+            started = false;
+
+            UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, F.message("Countdown", "Not enough players to start the game.")));
+
+            cancel();
+            return;
+        }
+
+        if (timer <= 0) {
+            started = false;
+
+            game.setState(Game.GameState.IN_GAME);
+
+            cancel();
+            return;
+        }
+
+        started = true;
+
+        UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, F.message("Countdown", C.YELLOW + "The game will start in " + C.RED + timer + C.YELLOW + " seconds.")));
+
+        timer--;
+    }
+}

@@ -1,32 +1,38 @@
 package net.climaxmc.game;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.WorldConfig;
+import org.bukkit.Location;
 import org.bukkit.event.Listener;
 
-import java.util.HashMap;
+import java.util.*;
 
 /**
  * Represents a game
  */
+@Getter
 public abstract class Game implements Listener {
+    @Getter(value = AccessLevel.NONE)
     protected static ClimaxGames plugin = ClimaxGames.getInstance();
-    @Getter
     private String name;
-    @Getter
     private Kit[] kits;
-    @Getter
     private GameState state = GameState.READY;
-    @Getter
     @Setter
     private WorldConfig worldConfig = new WorldConfig("None", "None", new HashMap<>());
 
+    @Getter
+    private List<Location> lobbyKitEntityLocations = Arrays.asList(
+            new Location(plugin.getServer().getWorld("world"), 88.5, 69, 86.5, -45, 0),
+            new Location(plugin.getServer().getWorld("world"), 96.5, 69, 86.5, 45, 0),
+            new Location(plugin.getServer().getWorld("world"), 96.5, 69, 94.5, 135, 0),
+            new Location(plugin.getServer().getWorld("world"), 88.5, 69, 94.5, -135, 0)
+    );
+
     // Game specific variables
-    protected int minPlayers = 4;
+    protected int minPlayers = 2; //TODO CHANGE TO 4, ONLY 2 FOR DEBUGGING
     protected int maxPlayers = 16;
 
     /**
@@ -47,6 +53,13 @@ public abstract class Game implements Listener {
     }
 
     /**
+     * Attempt to start the countdown
+     */
+    public void startCountdown() {
+        new GameCountdown().runTaskTimer(plugin, 0, 20);
+    }
+
+    /**
      * Sets the state of the game
      *
      * @param state State to set game to
@@ -63,7 +76,7 @@ public abstract class Game implements Listener {
      * @return If the game has started yet
      */
     public boolean hasStarted() {
-        return getState().equals(GameState.IN_GAME);
+        return state.equals(GameState.IN_GAME);
     }
 
     /**
@@ -71,8 +84,6 @@ public abstract class Game implements Listener {
      */
     public enum GameState {
         READY,
-        PREPARE,
-        IN_GAME,
-        CLEANUP;
+        IN_GAME;
     }
 }

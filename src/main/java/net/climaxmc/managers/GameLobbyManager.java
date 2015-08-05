@@ -15,11 +15,13 @@ public class GameLobbyManager extends Manager {
     }
 
     private void initializeKitSelector() {
-        plugin.getServer().getWorld("world").getEntities().stream().filter(entity -> entity.getType().equals(EntityType.ZOMBIE)).forEach(Entity::remove);
+        plugin.getServer().getWorld("world").getEntities().stream().filter(entity -> entity.getType().equals(EntityType.ZOMBIE) || entity.getType().equals(EntityType.ARMOR_STAND)).forEach(Entity::remove);
 
         int i = 0;
         for (Kit kit : manager.getGame().getKits()) {
-            kit.spawnEntity(plugin.getServer().getWorld("world").getSpawnLocation().add(0, 0, i++));
+            if (manager.getGame().getLobbyKitEntityLocations().size() >= i) {
+                kit.spawnEntity(manager.getGame().getLobbyKitEntityLocations().get(++i));
+            }
         }
     }
 

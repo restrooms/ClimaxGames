@@ -6,12 +6,11 @@ import net.climaxmc.kit.perks.BasicGunPerk;
 import net.climaxmc.utilities.C;
 import net.climaxmc.utilities.I;
 import org.bukkit.Material;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 public class BasicKit extends Kit {
     public BasicKit() {
-        super("Basic", new String[]{"Basic paintball kit.", "Jonhan will change the name at some point."}, new Perk[]{new BasicGunPerk()}, new I(Material.GOLD_BARDING));
+        super(C.DARK_AQUA + "Basic", new String[]{"Basic paintball kit.", "Jonhan will change the name at some point."}, new Perk[]{new BasicGunPerk()}, new I(Material.GOLD_BARDING));
     }
 
     @Override
