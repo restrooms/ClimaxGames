@@ -13,7 +13,19 @@ public class F {
         return prefix("Permissions") + C.GRAY + "This requires permissions rank [" + C.BLUE + rank.name() + C.GRAY + "].";
     }
 
-    public static String line() {
-        return C.DARK_GREEN + C.STRIKETHROUGH + "=============================================";
+    public static String topLine() {
+        String line = "";
+        for (int i = 0; i < 5; i++) {
+            line += C.RED + C.STRIKETHROUGH + "----" + C.DARK_GRAY + C.STRIKETHROUGH + "[-" + C.RESET + " ";
+        }
+        return line;
+    }
+
+    public static String bottomLine() {
+        String line = "";
+        for (int i = 0; i < 5; i++) {
+            line += C.RED + C.STRIKETHROUGH + "----" + C.DARK_GRAY + C.STRIKETHROUGH + "]-" + C.RESET + " ";
+        }
+        return line;
     }
 }

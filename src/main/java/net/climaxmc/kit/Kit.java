@@ -65,19 +65,20 @@ public abstract class Kit {
     public abstract void giveItems(Player player);
 
     public Entity spawnEntity(Location location) {
-        Zombie zombie = location.getWorld().spawn(location, Zombie.class);
-        zombie.setRemoveWhenFarAway(false);
-        //zombie.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
-        //zombie.setCustomNameVisible(true);
-        zombie.getEquipment().setItemInHand(itemInHand);
-        zombie.setBaby(false);
-        zombie.setVillager(false);
-        UtilEnt.removeAI(zombie);
+        Villager villager = location.getWorld().spawn(location, Villager.class);
+        villager.setRemoveWhenFarAway(false);
+        //villager.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
+        //villager.setCustomNameVisible(true);
+        villager.getEquipment().setItemInHand(itemInHand);
+        villager.setAdult();
+        villager.setAgeLock(true);
+        villager.setProfession(Villager.Profession.LIBRARIAN);
+        UtilEnt.removeAI(villager);
         ArmorStand armorStand = location.getWorld().spawn(location/*.multiply(0.9999999999999999).add(0, 0.4, 0)*/, ArmorStand.class);
         armorStand.setVisible(false);
         armorStand.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
         armorStand.setCustomNameVisible(true);
-        return zombie;
+        return villager;
     }
 
     public void displayDescription(Player player) {
@@ -85,8 +86,8 @@ public abstract class Kit {
             player.sendMessage("");
         }
 
-        player.sendMessage(F.line());
-        player.sendMessage(C.GREEN + "Kit - " + C.WHITE + C.BOLD + name);
+        player.sendMessage(F.topLine());
+        player.sendMessage(C.GOLD + C.BOLD + "Kit " + C.WHITE + "\u00bb " + C.WHITE + name);
 
         player.sendMessage("");
 
@@ -94,12 +95,9 @@ public abstract class Kit {
             player.sendMessage(C.GRAY + descLine);
         }
 
-        for (Perk perk : perks) {
-            player.sendMessage("");
-            player.sendMessage(C.WHITE + C.BOLD + perk.getName());
-        }
+        player.sendMessage("");
 
-        player.sendMessage(F.line());
+        player.sendMessage(F.bottomLine());
 
         player.playSound(player.getLocation(), Sound.NOTE_PIANO, 2, 3);
     }

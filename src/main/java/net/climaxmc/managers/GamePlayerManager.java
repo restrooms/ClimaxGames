@@ -2,19 +2,22 @@ package net.climaxmc.managers;
 
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
+import net.climaxmc.game.GameTeam;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.*;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 
-import java.util.Optional;
+import java.util.*;
 
 public class GamePlayerManager extends Manager {
     GamePlayerManager() {
@@ -25,7 +28,7 @@ public class GamePlayerManager extends Manager {
     public void onPlayerSelectKit(PlayerInteractEntityEvent event) {
         Entity entity = event.getRightClicked();
 
-        if (!entity.getType().equals(EntityType.ZOMBIE)) {
+        if (!entity.getType().equals(EntityType.VILLAGER)) {
             return;
         }
 
@@ -39,7 +42,7 @@ public class GamePlayerManager extends Manager {
         Entity damaged = event.getEntity();
         Entity damager = event.getDamager();
 
-        if (damager.getType() != EntityType.PLAYER || damaged.getType() != EntityType.ZOMBIE) {
+        if (damager.getType() != EntityType.PLAYER || damaged.getType() != EntityType.VILLAGER) {
             return;
         }
 
@@ -78,9 +81,28 @@ public class GamePlayerManager extends Manager {
         UtilChat.sendActionBar(player, F.message("Kit", "Selected: " + kit.getName()));
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onGameStart(GameStateChangeEvent event) {
+        if (!event.getState().equals(Game.GameState.PREPARE)) {
+            return;
+        }
 
+        UtilPlayer.getAll().forEach(player -> {
+            GameTeam smallest = manager.getGame().getTeams().get(1);
+            final List<UUID> smallestPlayers = smallest.getPlayers();
+            Optional<GameTeam> smallestOptional = manager.getGame().getTeams().stream().filter(team -> team.getPlayers().size() < smallestPlayers.size()).findFirst();
+            if (smallestOptional.isPresent()) {
+                smallest = smallestOptional.get();
+            }
+            smallest.getPlayers().add(player.getUniqueId());
+        });
+
+        manager.getGame().getTeams().forEach(team -> {
+            int i = 0;
+            for (UUID player : team.getPlayers()) {
+                plugin.getServer().getPlayer(player).teleport(team.getSpawns().get(++i));
+            }
+        });
     }
 
 
@@ -173,6 +195,13 @@ public class GamePlayerManager extends Manager {
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent event) {
         if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerOpenInventory(InventoryOpenEvent event) {
+        if (event.getInventory().getHolder() instanceof Villager) {
             event.setCancelled(true);
         }
     }

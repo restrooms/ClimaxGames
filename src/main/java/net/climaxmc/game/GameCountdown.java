@@ -1,21 +1,18 @@
 package net.climaxmc.game;
 
+import lombok.Getter;
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.utilities.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameCountdown extends BukkitRunnable {
     private Game game = ClimaxGames.getInstance().getManager().getGame();
+    @Getter
     private static boolean started = false;
     private int timer = 20;
 
     @Override
     public void run() {
-        if (started) {
-            cancel();
-            return;
-        }
-
         if (UtilPlayer.getAll().size() < game.getMinPlayers()) {
             started = false;
 
@@ -28,7 +25,7 @@ public class GameCountdown extends BukkitRunnable {
         if (timer <= 0) {
             started = false;
 
-            game.setState(Game.GameState.IN_GAME);
+            game.setState(Game.GameState.PREPARE);
 
             cancel();
             return;

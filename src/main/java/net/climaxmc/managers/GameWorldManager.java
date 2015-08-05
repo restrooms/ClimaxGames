@@ -2,6 +2,7 @@ package net.climaxmc.managers;
 
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
+import net.climaxmc.game.GameTeam;
 import net.climaxmc.utilities.WorldConfig;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -94,6 +95,7 @@ public class GameWorldManager extends Manager {
             teamSpawns.put(team, spawns);
         }
         manager.getGame().setWorldConfig(new WorldConfig(worldConfig.getString("Name"), worldConfig.getString("Author"), teamSpawns));
+        teamSpawns.keySet().forEach(teamSpawn -> manager.getGame().getTeams().add(new GameTeam(teamSpawn, teamSpawns.get(teamSpawn), new ArrayList<>())));
     }
 
     @EventHandler
