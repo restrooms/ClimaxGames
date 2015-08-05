@@ -1,6 +1,7 @@
 package net.climaxmc.game;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
@@ -12,13 +13,21 @@ import java.util.HashMap;
 /**
  * Represents a game
  */
-@Data
 public abstract class Game implements Listener {
     protected static ClimaxGames plugin = ClimaxGames.getInstance();
+    @Getter
     private String name;
+    @Getter
     private Kit[] kits;
-    private GameState state;
+    @Getter
+    private GameState state = GameState.READY;
+    @Getter
+    @Setter
     private WorldConfig worldConfig = new WorldConfig("None", "None", new HashMap<>());
+
+    // Game specific variables
+    protected int minPlayers = 4;
+    protected int maxPlayers = 16;
 
     /**
      * Defines a game
@@ -30,7 +39,6 @@ public abstract class Game implements Listener {
         this.name = name;
         this.kits = kits;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
-        setState(GameState.READY);
     }
 
     @Override

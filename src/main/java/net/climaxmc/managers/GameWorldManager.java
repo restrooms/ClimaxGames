@@ -2,6 +2,7 @@ package net.climaxmc.managers;
 
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
+import net.climaxmc.utilities.WorldConfig;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
@@ -14,6 +15,7 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.*;
 
 public class GameWorldManager extends Manager {
     private File mapsFolder;
@@ -74,8 +76,24 @@ public class GameWorldManager extends Manager {
         File worldConfigFile = new File(gameMapFolder.getPath() + File.separator + "WorldConfig.yml");
         if (!worldConfigFile.exists()) {
             plugin.getLogger().severe("World configuration does not exist!");
+            return;
         }
         FileConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldConfigFile);
+        Map<String, List<Location>> teamSpawns = new HashMap<>();
+        for (String team : worldConfig.getConfigurationSection("Spawns").getKeys(false)) {
+            List<Location> spawns = new ArrayList<>();
+            for (String locationKey : worldConfig.getConfigurationSection("Spawns." + team).getKeys(false)) {
+                String path = "Spawns." + team + "." + locationKey + ".";
+                double x = worldConfig.getDouble(path + "X");
+                double y = worldConfig.getDouble(path + "Y");
+                double z = worldConfig.getDouble(path + "Z");
+                float yaw = (float) worldConfig.getDouble(path + "Yaw");
+                float pitch = (float) worldConfig.getDouble(path + "Pitch");
+                spawns.add(new Location(plugin.getServer().getWorld(manager.getGame().getName()), x, y, z, yaw, pitch));
+            }
+            teamSpawns.put(team, spawns);
+        }
+        manager.getGame().setWorldConfig(new WorldConfig(worldConfig.getString("Name"), worldConfig.getString("Author"), teamSpawns));
     }
 
     @EventHandler

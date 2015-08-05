@@ -65,7 +65,7 @@ public class Ability {
 
         // Check cooldown
         if (!status.isExpired()) {
-            player.sendMessage(F.message("Ability", "You cannot use this for " + new DecimalFormat("#.#").format(getStatus(player).getRemainingTime(TimeUnit.MILLISECONDS) / 1000D) + " seconds."));
+            UtilChat.sendActionBar(player, F.message("Ability", "You cannot use this for " + new DecimalFormat("#.#").format(getStatus(player).getRemainingTime(TimeUnit.MILLISECONDS) / 1000D) + " seconds."));
             return false;
         }
 

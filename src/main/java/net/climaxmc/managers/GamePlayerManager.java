@@ -4,6 +4,7 @@ import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.*;
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
@@ -89,6 +90,11 @@ public class GamePlayerManager extends Manager {
         if (manager.getGame().getState().equals(Game.GameState.IN_GAME)) {
             event.setRespawnLocation(plugin.getServer().getWorld(manager.getGame().getName()).getSpawnLocation());
         }
+    }
+
+    @EventHandler
+    public void onPlayerChat(AsyncPlayerChatEvent event) {
+        event.setFormat(ChatColor.GRAY + "%s" + ChatColor.RESET + ": " + ChatColor.translateAlternateColorCodes('&', event.getMessage()));
     }
 
     @EventHandler

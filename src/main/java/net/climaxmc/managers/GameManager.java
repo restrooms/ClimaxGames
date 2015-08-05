@@ -19,15 +19,16 @@ public class GameManager extends Manager {
         manager = this;
 
         managers = Sets.newHashSet(this,
-                new GameCommandManager(),
                 new GameConfigurationManager(),
+                new GameWorldManager(),
                 new GameLobbyManager(),
-                new GamePlayerManager(),
-                new GameWorldManager()
+                new GameCommandManager(),
+                new GamePlayerManager()
         );
 
         managers.forEach(manager -> plugin.getServer().getPluginManager().registerEvents(manager, plugin));
 
+        game.setState(Game.GameState.READY);
     }
 
     @EventHandler
