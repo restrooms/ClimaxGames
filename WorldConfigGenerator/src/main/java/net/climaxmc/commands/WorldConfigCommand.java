@@ -5,7 +5,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Location;
 import org.bukkit.command.*;
-import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -45,12 +45,7 @@ public class WorldConfigCommand implements CommandExecutor {
             }
         }
 
-        YamlConfiguration config = new YamlConfiguration();
-        try {
-            config.load(file);
-        } catch (IOException | InvalidConfigurationException e) {
-            player.sendMessage(ChatColor.RED + "Could not load existing configuration!");
-        }
+        FileConfiguration config = YamlConfiguration.loadConfiguration(file);
 
         if (config.getString("Name") == null) {
             config.set("Name", player.getWorld().getName());

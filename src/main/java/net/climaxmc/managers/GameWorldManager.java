@@ -7,6 +7,8 @@ import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.*;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
@@ -28,8 +30,6 @@ public class GameWorldManager extends Manager {
         if (mapsFolder.mkdirs()) {
             plugin.getLogger().info("Created maps folder at " + mapsFolder.getPath());
         }
-
-        loadMapFolders();
     }
 
     private void loadMapFolders() {
@@ -66,11 +66,16 @@ public class GameWorldManager extends Manager {
                     plugin.getLogger().severe("Could not extract zip file " + mapZipFile.getPath());
                 }
 
-
-
                 plugin.getLogger().info("Created " + manager.getGame().getName() + " world directory");
             }
         }
+
+        // Get world configuration
+        File worldConfigFile = new File(gameMapFolder.getPath() + File.separator + "WorldConfig.yml");
+        if (!worldConfigFile.exists()) {
+            plugin.getLogger().severe("World configuration does not exist!");
+        }
+        FileConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldConfigFile);
     }
 
     @EventHandler

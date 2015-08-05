@@ -4,7 +4,10 @@ import lombok.Data;
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
+import net.climaxmc.utilities.WorldConfig;
 import org.bukkit.event.Listener;
+
+import java.util.HashMap;
 
 /**
  * Represents a game
@@ -15,6 +18,7 @@ public abstract class Game implements Listener {
     private String name;
     private Kit[] kits;
     private GameState state;
+    private WorldConfig worldConfig = new WorldConfig("None", "None", new HashMap<>());
 
     /**
      * Defines a game
