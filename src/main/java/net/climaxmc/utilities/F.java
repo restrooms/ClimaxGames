@@ -13,10 +13,18 @@ public class F {
         return prefix("Permissions") + C.GRAY + "This requires permissions rank [" + C.BLUE + rank.name() + C.GRAY + "].";
     }
 
+    public static String leftSword() {
+        return C.RED + C.STRIKETHROUGH + "----" + C.DARK_GRAY + C.STRIKETHROUGH + "[-";
+    }
+
+    public static String rightSword() {
+        return C.DARK_GRAY + C.STRIKETHROUGH + "-]" + C.RED + C.STRIKETHROUGH + "----";
+    }
+
     public static String topLine() {
         String line = "\n";
         for (int i = 0; i < 5; i++) {
-            line += C.RED + C.STRIKETHROUGH + "----" + C.DARK_GRAY + C.STRIKETHROUGH + "[-" + C.RESET + " ";
+            line += leftSword() + C.RESET + " ";
         }
         return line;
     }
@@ -24,7 +32,7 @@ public class F {
     public static String bottomLine() {
         String line = "";
         for (int i = 0; i < 5; i++) {
-            line += C.DARK_GRAY + C.STRIKETHROUGH + "-]" + C.RED + C.STRIKETHROUGH + "----" + C.RESET + " ";
+            line += rightSword() + C.RESET + " ";
         }
         return line;
     }

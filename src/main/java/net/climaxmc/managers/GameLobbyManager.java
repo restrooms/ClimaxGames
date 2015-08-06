@@ -15,7 +15,6 @@ public class GameLobbyManager extends Manager {
 
         UtilPlayer.getAll().forEach(player -> {
             manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
-            manager.initializeLobbyScoreboard(player);
         });
     }
 

@@ -9,7 +9,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -24,7 +23,7 @@ public abstract class Game implements Listener {
     private static BukkitTask endCheckTask = null;
 
     // Game specific variables
-    protected int minPlayers = 1; //TODO CHANGE TO 4, ONLY 2 FOR DEBUGGING
+    protected int minPlayers = 2; //TODO CHANGE TO 4, ONLY 2 FOR DEBUGGING
     protected int maxPlayers = 16;
     protected boolean respawnOnDeath = false;
     protected boolean fallDamage = false;
@@ -88,8 +87,6 @@ public abstract class Game implements Listener {
 
     public void announceEnd(List<String> places) {
         plugin.getServer().broadcastMessage(F.topLine());
-        plugin.getServer().broadcastMessage(C.BLUE + C.BOLD + getWorldConfig().getMapName() + C.GRAY + " \u00bb by " + C.WHITE + C.BOLD + "Arcane Builds");
-        plugin.getServer().broadcastMessage("");
         int i = 0;
         for (String playerName : places) {
             if (i == 3) {
@@ -99,6 +96,7 @@ public abstract class Game implements Listener {
             plugin.getServer().broadcastMessage(C.BOLD + "#" + ++i + " " + C.BLUE + playerName);
         }
         plugin.getServer().broadcastMessage("");
+        plugin.getServer().broadcastMessage(C.BLUE + C.BOLD + getWorldConfig().getMapName() + C.GRAY + " \u00bb by " + C.WHITE + C.BOLD + "Arcane Builds");
         plugin.getServer().broadcastMessage(F.bottomLine());
     }
 
@@ -117,7 +115,7 @@ public abstract class Game implements Listener {
             return;
         }
 
-        //TODO DEBUG endCheckTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::checkEnd, 0, 5);
+        endCheckTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::checkEnd, 0, 5);
     }
 
     /**
@@ -130,29 +128,26 @@ public abstract class Game implements Listener {
         END
     }
 
-    public abstract static class FreeForAll extends Game {
-
+    public abstract static class TeamGame extends Game {
         /**
-         * Defines a free for all game
+         * Defines a team game
          *
          * @param name Name of game
          * @param kits Kits of game
          */
-        public FreeForAll(String name, Kit[] kits) {
+        public TeamGame(String name, Kit[] kits) {
             super(name, kits);
         }
 
         @Override
         public void checkEnd() {
-            if (UtilPlayer.getAll(false).size() <= 1) {
-                UtilPlayer.getAll().forEach(player -> player.playSound(player.getLocation(), Sound.LEVEL_UP, 2.0f, 1.0f));
-            }
-            setState(GameState.END);
-        }
-
-        @EventHandler
-        public void onPlayerDeathAddPlace(PlayerDeathEvent event) {
-            places.add(0, event.getEntity().getName());
+            getWorldConfig().getTeams().stream().filter(team -> team.getPlayers().size() == 0).forEach(team -> {
+                getWorldConfig().getTeams().stream().filter(otherTeam -> otherTeam.getPlayers().size() == UtilPlayer.getAll(false).size()).forEach(otherTeam -> {
+                    places.add(0, otherTeam.getColorCode() + C.BOLD + otherTeam.getName());
+                    UtilPlayer.getAll().forEach(player -> player.playSound(player.getLocation(), Sound.LEVEL_UP, 2.0f, 1.0f));
+                    setState(GameState.END);
+                });
+            });
         }
     }
 
@@ -165,8 +160,6 @@ public abstract class Game implements Listener {
         announceEnd(places);
 
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> setState(GameState.READY), 120L);
-        if (endCheckTask != null) { //TODO REMOVE DUE TO DEBUG
-            plugin.getServer().getScheduler().cancelTask(endCheckTask.getTaskId());
-        }
+        plugin.getServer().getScheduler().cancelTask(endCheckTask.getTaskId());
     }
 }

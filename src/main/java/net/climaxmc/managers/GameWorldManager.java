@@ -3,8 +3,7 @@ package net.climaxmc.managers;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
 import net.climaxmc.game.GameTeam;
-import net.climaxmc.utilities.C;
-import net.climaxmc.utilities.WorldConfig;
+import net.climaxmc.utilities.*;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
@@ -100,6 +99,8 @@ public class GameWorldManager extends Manager {
             teams.add(new GameTeam(team, spawns, new ArrayList<>(), C.getColorFromCode(teamColorCode), teamColorCode));
         }
         manager.getGame().setWorldConfig(new WorldConfig(worldConfig.getString("Name"), worldConfig.getString("Author"), teams));
+
+        UtilPlayer.getAll().forEach(manager::initializeLobbyScoreboard);
     }
 
     @EventHandler

@@ -85,9 +85,9 @@ public class GamePlayerManager extends Manager {
             Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
             for (String entry : scoreboard.getEntries()) {
                 for (Score score : scoreboard.getScores(entry)) {
-                    if (score.getScore() == 8) {
+                    if (score.getScore() == 4) {
                         scoreboard.resetScores(score.getEntry());
-                        objective.getScore(C.DARK_GREEN + kit.getName()).setScore(8);
+                        objective.getScore(C.GREEN + C.BOLD + "Kit " + C.WHITE + "\u00bb " + kit.getName()).setScore(4);
                     }
                 }
             }
@@ -100,7 +100,7 @@ public class GamePlayerManager extends Manager {
             return;
         }
 
-        UtilPlayer.getAll().forEach(player -> {
+        UtilPlayer.getAllShuffled().forEach(player -> {
             GameTeam smallest = manager.getGame().getWorldConfig().getTeams().get(0);
             final List<UUID> smallestPlayers = smallest.getPlayers();
             Optional<GameTeam> smallestOptional = manager.getGame().getWorldConfig().getTeams().stream().filter(team -> team.getPlayers().size() < smallestPlayers.size()).findFirst();
@@ -115,8 +115,10 @@ public class GamePlayerManager extends Manager {
 
         manager.getGame().getWorldConfig().getTeams().forEach(team -> {
             int i = 0;
-            for (UUID player : team.getPlayers()) {
-                plugin.getServer().getPlayer(player).teleport(team.getSpawns().get(++i));
+            for (UUID playerUUID : team.getPlayers()) {
+                Player player = plugin.getServer().getPlayer(playerUUID);
+                player.teleport(team.getSpawns().get(++i));
+                manager.getGame().getPlayerKits().get(playerUUID).apply(player);
             }
         });
 
@@ -142,7 +144,10 @@ public class GamePlayerManager extends Manager {
     @EventHandler
     public void onPlayerMoveGameStarting(PlayerMoveEvent event) {
         if (manager.getGame().getState().equals(Game.GameState.PREPARE)) {
-            event.setTo(event.getFrom());
+            Location location = event.getFrom();
+            location.setYaw(event.getTo().getYaw());
+            location.setPitch(event.getTo().getPitch());
+            event.setTo(location);
         }
     }
 
@@ -186,7 +191,16 @@ public class GamePlayerManager extends Manager {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (!manager.getGame().hasStarted() || event.getEntity().getWorld().getName().equals("world")) {
+        if (!(event.getEntity() instanceof Player && event.getDamager() instanceof Player)) {
+            return;
+        }
+
+        Player damaged = (Player) event.getEntity();
+        Player damager = (Player) event.getDamager();
+
+        if (!manager.getGame().hasStarted() || damaged.getWorld().getName().equals("world")) {
+            event.setCancelled(true);
+        } else if (manager.getGame().hasStarted() && manager.getGame().getPlayerTeam(damaged).equals(manager.getGame().getPlayerTeam(damager))) {
             event.setCancelled(true);
         }
     }

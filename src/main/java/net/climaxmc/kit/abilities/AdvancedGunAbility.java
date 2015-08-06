@@ -1,6 +1,7 @@
 package net.climaxmc.kit.abilities;
 
 import net.climaxmc.kit.Ability;
+import net.climaxmc.utilities.UtilPlayer;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
@@ -10,14 +11,14 @@ import org.bukkit.util.Vector;
 
 public class AdvancedGunAbility extends Ability {
     public AdvancedGunAbility() {
-        super("Advanced Gun", 1500);
+        super("Advanced Gun"/*, 1500*/);
     }
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
-        if (!plugin.getManager().getGame().hasStarted()) {
+        if (!plugin.getManager().getGame().hasStarted() || !UtilPlayer.getAll(false).contains(player)) {
             return;
         }
 
