@@ -6,9 +6,9 @@ import net.climaxmc.utilities.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameCountdown extends BukkitRunnable {
-    private Game game = ClimaxGames.getInstance().getManager().getGame();
     @Getter
     private static boolean started = false;
+    private Game game = ClimaxGames.getInstance().getManager().getGame();
     private int timer = 20;
 
     @Override

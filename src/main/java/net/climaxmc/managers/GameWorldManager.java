@@ -3,6 +3,7 @@ package net.climaxmc.managers;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
 import net.climaxmc.game.GameTeam;
+import net.climaxmc.utilities.C;
 import net.climaxmc.utilities.WorldConfig;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -82,7 +83,7 @@ public class GameWorldManager extends Manager {
             return;
         }
         FileConfiguration worldConfig = YamlConfiguration.loadConfiguration(worldConfigFile);
-        Map<String, List<Location>> teamSpawns = new HashMap<>();
+        List<GameTeam> teams = new ArrayList<>();
         for (String team : worldConfig.getConfigurationSection("Spawns").getKeys(false)) {
             List<Location> spawns = new ArrayList<>();
             for (String locationKey : worldConfig.getConfigurationSection("Spawns." + team).getKeys(false)) {
@@ -95,10 +96,10 @@ public class GameWorldManager extends Manager {
                 float pitch = (float) worldConfig.getDouble(path + "Pitch");
                 spawns.add(new Location(world, x, y, z, yaw, pitch));
             }
-            teamSpawns.put(team, spawns);
+            String teamColorCode = C.getColor(team);
+            teams.add(new GameTeam(team, spawns, new ArrayList<>(), C.getColorFromCode(teamColorCode), teamColorCode));
         }
-        manager.getGame().setWorldConfig(new WorldConfig(worldConfig.getString("Name"), worldConfig.getString("Author"), teamSpawns));
-        teamSpawns.keySet().forEach(teamSpawn -> manager.getGame().getTeams().add(new GameTeam(teamSpawn, teamSpawns.get(teamSpawn), new ArrayList<>())));
+        manager.getGame().setWorldConfig(new WorldConfig(worldConfig.getString("Name"), worldConfig.getString("Author"), teams));
     }
 
     @EventHandler

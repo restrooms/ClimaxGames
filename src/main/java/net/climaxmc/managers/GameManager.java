@@ -3,7 +3,10 @@ package net.climaxmc.managers;
 import com.google.common.collect.Sets;
 import lombok.*;
 import net.climaxmc.game.Game;
+import net.climaxmc.utilities.C;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.*;
 
 import java.util.*;
 
@@ -35,5 +38,16 @@ public class GameManager extends Manager {
         managers.forEach(manager -> plugin.getServer().getPluginManager().registerEvents(manager, plugin));
 
         game.setState(Game.GameState.READY);
+    }
+
+    protected void initializeLobbyScoreboard(Player player) {
+        Scoreboard scoreboard = plugin.getServer().getScoreboardManager().getNewScoreboard();
+        Objective objective = scoreboard.registerNewObjective("GameLobby", "dummy");
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+        objective.setDisplayName(C.RED + C.BOLD + "Climax" + C.GOLD + C.BOLD + "MC");
+        scoreboard.registerNewTeam("LobbyTeam");
+        objective.getScore(C.GREEN + C.BOLD + "Kit").setScore(9);
+        objective.getScore(game.getPlayerKits().get(player.getUniqueId()).getName()).setScore(8);
+        player.setScoreboard(scoreboard);
     }
 }

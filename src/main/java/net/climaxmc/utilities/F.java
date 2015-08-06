@@ -14,7 +14,7 @@ public class F {
     }
 
     public static String topLine() {
-        String line = "";
+        String line = "\n";
         for (int i = 0; i < 5; i++) {
             line += C.RED + C.STRIKETHROUGH + "----" + C.DARK_GRAY + C.STRIKETHROUGH + "[-" + C.RESET + " ";
         }

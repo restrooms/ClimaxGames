@@ -1,8 +1,8 @@
 package net.climaxmc.game.games.paintball.kits;
 
 import net.climaxmc.kit.Kit;
-import net.climaxmc.kit.Perk;
-import net.climaxmc.kit.perks.BasicGunPerk;
+import net.climaxmc.kit.Ability;
+import net.climaxmc.kit.abilities.BasicGunAbility;
 import net.climaxmc.utilities.C;
 import net.climaxmc.utilities.I;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class BasicKit extends Kit {
     public BasicKit() {
-        super(C.DARK_AQUA + "Basic", new String[]{"Basic paintball kit.", "Jonhan will change the name at some point."}, new Perk[]{new BasicGunPerk()}, new I(Material.GOLD_BARDING));
+        super(C.DARK_AQUA + "Basic", new String[]{"Basic paintball kit.", "Jonhan will change the name at some point."}, new Ability[]{new BasicGunAbility()}, new I(Material.GOLD_BARDING));
     }
 
     @Override

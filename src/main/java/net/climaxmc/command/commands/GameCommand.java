@@ -30,7 +30,7 @@ public class GameCommand extends Command {
                 return C.BOLD + "The game has not started yet.";
             }
 
-            game.setState(Game.GameState.READY);
+            game.setState(Game.GameState.END);
             plugin.getServer().broadcastMessage(C.GOLD + C.BOLD + player.getName() + " stopped the game.");
             return null;
         }

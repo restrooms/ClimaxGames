@@ -6,12 +6,12 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
-public class Ability {
+public class Cooldown {
     private final int defaultCharges;
     private final long defaultDelay;
     private Map<UUID, Status> playerStatus = new HashMap<>();
 
-    public Ability(int defaultCharges, int defaultDelay, TimeUnit unit) {
+    public Cooldown(int defaultCharges, int defaultDelay, TimeUnit unit) {
         this.defaultCharges = defaultCharges;
         this.defaultDelay = TimeUnit.MILLISECONDS.convert(defaultDelay, unit);
     }
@@ -37,20 +37,20 @@ public class Ability {
     /**
      * Attempt to use this ability. The player must have at least once charge for this operation
      * to be successful. The player's charge count will be decremented by the given amount.
-     * <p/>
+     * <p>
      * Otherwise, initiate the recharging cooldown and return FALSE.
      *
      * @param player - the player.
      * @return TRUE if the operation was successful, FALSE otherwise.
      */
-    public boolean tryUse(Player player) {
-        return tryUse(player, 1, defaultDelay, TimeUnit.MILLISECONDS);
+    public boolean check(Player player) {
+        return check(player, 1, defaultDelay, TimeUnit.MILLISECONDS);
     }
 
     /**
      * Attempt to use this ability. The player must have at least once charge for this operation
      * to be successful. The player's charge count will be decremented by the given amount.
-     * <p/>
+     * <p>
      * Otherwise, initiate the recharging cooldown and return FALSE.
      *
      * @param player  - the player.
@@ -59,7 +59,7 @@ public class Ability {
      * @param unit    - the unit of the delay parameter.
      * @return TRUE if the operation was successful, FALSE otherwise.
      */
-    public boolean tryUse(Player player, int charges, long delay, TimeUnit unit) {
+    public boolean check(Player player, int charges, long delay, TimeUnit unit) {
         Status status = getStatus(player);
         int current = status.getCharges();
 

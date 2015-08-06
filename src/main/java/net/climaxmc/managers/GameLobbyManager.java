@@ -11,11 +11,16 @@ import org.bukkit.event.EventPriority;
 
 public class GameLobbyManager extends Manager {
     GameLobbyManager() {
-        initializeKitSelector();
+        initializeKitSelectorEntities();
+
+        UtilPlayer.getAll().forEach(player -> {
+            manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
+            manager.initializeLobbyScoreboard(player);
+        });
     }
 
-    private void initializeKitSelector() {
-        plugin.getServer().getWorld("world").getEntities().stream().filter(entity -> entity.getType().equals(EntityType.ZOMBIE) || entity.getType().equals(EntityType.ARMOR_STAND)).forEach(Entity::remove);
+    private void initializeKitSelectorEntities() {
+        plugin.getServer().getWorld("world").getEntities().stream().filter(entity -> entity.getType().equals(EntityType.VILLAGER) || entity.getType().equals(EntityType.ARMOR_STAND)).forEach(Entity::remove);
 
         int i = 0;
         for (Kit kit : manager.getGame().getKits()) {
@@ -31,6 +36,9 @@ public class GameLobbyManager extends Manager {
             return;
         }
 
-        UtilPlayer.getAll().forEach(player -> player.teleport(plugin.getServer().getWorld("world").getSpawnLocation()));
+        UtilPlayer.getAll().forEach(player -> {
+            player.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
+            manager.initializeLobbyScoreboard(player);
+        });
     }
 }

@@ -5,7 +5,8 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 public class UtilPlayer {
     public static Set<Player> getAll() {

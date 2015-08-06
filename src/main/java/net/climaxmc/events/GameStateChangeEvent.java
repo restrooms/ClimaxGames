@@ -25,6 +25,10 @@ public class GameStateChangeEvent extends Event implements Cancellable {
         this.state = state;
     }
 
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
+
     /**
      * Gets the game
      *
@@ -55,10 +59,6 @@ public class GameStateChangeEvent extends Event implements Cancellable {
 
     @Override
     public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
         return handlers;
     }
 }

@@ -1,20 +1,15 @@
-package net.climaxmc.kit.perks;
+package net.climaxmc.kit.abilities;
 
-import net.climaxmc.kit.Perk;
-import net.climaxmc.utilities.Ability;
+import net.climaxmc.kit.Ability;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import java.util.concurrent.TimeUnit;
-
-public class BasicGunPerk extends Perk {
-    private Ability gun = new Ability(1, 1, TimeUnit.SECONDS);
-
-    public BasicGunPerk() {
-        super("Basic Gun");
+public class BasicGunAbility extends Ability {
+    public BasicGunAbility() {
+        super("Basic Gun", 1000);
     }
 
     @EventHandler
@@ -27,9 +22,7 @@ public class BasicGunPerk extends Perk {
 
         if (!player.getItemInHand().getType().equals(Material.GOLD_BARDING)) {
             return;
-        }
-
-        if (!gun.tryUse(player)) {
+        } else if (!cooldown.check(player)) {
             return;
         }
 

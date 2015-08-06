@@ -1,8 +1,8 @@
 package net.climaxmc.game.games.paintball.kits;
 
 import net.climaxmc.kit.Kit;
-import net.climaxmc.kit.Perk;
-import net.climaxmc.kit.perks.AdvancedGunPerk;
+import net.climaxmc.kit.Ability;
+import net.climaxmc.kit.abilities.AdvancedGunAbility;
 import net.climaxmc.utilities.C;
 import net.climaxmc.utilities.I;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class AdvancedKit extends Kit {
     public AdvancedKit() {
-        super(C.GREEN + "Advanced", new String[]{"Advanced paintball kit.", "Jonhan will change the name at some point."}, new Perk[]{new AdvancedGunPerk()}, new I(Material.IRON_BARDING), 2000);
+        super(C.GREEN + "Advanced", new String[]{"Advanced paintball kit.", "Jonhan will change the name at some point."}, new Ability[]{new AdvancedGunAbility()}, new I(Material.IRON_BARDING), 2000);
     }
 
     @Override

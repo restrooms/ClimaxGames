@@ -18,7 +18,7 @@ public abstract class Kit {
     private String name;
     private String[] description;
     private int cost;
-    private Perk[] perks;
+    private Ability[] abilities;
     private ItemStack itemInHand;
 
     /**
@@ -26,10 +26,10 @@ public abstract class Kit {
      *
      * @param name        Name of kit
      * @param description Description of kit
-     * @param perks       Perks of kit
+     * @param abilities       Perks of kit
      */
-    public Kit(String name, String[] description, Perk[] perks, ItemStack itemInHand) {
-        this(name, description, perks, itemInHand, 0);
+    public Kit(String name, String[] description, Ability[] abilities, ItemStack itemInHand) {
+        this(name, description, abilities, itemInHand, 0);
     }
 
     /**
@@ -37,18 +37,18 @@ public abstract class Kit {
      *
      * @param name        Name of kit
      * @param description Description of kit
-     * @param perks       Perks of kit
+     * @param abilities       Perks of kit
      * @param cost        Cost of kit
      */
-    public Kit(String name, String[] description, Perk[] perks, ItemStack itemInHand, int cost) {
+    public Kit(String name, String[] description, Ability[] abilities, ItemStack itemInHand, int cost) {
         this.name = name;
         this.description = description;
-        this.perks = perks;
+        this.abilities = abilities;
         this.itemInHand = itemInHand;
         this.cost = cost;
 
-        for (Perk perk : perks) {
-            ClimaxGames.getInstance().getServer().getPluginManager().registerEvents(perk, ClimaxGames.getInstance());
+        for (Ability ability : abilities) {
+            plugin.getServer().getPluginManager().registerEvents(ability, plugin);
         }
     }
 
@@ -60,6 +60,7 @@ public abstract class Kit {
     public void apply(Player player) {
         UtilInv.clear(player);
         giveItems(player);
+        plugin.getManager().getGame().getPlayerKits().put(player.getUniqueId(), this);
     }
 
     public abstract void giveItems(Player player);
@@ -67,8 +68,6 @@ public abstract class Kit {
     public Entity spawnEntity(Location location) {
         Villager villager = location.getWorld().spawn(location, Villager.class);
         villager.setRemoveWhenFarAway(false);
-        //villager.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
-        //villager.setCustomNameVisible(true);
         villager.getEquipment().setItemInHand(itemInHand);
         villager.setAdult();
         villager.setAgeLock(true);
@@ -82,10 +81,6 @@ public abstract class Kit {
     }
 
     public void displayDescription(Player player) {
-        for (int i = 0; i < 3; ++i) {
-            player.sendMessage("");
-        }
-
         player.sendMessage(F.topLine());
         player.sendMessage(C.GOLD + C.BOLD + "Kit " + C.WHITE + "\u00bb " + C.WHITE + name);
 

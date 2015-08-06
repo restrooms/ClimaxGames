@@ -17,7 +17,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.util.Vector;
+import org.bukkit.scoreboard.*;
 
 import java.util.*;
 
@@ -35,7 +35,6 @@ public class GamePlayerManager extends Manager {
         }
 
         Player player = event.getPlayer();
-
         selectKit(player, entity);
     }
 
@@ -49,7 +48,6 @@ public class GamePlayerManager extends Manager {
         }
 
         Player player = (Player) damager;
-
         event.setCancelled(true);
         selectKit(player, damaged);
     }
@@ -81,6 +79,19 @@ public class GamePlayerManager extends Manager {
         kit.displayDescription(player);
 
         UtilChat.sendActionBar(player, F.message("Kit", "Selected: " + kit.getName()));
+
+        Scoreboard scoreboard = player.getScoreboard();
+        if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
+            Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
+            for (String entry : scoreboard.getEntries()) {
+                for (Score score : scoreboard.getScores(entry)) {
+                    if (score.getScore() == 8) {
+                        scoreboard.resetScores(score.getEntry());
+                        objective.getScore(C.DARK_GREEN + kit.getName()).setScore(8);
+                    }
+                }
+            }
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -90,30 +101,33 @@ public class GamePlayerManager extends Manager {
         }
 
         UtilPlayer.getAll().forEach(player -> {
-            GameTeam smallest = manager.getGame().getTeams().get(1);
+            GameTeam smallest = manager.getGame().getWorldConfig().getTeams().get(0);
             final List<UUID> smallestPlayers = smallest.getPlayers();
-            Optional<GameTeam> smallestOptional = manager.getGame().getTeams().stream().filter(team -> team.getPlayers().size() < smallestPlayers.size()).findFirst();
+            Optional<GameTeam> smallestOptional = manager.getGame().getWorldConfig().getTeams().stream().filter(team -> team.getPlayers().size() < smallestPlayers.size()).findFirst();
             if (smallestOptional.isPresent()) {
                 smallest = smallestOptional.get();
             }
             smallest.getPlayers().add(player.getUniqueId());
+            if (!manager.getGame().getPlayerKits().containsKey(player.getUniqueId())) {
+                manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
+            }
         });
 
-        manager.getGame().getTeams().forEach(team -> {
+        manager.getGame().getWorldConfig().getTeams().forEach(team -> {
             int i = 0;
             for (UUID player : team.getPlayers()) {
                 plugin.getServer().getPlayer(player).teleport(team.getSpawns().get(++i));
             }
         });
 
-        UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "4"));
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "3")), 20);
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "2")), 40);
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "1")), 60);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "4")), 20);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "3")), 40);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "2")), 60);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "1")), 80);
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, C.BOLD + "GOOO"));
             manager.getGame().setState(Game.GameState.IN_GAME);
-        }, 80);
+        }, 100);
     }
 
     @EventHandler
@@ -140,6 +154,8 @@ public class GamePlayerManager extends Manager {
         if (manager.getGame().getState().equals(Game.GameState.READY)) {
             manager.getGame().startCountdown();
         }
+        manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
+        manager.initializeLobbyScoreboard(player);
     }
 
     @EventHandler
@@ -148,22 +164,24 @@ public class GamePlayerManager extends Manager {
     }
 
     @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event) {
+        event.getEntity().spigot().respawn();
+    }
+
+    @EventHandler
     public void onPlayerRespawn(PlayerRespawnEvent event) {
         Player player = event.getPlayer();
         if (manager.getGame().getState().equals(Game.GameState.IN_GAME)) {
-            if (manager.getGame().isRespawnOnDeath()) {
-                event.setRespawnLocation(manager.getGame().getPlayerTeam(player).getSpawns().get(RandomUtils.nextInt(manager.getGame().getPlayerTeam(player).getSpawns().size())));
-            } else {
-                player.setGameMode(GameMode.SPECTATOR);
-                player.setVelocity(new Vector(0, 1.2, 0));
-                event.setRespawnLocation(player.getLocation().add(0, 0, 0));
-            }
+            event.setRespawnLocation(manager.getGame().getPlayerTeam(player).getSpawns().get(RandomUtils.nextInt(manager.getGame().getPlayerTeam(player).getSpawns().size())));
+            manager.getGame().getPlayerKits().get(player.getUniqueId()).apply(player);
+        } else {
+            event.setRespawnLocation(plugin.getServer().getWorld("world").getSpawnLocation());
         }
     }
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        event.setFormat(ChatColor.GRAY + "%s" + ChatColor.RESET + ": " + ChatColor.translateAlternateColorCodes('&', event.getMessage()));
+        event.setFormat(C.GRAY + "%s" + C.RESET + ": " + ChatColor.translateAlternateColorCodes('&', event.getMessage()));
     }
 
     @EventHandler
@@ -175,11 +193,23 @@ public class GamePlayerManager extends Manager {
 
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event) {
-        if (!manager.getGame().hasStarted() || event.getEntity().getWorld().getName().equals("world")) {
+        if (!event.getEntity().getType().equals(EntityType.PLAYER)) {
+            return;
+        }
+
+        Player player = (Player) event.getEntity();
+        if (!manager.getGame().hasStarted() || player.getWorld().getName().equals("world")) {
             if (event.getCause().equals(EntityDamageEvent.DamageCause.VOID)) {
-                event.getEntity().teleport(plugin.getServer().getWorld("world").getSpawnLocation());
+                player.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
             }
             event.setCancelled(true);
+        } else if (manager.getGame().hasStarted()) {
+            if (!manager.getGame().isRespawnOnDeath() && player.getHealth() - event.getFinalDamage() <= 0) {
+                event.setCancelled(true);
+                player.setGameMode(GameMode.SPECTATOR);
+            } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) && !manager.getGame().isFallDamage()) {
+                event.setCancelled(true);
+            }
         }
     }
 
@@ -241,7 +271,7 @@ public class GamePlayerManager extends Manager {
 
     @EventHandler
     public void onPaintingBreak(HangingBreakByEntityEvent event) {
-        if (event.getRemover() instanceof Player && !((Player)event.getRemover()).getGameMode().equals(GameMode.CREATIVE)) {
+        if (event.getRemover() instanceof Player && !((Player) event.getRemover()).getGameMode().equals(GameMode.CREATIVE)) {
             event.setCancelled(true);
         }
     }

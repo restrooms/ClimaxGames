@@ -1,5 +1,11 @@
 package net.climaxmc.utilities;
 
+import net.climaxmc.ClimaxGames;
+import org.bukkit.Color;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+
 public class C {
     private static final char SECTION = '\u00a7';
 
@@ -27,4 +33,68 @@ public class C {
     public static final String STRIKETHROUGH = SECTION + "m";
     public static final String UNDERLINE = SECTION + "n";
     public static final String ITALIC = SECTION + "o";
+
+    public static String getColor(String name) {
+        for (Field field : C.class.getFields()) {
+            if (field.getType().equals(String.class)) {
+                if (field.getName().equalsIgnoreCase(name)) {
+                    if (Modifier.isStatic(field.getModifiers())) {
+                        try {
+                            return (String) field.get(null);
+                        } catch (IllegalAccessException e) {
+                            ClimaxGames.getInstance().getLogger().warning("Could not get color!");
+                        }
+                    }
+                }
+            }
+        }
+
+        return WHITE;
+    }
+
+    public static Color getColorFromCode(String colorCode) {
+        if (colorCode.contains("f")) {
+            return Color.WHITE;
+        }
+        if (colorCode.contains("6")) {
+            return Color.ORANGE;
+        }
+        if (colorCode.contains("d")) {
+            return Color.PURPLE;
+        }
+        if (colorCode.contains("b")) {
+            return Color.AQUA;
+        }
+        if (colorCode.contains("e")) {
+            return Color.YELLOW;
+        }
+        if (colorCode.contains("a")) {
+            return Color.GREEN;
+        }
+        if (colorCode.contains("8")) {
+            return Color.GRAY;
+        }
+        if (colorCode.contains("7")) {
+            return Color.GRAY;
+        }
+        if (colorCode.contains("3")) {
+            return Color.AQUA;
+        }
+        if (colorCode.contains("5")) {
+            return Color.PURPLE;
+        }
+        if (colorCode.contains("9")) {
+            return Color.BLUE;
+        }
+        if (colorCode.contains("1")) {
+            return Color.BLUE;
+        }
+        if (colorCode.contains("2")) {
+            return Color.GREEN;
+        }
+        if (colorCode.contains("c")) {
+            return Color.RED;
+        }
+        return Color.WHITE;
+    }
 }

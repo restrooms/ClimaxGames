@@ -5,7 +5,6 @@ import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.*;
-import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -22,20 +21,21 @@ import java.util.*;
 public abstract class Game implements Listener {
     @Getter(value = AccessLevel.NONE)
     protected static ClimaxGames plugin = ClimaxGames.getInstance();
-    private String name;
-    private Kit[] kits;
-    private GameState state = GameState.READY;
-    @Setter
-    private WorldConfig worldConfig = new WorldConfig("None", "None", new HashMap<>());
-
-    private List<GameTeam> teams = new ArrayList<>();
-
     private static BukkitTask endCheckTask = null;
 
     // Game specific variables
     protected int minPlayers = 1; //TODO CHANGE TO 4, ONLY 2 FOR DEBUGGING
     protected int maxPlayers = 16;
     protected boolean respawnOnDeath = false;
+    protected boolean fallDamage = false;
+    protected List<String> places = new ArrayList<>();
+
+    private String name;
+    private Kit[] kits;
+    private GameState state = GameState.READY;
+    @Setter
+    private WorldConfig worldConfig = new WorldConfig("None", "None", new ArrayList<>());
+    private HashMap<UUID, Kit> playerKits = new HashMap<>();
 
     /**
      * Defines a game
@@ -67,11 +67,12 @@ public abstract class Game implements Listener {
 
     /**
      * Gets the team of a player
+     *
      * @param player Player to get team of
      * @return Player team
      */
     public GameTeam getPlayerTeam(Player player) {
-        return teams.stream().filter(team -> team.getPlayers().contains(player.getUniqueId())).findFirst().get();
+        return worldConfig.getTeams().stream().filter(team -> team.getPlayers().contains(player.getUniqueId())).findFirst().get();
     }
 
     /**
@@ -110,17 +111,26 @@ public abstract class Game implements Listener {
         return state.equals(GameState.IN_GAME);
     }
 
+    @EventHandler
+    public void onGameStart(GameStateChangeEvent event) {
+        if (!event.getState().equals(GameState.IN_GAME)) {
+            return;
+        }
+
+        //TODO DEBUG endCheckTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::checkEnd, 0, 5);
+    }
+
     /**
      * Possible states of games
      */
     public enum GameState {
         READY,
         PREPARE,
-        IN_GAME;
+        IN_GAME,
+        END
     }
 
     public abstract static class FreeForAll extends Game {
-        protected List<String> places = new ArrayList<>();
 
         /**
          * Defines a free for all game
@@ -136,10 +146,8 @@ public abstract class Game implements Listener {
         public void checkEnd() {
             if (UtilPlayer.getAll(false).size() <= 1) {
                 UtilPlayer.getAll().forEach(player -> player.playSound(player.getLocation(), Sound.LEVEL_UP, 2.0f, 1.0f));
-                announceEnd(places);
-                plugin.getServer().getScheduler().runTaskLater(plugin, () -> setState(GameState.READY), 120L);
-                plugin.getServer().getScheduler().cancelTask(endCheckTask.getTaskId());
             }
+            setState(GameState.END);
         }
 
         @EventHandler
@@ -149,11 +157,16 @@ public abstract class Game implements Listener {
     }
 
     @EventHandler
-    public void onGameStart(GameStateChangeEvent event) {
-        if (!event.getState().equals(GameState.IN_GAME)) {
+    public void onGameAboutToEnd(GameStateChangeEvent event) {
+        if (!event.getState().equals(GameState.END)) {
             return;
         }
 
-        endCheckTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::checkEnd, 0, 20);
+        announceEnd(places);
+
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> setState(GameState.READY), 120L);
+        if (endCheckTask != null) { //TODO REMOVE DUE TO DEBUG
+            plugin.getServer().getScheduler().cancelTask(endCheckTask.getTaskId());
+        }
     }
 }

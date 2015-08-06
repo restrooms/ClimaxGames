@@ -1,7 +1,6 @@
-package net.climaxmc.kit.perks;
+package net.climaxmc.kit.abilities;
 
-import net.climaxmc.kit.Perk;
-import net.climaxmc.utilities.Ability;
+import net.climaxmc.kit.Ability;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
@@ -9,13 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.Vector;
 
-import java.util.concurrent.TimeUnit;
-
-public class AdvancedGunPerk extends Perk {
-    private Ability gun = new Ability(1, 1500, TimeUnit.MILLISECONDS);
-
-    public AdvancedGunPerk() {
-        super("Advanced Gun");
+public class AdvancedGunAbility extends Ability {
+    public AdvancedGunAbility() {
+        super("Advanced Gun", 1500);
     }
 
     @EventHandler
@@ -30,7 +25,7 @@ public class AdvancedGunPerk extends Perk {
             return;
         }
 
-        if (!gun.tryUse(player)) {
+        if (!cooldown.check(player)) {
             return;
         }
 

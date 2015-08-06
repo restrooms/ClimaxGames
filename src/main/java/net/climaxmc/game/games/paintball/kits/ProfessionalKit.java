@@ -1,8 +1,8 @@
 package net.climaxmc.game.games.paintball.kits;
 
 import net.climaxmc.kit.Kit;
-import net.climaxmc.kit.Perk;
-import net.climaxmc.kit.perks.ProfessionalGunPerk;
+import net.climaxmc.kit.Ability;
+import net.climaxmc.kit.abilities.ProfessionalGunAbility;
 import net.climaxmc.utilities.C;
 import net.climaxmc.utilities.I;
 import org.bukkit.Material;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class ProfessionalKit extends Kit {
     public ProfessionalKit() {
-        super(C.RED + "Professional", new String[]{"Professional paintball kit.", "Jonhan will change the name at some point."}, new Perk[]{new ProfessionalGunPerk()}, new I(Material.DIAMOND_BARDING), 5000);
+        super(C.RED + "Professional", new String[]{"Professional paintball kit.", "Jonhan will change the name at some point."}, new Ability[]{new ProfessionalGunAbility()}, new I(Material.DIAMOND_BARDING), 5000);
     }
 
     @Override
