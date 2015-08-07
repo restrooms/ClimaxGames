@@ -53,47 +53,47 @@ public class C {
     }
 
     public static Color getColorFromCode(String colorCode) {
-        if (colorCode.contains("f")) {
-            return Color.WHITE;
-        }
-        if (colorCode.contains("6")) {
-            return Color.ORANGE;
-        }
-        if (colorCode.contains("d")) {
-            return Color.PURPLE;
-        }
-        if (colorCode.contains("b")) {
-            return Color.AQUA;
-        }
-        if (colorCode.contains("e")) {
-            return Color.YELLOW;
-        }
-        if (colorCode.contains("a")) {
-            return Color.GREEN;
-        }
-        if (colorCode.contains("8")) {
-            return Color.GRAY;
-        }
-        if (colorCode.contains("7")) {
-            return Color.GRAY;
-        }
-        if (colorCode.contains("3")) {
-            return Color.AQUA;
-        }
-        if (colorCode.contains("5")) {
-            return Color.PURPLE;
-        }
-        if (colorCode.contains("9")) {
-            return Color.BLUE;
-        }
         if (colorCode.contains("1")) {
             return Color.BLUE;
         }
         if (colorCode.contains("2")) {
             return Color.GREEN;
         }
+        if (colorCode.contains("3")) {
+            return Color.AQUA;
+        }
+        if (colorCode.contains("4")) {
+            return Color.RED;
+        }
+        if (colorCode.contains("5")) {
+            return Color.PURPLE;
+        }
+        if (colorCode.contains("6")) {
+            return Color.ORANGE;
+        }
+        if (colorCode.contains("7")) {
+            return Color.GRAY;
+        }
+        if (colorCode.contains("8")) {
+            return Color.GRAY;
+        }
+        if (colorCode.contains("9")) {
+            return Color.BLUE;
+        }
+        if (colorCode.contains("a")) {
+            return Color.GREEN;
+        }
+        if (colorCode.contains("b")) {
+            return Color.AQUA;
+        }
         if (colorCode.contains("c")) {
             return Color.RED;
+        }
+        if (colorCode.contains("d")) {
+            return Color.PURPLE;
+        }
+        if (colorCode.contains("e")) {
+            return Color.YELLOW;
         }
         return Color.WHITE;
     }

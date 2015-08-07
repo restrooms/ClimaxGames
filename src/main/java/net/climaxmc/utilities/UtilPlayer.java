@@ -29,6 +29,7 @@ public class UtilPlayer {
         player.getInventory().clear();
         player.getInventory().setArmorContents(null);
         player.setGameMode(GameMode.SURVIVAL);
+        player.getActivePotionEffects().forEach(potion -> player.removePotionEffect(potion.getType()));
         for (PotionEffect potion : player.getActivePotionEffects()) {
             player.removePotionEffect(potion.getType());
         }

@@ -2,7 +2,6 @@ package net.climaxmc.managers;
 
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
-import net.climaxmc.game.GameTeam;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.*;
 import org.apache.commons.lang.math.RandomUtils;
@@ -19,7 +18,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.scoreboard.*;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 public class GamePlayerManager extends Manager {
     GamePlayerManager() {
@@ -101,13 +101,6 @@ public class GamePlayerManager extends Manager {
         }
 
         UtilPlayer.getAllShuffled().forEach(player -> {
-            GameTeam smallest = manager.getGame().getWorldConfig().getTeams().get(0);
-            final List<UUID> smallestPlayers = smallest.getPlayers();
-            Optional<GameTeam> smallestOptional = manager.getGame().getWorldConfig().getTeams().stream().filter(team -> team.getPlayers().size() < smallestPlayers.size()).findFirst();
-            if (smallestOptional.isPresent()) {
-                smallest = smallestOptional.get();
-            }
-            smallest.getPlayers().add(player.getUniqueId());
             if (!manager.getGame().getPlayerKits().containsKey(player.getUniqueId())) {
                 manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
             }
@@ -138,7 +131,10 @@ public class GamePlayerManager extends Manager {
             return;
         }
 
-        UtilPlayer.getAll().forEach(UtilPlayer::reset);
+        UtilPlayer.getAll().forEach(player -> {
+            UtilPlayer.reset(player);
+            player.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
+        });
     }
 
     @EventHandler
@@ -164,12 +160,12 @@ public class GamePlayerManager extends Manager {
             manager.getGame().startCountdown();
             UtilPlayer.getAll().forEach(players -> {
                 Scoreboard scoreboard = players.getScoreboard();
-                if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
+                if (scoreboard != null && scoreboard.getObjective(DisplaySlot.SIDEBAR) != null && scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
                     Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
                     for (String entry : scoreboard.getEntries()) {
                         scoreboard.getScores(entry).stream().filter(score -> score.getScore() == 8).forEach(score -> {
                             scoreboard.resetScores(score.getEntry());
-                            objective.getScore(C.GOLD + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.GREEN + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
+                            objective.getScore(C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
                         });
                     }
                 }
@@ -190,7 +186,7 @@ public class GamePlayerManager extends Manager {
                 for (String entry : scoreboard.getEntries()) {
                     scoreboard.getScores(entry).stream().filter(score -> score.getScore() == 8).forEach(score -> {
                         scoreboard.resetScores(score.getEntry());
-                        objective.getScore(C.GOLD + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.GREEN + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
+                        objective.getScore(C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
                     });
                 }
             }

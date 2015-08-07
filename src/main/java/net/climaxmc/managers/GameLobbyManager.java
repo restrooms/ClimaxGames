@@ -1,13 +1,9 @@
 package net.climaxmc.managers;
 
-import net.climaxmc.events.GameStateChangeEvent;
-import net.climaxmc.game.Game;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.UtilPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 
 public class GameLobbyManager extends Manager {
     GameLobbyManager() {
@@ -27,17 +23,5 @@ public class GameLobbyManager extends Manager {
                 kit.spawnEntity(manager.getLobbyKitEntityLocations().get(++i));
             }
         }
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onGameFinished(GameStateChangeEvent event) {
-        if (!event.getState().equals(Game.GameState.READY)) {
-            return;
-        }
-
-        UtilPlayer.getAll().forEach(player -> {
-            player.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
-            manager.initializeLobbyScoreboard(player);
-        });
     }
 }

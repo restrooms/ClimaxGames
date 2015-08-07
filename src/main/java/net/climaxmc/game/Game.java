@@ -70,7 +70,21 @@ public abstract class Game implements Listener {
      * @return Player team
      */
     public GameTeam getPlayerTeam(Player player) {
-        return worldConfig.getTeams().stream().filter(team -> team.getPlayers().contains(player.getUniqueId())).findFirst().get();
+        Optional<GameTeam> playerTeamOptional = worldConfig.getTeams().stream().filter(team -> team.getPlayers().contains(player.getUniqueId())).findFirst();
+        GameTeam playerTeam;
+        if (!playerTeamOptional.isPresent()) {
+            GameTeam smallest = worldConfig.getTeams().get(0);
+            final List<UUID> smallestPlayers = smallest.getPlayers();
+            Optional<GameTeam> smallestOptional = worldConfig.getTeams().stream().filter(team -> team.getPlayers().size() < smallestPlayers.size()).findFirst();
+            if (smallestOptional.isPresent()) {
+                smallest = smallestOptional.get();
+            }
+            smallest.getPlayers().add(player.getUniqueId());
+            playerTeam = smallest;
+        } else {
+            playerTeam = playerTeamOptional.get();
+        }
+        return playerTeam;
     }
 
     /**
@@ -95,7 +109,7 @@ public abstract class Game implements Listener {
             plugin.getServer().broadcastMessage(C.BOLD + "#" + ++i + " " + C.BLUE + playerName);
         }
         plugin.getServer().broadcastMessage("");
-        plugin.getServer().broadcastMessage(C.BLUE + C.BOLD + getWorldConfig().getMapName() + C.GRAY + " \u00bb by " + C.WHITE + C.BOLD + "Arcane Builds");
+        plugin.getServer().broadcastMessage(C.BLUE + C.BOLD + worldConfig.getMapName() + C.GRAY + " \u00bb by " + C.WHITE + C.BOLD + "Arcane Builds");
         plugin.getServer().broadcastMessage(F.bottomLine());
     }
 

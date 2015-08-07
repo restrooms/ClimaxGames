@@ -10,7 +10,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 public class BasicGunAbility extends Ability {
     public BasicGunAbility() {
-        super("Basic Gun"/*, 1000*/);
+        super("Basic Gun");
     }
 
     @EventHandler
@@ -22,8 +22,6 @@ public class BasicGunAbility extends Ability {
         }
 
         if (!player.getItemInHand().getType().equals(Material.GOLD_BARDING)) {
-            return;
-        } else if (!cooldown.check(player)) {
             return;
         }
 

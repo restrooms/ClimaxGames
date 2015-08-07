@@ -12,6 +12,7 @@ import org.bukkit.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityCombustEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 
 import java.io.File;
@@ -130,5 +131,10 @@ public class GameWorldManager extends Manager {
         if (event.toWeatherState()) {
             event.setCancelled(true);
         }
+    }
+
+    @EventHandler
+    public void onEntityCombut(EntityCombustEvent event) {
+        event.setCancelled(true);
     }
 }

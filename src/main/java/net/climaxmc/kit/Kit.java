@@ -26,7 +26,7 @@ public abstract class Kit {
      *
      * @param name        Name of kit
      * @param description Description of kit
-     * @param abilities       Perks of kit
+     * @param abilities   Abilities of kit
      */
     public Kit(String name, String[] description, Ability[] abilities, ItemStack itemInHand) {
         this(name, description, abilities, itemInHand, 0);
@@ -37,7 +37,7 @@ public abstract class Kit {
      *
      * @param name        Name of kit
      * @param description Description of kit
-     * @param abilities       Perks of kit
+     * @param abilities   Abilities of kit
      * @param cost        Cost of kit
      */
     public Kit(String name, String[] description, Ability[] abilities, ItemStack itemInHand, int cost) {
@@ -73,7 +73,7 @@ public abstract class Kit {
         villager.setAgeLock(true);
         villager.setProfession(Villager.Profession.LIBRARIAN);
         UtilEnt.removeAI(villager);
-        ArmorStand armorStand = location.getWorld().spawn(location/*.multiply(0.9999999999999999).add(0, 0.4, 0)*/, ArmorStand.class);
+        ArmorStand armorStand = location.getWorld().spawn(location, ArmorStand.class);
         armorStand.setVisible(false);
         armorStand.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
         armorStand.setCustomNameVisible(true);

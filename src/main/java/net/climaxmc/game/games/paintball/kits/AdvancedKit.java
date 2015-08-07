@@ -15,10 +15,10 @@ public class AdvancedKit extends Kit {
 
     @Override
     public void giveItems(Player player) {
-        player.getInventory().setHelmet(new I(Material.LEATHER_HELMET));
-        player.getInventory().setChestplate(new I(Material.LEATHER_CHESTPLATE));
-        player.getInventory().setLeggings(new I(Material.LEATHER_LEGGINGS));
-        player.getInventory().setBoots(new I(Material.LEATHER_BOOTS));
+        player.getInventory().setHelmet(new I(Material.LEATHER_HELMET).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
+        player.getInventory().setChestplate(new I(Material.LEATHER_CHESTPLATE).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
+        player.getInventory().setLeggings(new I(Material.LEATHER_LEGGINGS).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
+        player.getInventory().setBoots(new I(Material.LEATHER_BOOTS).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
         player.getInventory().addItem(new I(Material.IRON_BARDING).name(C.GOLD + "Advanced Gun"));
         player.getInventory().addItem(new I(Material.POTION).name(C.BLUE + "Revive Potion"));
     }
