@@ -87,7 +87,7 @@ public class GamePlayerManager extends Manager {
                 for (Score score : scoreboard.getScores(entry)) {
                     if (score.getScore() == 4) {
                         scoreboard.resetScores(score.getEntry());
-                        objective.getScore(C.GREEN + C.BOLD + "Kit " + C.WHITE + "\u00bb " + kit.getName()).setScore(4);
+                        objective.getScore(C.RED + C.BOLD + "Kit " + C.WHITE + "\u00bb " + kit.getName()).setScore(4);
                     }
                 }
             }
@@ -156,8 +156,24 @@ public class GamePlayerManager extends Manager {
         Player player = event.getPlayer();
         event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + player.getName());
         UtilPlayer.reset(player);
-        if (manager.getGame().getState().equals(Game.GameState.READY)) {
+        if (manager.getGame().hasStarted()) {
+            player.teleport(plugin.getServer().getWorld(manager.getGame().getName()).getSpawnLocation());
+            player.setGameMode(GameMode.SPECTATOR);
+        } else {
+            player.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
             manager.getGame().startCountdown();
+            UtilPlayer.getAll().forEach(players -> {
+                Scoreboard scoreboard = players.getScoreboard();
+                if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
+                    Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
+                    for (String entry : scoreboard.getEntries()) {
+                        scoreboard.getScores(entry).stream().filter(score -> score.getScore() == 8).forEach(score -> {
+                            scoreboard.resetScores(score.getEntry());
+                            objective.getScore(C.GOLD + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.GREEN + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
+                        });
+                    }
+                }
+            });
         }
         manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
         manager.initializeLobbyScoreboard(player);
@@ -166,6 +182,19 @@ public class GamePlayerManager extends Manager {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
+        
+        UtilPlayer.getAll().forEach(players -> {
+            Scoreboard scoreboard = players.getScoreboard();
+            if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
+                Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
+                for (String entry : scoreboard.getEntries()) {
+                    scoreboard.getScores(entry).stream().filter(score -> score.getScore() == 8).forEach(score -> {
+                        scoreboard.resetScores(score.getEntry());
+                        objective.getScore(C.GOLD + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.GREEN + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
+                    });
+                }
+            }
+        });
     }
 
     @EventHandler

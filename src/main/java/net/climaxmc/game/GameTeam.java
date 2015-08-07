@@ -2,11 +2,10 @@ package net.climaxmc.game;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.bukkit.Color;
-import org.bukkit.Location;
+import org.bukkit.*;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -16,4 +15,8 @@ public class GameTeam {
     private List<UUID> players;
     private Color color;
     private String colorCode;
+
+    public List<UUID> getPlayers(boolean includeSpectators) {
+        return players.stream().filter(playerUUID -> includeSpectators || !Bukkit.getPlayer(playerUUID).getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList());
+    }
 }

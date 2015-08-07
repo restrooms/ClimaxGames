@@ -5,7 +5,6 @@ import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.utilities.*;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -57,7 +56,7 @@ public abstract class Game implements Listener {
      * Attempt to start the countdown
      */
     public void startCountdown() {
-        if (!GameCountdown.isStarted()) {
+        if (!GameCountdown.isStarted() && !state.equals(GameState.READY)) {
             new GameCountdown().runTaskTimer(plugin, 0, 20);
         }
     }
@@ -141,13 +140,14 @@ public abstract class Game implements Listener {
 
         @Override
         public void checkEnd() {
-            getWorldConfig().getTeams().stream().filter(team -> team.getPlayers().size() == 0).forEach(team -> {
-                getWorldConfig().getTeams().stream().filter(otherTeam -> otherTeam.getPlayers().size() == UtilPlayer.getAll(false).size()).forEach(otherTeam -> {
-                    places.add(0, otherTeam.getColorCode() + C.BOLD + otherTeam.getName());
-                    UtilPlayer.getAll().forEach(player -> player.playSound(player.getLocation(), Sound.LEVEL_UP, 2.0f, 1.0f));
-                    setState(GameState.END);
-                });
-            });
+            ArrayList<String> teamsAlive = new ArrayList<>();
+            getWorldConfig().getTeams().stream().filter(team -> team.getPlayers(false).size() > 0).forEach(team -> teamsAlive.add(team.getColorCode() + C.BOLD + team.getName()));
+            if (teamsAlive.size() <= 1) {
+                if (teamsAlive.size() > 0) {
+                    places = teamsAlive;
+                }
+                setState(GameState.END);
+            }
         }
     }
 

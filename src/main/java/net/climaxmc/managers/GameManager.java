@@ -47,13 +47,13 @@ public class GameManager extends Manager {
         objective.setDisplayName(C.RED + C.BOLD + "Climax" + C.WHITE + C.BOLD + "Games");
         scoreboard.registerNewTeam("LobbyTeam");
         objective.getScore("").setScore(9);
-        objective.getScore(C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.GREEN + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
+        objective.getScore(C.GOLD + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.GREEN + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
         objective.getScore(" ").setScore(7);
-        objective.getScore(C.GOLD + C.BOLD + "Money" + C.WHITE + " \u00bb " + C.AQUA + "$" + 0).setScore(6);
+        objective.getScore(C.GREEN + C.BOLD + "Money" + C.WHITE + " \u00bb " + C.YELLOW + "$" + 0).setScore(6);
         objective.getScore("  ").setScore(5);
-        objective.getScore(C.GREEN + C.BOLD + "Kit" + C.WHITE + " \u00bb " + game.getPlayerKits().get(player.getUniqueId()).getName()).setScore(4);
+        objective.getScore(C.RED + C.BOLD + "Kit" + C.WHITE + " \u00bb " + game.getPlayerKits().get(player.getUniqueId()).getName()).setScore(4);
         objective.getScore("   ").setScore(3);
-        objective.getScore(C.DARK_PURPLE + C.BOLD + "Map" + C.WHITE + " \u00bb " + C.YELLOW + game.getWorldConfig().getMapName()).setScore(2);
+        objective.getScore(C.RED + C.BOLD + "Map" + C.WHITE + " \u00bb " + C.YELLOW + game.getWorldConfig().getMapName()).setScore(2);
         player.setScoreboard(scoreboard);
     }
 }
