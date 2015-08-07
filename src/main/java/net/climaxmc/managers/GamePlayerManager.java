@@ -182,7 +182,7 @@ public class GamePlayerManager extends Manager {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
         event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
-        
+
         UtilPlayer.getAll().forEach(players -> {
             Scoreboard scoreboard = players.getScoreboard();
             if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
@@ -331,6 +331,10 @@ public class GamePlayerManager extends Manager {
 
     @EventHandler
     public void onFireBreak(PlayerInteractEvent event) {
+        if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE) && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType().equals(Material.TRAP_DOOR)) {
+            event.setCancelled(true);
+        }
+
         if (!event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             return;
         }
