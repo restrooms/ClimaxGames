@@ -3,6 +3,7 @@ package net.climaxmc.mysql;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -12,11 +13,14 @@ import java.util.UUID;
 @AllArgsConstructor
 public class PlayerData {
     private final MySQL mySQL;
+    private final int id;
     private final UUID uuid;
     private String name;
     private String ip;
     private Rank rank;
     private int coins;
+
+    private List<Punishment> punishments;
 
     /**
      * Sets the player's name
@@ -80,5 +84,14 @@ public class PlayerData {
      */
     public boolean hasRank(Rank rank) {
         return this.rank.getPermissionLevel() >= rank.getPermissionLevel();
+    }
+
+    /**
+     * Adds a punishment to the player
+     *
+     * @param punishment Punishment to apply
+     */
+    public void addPunishment(Punishment punishment) {
+        punishments.add(punishment);
     }
 }

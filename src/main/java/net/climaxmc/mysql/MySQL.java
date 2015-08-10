@@ -1,10 +1,12 @@
 package net.climaxmc.mysql;
 
 import lombok.Getter;
+import net.climaxmc.command.commands.punishments.PunishType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
+import java.util.ArrayList;
 import java.util.UUID;
 
 public class MySQL {
@@ -136,26 +138,73 @@ public class MySQL {
             return null;
         }
 
-        ResultSet data = executeQuery(AccountQueries.GET_PLAYERDATA, uuid.toString());
+        ResultSet data = executeQuery(AccountQueries.GET_PLAYERDATA_UUID, uuid.toString());
 
         if (data == null) {
             return null;
         }
 
+        PlayerData playerData = null;
+
         try {
             if (data.next()) {
+                int id = data.getInt("playerid");
                 String name = data.getString("name");
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>());
 
-                return new PlayerData(this, uuid, name, ip, rank, coins);
+                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS);
+                while (punishments != null && punishments.next()) {
+                    playerData.getPunishments().add(new Punishment(id, PunishType.valueOf(punishments.getString("type")), punishments.getTimestamp("time").getTime(), punishments.getTime("expiretime").getTime()));
+                }
             }
         } catch (SQLException e) {
             plugin.getLogger().severe("Could not get player data! " + e.getMessage());
         }
 
-        return null;
+        return playerData;
+    }
+
+    /**
+     * Get player data
+     *
+     * @param name Name of the player to get data of
+     * @return Data of player
+     */
+    public PlayerData getPlayerData(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        ResultSet data = executeQuery(AccountQueries.GET_PLAYERDATA_NAME, name);
+
+        if (data == null) {
+            return null;
+        }
+
+        PlayerData playerData = null;
+
+        try {
+            if (data.next()) {
+                int id = data.getInt("playerid");
+                UUID uuid = UUID.fromString(data.getString("uuid"));
+                String ip = data.getString("ip");
+                Rank rank = Rank.valueOf(data.getString("rank"));
+                int coins = data.getInt("coins");
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>());
+
+                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS);
+                while (punishments != null && punishments.next()) {
+                    playerData.getPunishments().add(new Punishment(id, PunishType.valueOf(punishments.getString("type")), punishments.getTimestamp("time").getTime(), punishments.getTime("expiretime").getTime()));
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Could not get player data! " + e.getMessage());
+        }
+
+        return playerData;
     }
 
     /**

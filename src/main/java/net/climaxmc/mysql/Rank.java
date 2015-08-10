@@ -43,4 +43,14 @@ public enum Rank {
     public String toString() {
         return WordUtils.capitalizeFully(name());
     }
+
+    public static Rank fromString(String rankName) {
+        for (Rank rank : values()) {
+            if (rank.toString().equalsIgnoreCase(rankName)) {
+                return rank;
+            }
+        }
+
+        return null;
+    }
 }

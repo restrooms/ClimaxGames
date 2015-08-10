@@ -17,15 +17,6 @@ public abstract class Command {
      * Defines a command
      *
      * @param names Names of command (includes aliases)
-     */
-    public Command(String[] names, String usage) {
-        this(names, Rank.DEFAULT, usage);
-    }
-
-    /**
-     * Defines a command
-     *
-     * @param names Names of command (includes aliases)
      * @param rank  Rank of command
      */
     public Command(String[] names, Rank rank, String usage) {

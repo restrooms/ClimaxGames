@@ -12,7 +12,7 @@ public class F {
     }
 
     public static String denyPermissions(Rank rank) {
-        return prefix("Permissions") + C.GRAY + "This requires permissions rank [" + C.BLUE + rank.name() + C.GRAY + "].";
+        return prefix("Permissions") + C.GRAY + "This requires rank " + C.BLUE + rank.toString() + C.GRAY + ".";
     }
 
     public static String leftSword() {
