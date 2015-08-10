@@ -40,6 +40,7 @@ public class BasicGunAbility extends Ability {
             player.getWorld().playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 1.5f, 1.5f);
             snowballs.setAmount(snowballs.getAmount() - 1);
             player.getInventory().setItem(2, snowballs);
+            reloading.remove(player.getUniqueId());
         } else if (!reloading.contains(player.getUniqueId())) {
             UtilChat.sendActionBar(player, C.RED + "Reloading...");
             reloading.add(player.getUniqueId());
