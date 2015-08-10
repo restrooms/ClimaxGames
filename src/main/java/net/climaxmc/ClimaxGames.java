@@ -10,22 +10,14 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.UUID;
 
+@Getter
 public class ClimaxGames extends JavaPlugin {
+    @Getter
     private static ClimaxGames instance;
 
-    @Getter
     private MySQL mySQL;
     private GameManager manager;
     private Updater updater;
-
-    /**
-     * Get the plugin instance
-     *
-     * @return Plugin instance
-     */
-    public static ClimaxGames getInstance() {
-        return instance;
-    }
 
     @Override
     public void onEnable() {
@@ -39,15 +31,6 @@ public class ClimaxGames extends JavaPlugin {
     @Override
     public void onDisable() {
         mySQL.closeConnection();
-    }
-
-    /**
-     * Gets the game manager
-     *
-     * @return Game manager
-     */
-    public GameManager getManager() {
-        return manager;
     }
 
     public PlayerData getPlayerData(Player player) {

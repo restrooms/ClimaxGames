@@ -3,6 +3,8 @@ package net.climaxmc.managers;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
 import net.climaxmc.kit.Kit;
+import net.climaxmc.mysql.PlayerData;
+import net.climaxmc.mysql.Rank;
 import net.climaxmc.utilities.*;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.*;
@@ -148,14 +150,11 @@ public class GamePlayerManager extends Manager {
     }
 
     @EventHandler
-    public void onPlayerLogin(PlayerLoginEvent event) {
-        Player player = event.getPlayer();
-        plugin.getMySQL().createPlayerData(player.getUniqueId(), player.getName());
-    }
-
-    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        if (plugin.getPlayerData(player) == null) {
+            plugin.getMySQL().createPlayerData(player);
+        }
         event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + player.getName());
         UtilPlayer.reset(player);
         if (manager.getGame().hasStarted()) {
@@ -217,7 +216,13 @@ public class GamePlayerManager extends Manager {
 
     @EventHandler
     public void onPlayerChat(AsyncPlayerChatEvent event) {
-        event.setFormat(C.GRAY + "%s" + C.RESET + ": " + ChatColor.translateAlternateColorCodes('&', event.getMessage()));
+        Player player = event.getPlayer();
+        PlayerData playerData = plugin.getPlayerData(player);
+        if (playerData.hasRank(Rank.NINJA)) {
+            event.setFormat(C.DARK_GRAY + C.BOLD + "{" + playerData.getRank().getPrefix() + C.DARK_GRAY + C.BOLD + "} " + C.GRAY + "%s" + C.RESET + ": %s");
+        } else {
+            event.setFormat(C.GRAY + "%s" + C.RESET + ": %s");
+        }
     }
 
     @EventHandler

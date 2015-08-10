@@ -1,6 +1,7 @@
 package net.climaxmc.mysql;
 
 import lombok.Getter;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
@@ -118,10 +119,10 @@ public class MySQL {
     /**
      * Create player data
      *
-     * @param uuid UUID of the player to create data of
+     * @param player Player to create data of
      */
-    public void createPlayerData(UUID uuid, String name) {
-        executeUpdate(AccountQueries.CREATE_PLAYERDATA, uuid.toString(), name);
+    public void createPlayerData(Player player) {
+        executeUpdate(AccountQueries.CREATE_PLAYERDATA, player.getUniqueId().toString(), player.getName(), player.getAddress().getHostString());
     }
 
     /**
@@ -144,10 +145,11 @@ public class MySQL {
         try {
             if (data.next()) {
                 String name = data.getString("name");
+                String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
 
-                return new PlayerData(this, uuid, name, rank, coins);
+                return new PlayerData(this, uuid, name, ip, rank, coins);
             }
         } catch (SQLException e) {
             plugin.getLogger().severe("Could not get player data! " + e.getMessage());

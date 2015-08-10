@@ -1,11 +1,10 @@
 package net.climaxmc.managers;
 
 import com.google.common.collect.Sets;
-import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.command.Command;
 import net.climaxmc.command.commands.GameCommand;
+import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.utilities.F;
-import net.climaxmc.mysql.Rank;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -32,18 +31,18 @@ public class GameCommandManager extends Manager {
         String command = getFirstWord(message);
         for (Command possibleCommand : commands) {
             for (String name : possibleCommand.getNames()) {
-                if (("/" + name).equalsIgnoreCase(command)) {
+                if (command.equalsIgnoreCase("/" + name)) {
                     Player player = event.getPlayer();
                     PlayerData playerData = plugin.getPlayerData(player);
 
-                    if (!playerData.hasRank(Rank.ADMINISTRATOR)) {
+                    if (playerData.hasRank(possibleCommand.getRank())) {
+                        String result = possibleCommand.execute(player, args);
+
+                        if (result != null) {
+                            player.sendMessage(result);
+                        }
+                    } else {
                         player.sendMessage(F.denyPermissions(possibleCommand.getRank()));
-                    }
-
-                    String result = possibleCommand.execute(player, args);
-
-                    if (result != null) {
-                        player.sendMessage(result);
                     }
 
                     event.setCancelled(true);

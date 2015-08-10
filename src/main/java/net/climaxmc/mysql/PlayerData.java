@@ -14,6 +14,7 @@ public class PlayerData {
     private MySQL mySQL;
     private UUID uuid;
     private String name;
+    private String ip;
     private Rank rank;
     private int coins;
 
