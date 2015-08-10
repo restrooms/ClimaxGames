@@ -2,12 +2,12 @@ package net.climaxmc.mysql;
 
 import lombok.Getter;
 import net.climaxmc.command.commands.punishments.PunishType;
+import net.climaxmc.command.commands.punishments.Punishment;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
 public class MySQL {
     private final JavaPlugin plugin;
@@ -158,10 +158,10 @@ public class MySQL {
                 ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
                     PunishType type = PunishType.valueOf(punishments.getString("type"));
-                    long expireTime = punishments.getTimestamp("expiretime").getTime();
+                    long expiration = punishments.getTimestamp("expiration").getTime();
                     int punisherID = punishments.getInt("punisherid");
                     String reason = punishments.getString("reason");
-                    playerData.getPunishments().add(new Punishment(id, type, expireTime, punisherID, reason));
+                    playerData.getPunishments().add(new Punishment(id, type, expiration, punisherID, reason));
                 }
             }
         } catch (SQLException e) {
@@ -202,10 +202,10 @@ public class MySQL {
                 ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
                     PunishType type = PunishType.valueOf(punishments.getString("type"));
-                    long expireTime = punishments.getTimestamp("expiretime").getTime();
+                    long expiration = punishments.getTimestamp("expiration").getTime();
                     int punisherID = punishments.getInt("punisherid");
                     String reason = punishments.getString("reason");
-                    playerData.getPunishments().add(new Punishment(id, type, expireTime, punisherID, reason));
+                    playerData.getPunishments().add(new Punishment(id, type, expiration, punisherID, reason));
                 }
             }
         } catch (SQLException e) {
@@ -242,10 +242,10 @@ public class MySQL {
                 ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
                     PunishType type = PunishType.valueOf(punishments.getString("type"));
-                    long expireTime = punishments.getTimestamp("expiretime").getTime();
+                    long expiration = punishments.getTimestamp("expiration").getTime();
                     int punisherID = punishments.getInt("punisherid");
                     String reason = punishments.getString("reason");
-                    playerData.getPunishments().add(new Punishment(id, type, expireTime, punisherID, reason));
+                    playerData.getPunishments().add(new Punishment(id, type, expiration, punisherID, reason));
                 }
             }
         } catch (SQLException e) {

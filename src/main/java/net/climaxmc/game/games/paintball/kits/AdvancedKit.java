@@ -21,7 +21,7 @@ public class AdvancedKit extends Kit {
         player.getInventory().setLeggings(new I(Material.LEATHER_LEGGINGS).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
         player.getInventory().setBoots(new I(Material.LEATHER_BOOTS).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
         player.getInventory().addItem(new I(Material.IRON_BARDING).name(C.GOLD + "Advanced Gun"));
-        player.getInventory().addItem(new I(Material.POTION).name(C.BLUE + "Revive Potion"));
+        player.getInventory().addItem(new I(Material.POTION).name(C.BLUE + "Revive Potion").amount(5));
         player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 32));
     }
 }

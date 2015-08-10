@@ -268,11 +268,11 @@ public class GamePlayerManager extends Manager {
             }
             event.setCancelled(true);
         } else if (manager.getGame().hasStarted()) {
-            if (!manager.getGame().isRespawnOnDeath() && player.getHealth() - event.getFinalDamage() <= 0) {
+            if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) && !manager.getGame().isFallDamage()) {
+                event.setCancelled(true);
+            } else if (!manager.getGame().isRespawnOnDeath() && player.getHealth() - event.getFinalDamage() <= 0) {
                 event.setCancelled(true);
                 player.setGameMode(GameMode.SPECTATOR);
-            } else if (event.getCause().equals(EntityDamageEvent.DamageCause.FALL) && !manager.getGame().isFallDamage()) {
-                event.setCancelled(true);
             }
         }
     }

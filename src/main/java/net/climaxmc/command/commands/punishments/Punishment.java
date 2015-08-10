@@ -1,4 +1,4 @@
-package net.climaxmc.mysql;
+package net.climaxmc.command.commands.punishments;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import net.climaxmc.command.commands.punishments.PunishType;
 public class Punishment {
     private int playerID;
     private PunishType type;
-    private long expireTime;
+    private long expiration;
     private int punisherID;
     private String reason;
 }

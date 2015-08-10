@@ -58,7 +58,7 @@ public class BasicGunAbility extends Ability {
                     } else if (timer == 0) {
                         player.playSound(player.getLocation(), Sound.PISTON_RETRACT, 1F, 1.3F);
                         UtilChat.sendActionBar(player, C.GREEN + "Done!");
-                        player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 32));
+                        player.getInventory().setItem(2, new ItemStack(Material.SNOW_BALL, 32));
                         cancel();
                         return;
                     }

@@ -1,11 +1,14 @@
 package net.climaxmc.utilities;
 
+import net.climaxmc.ClimaxGames;
+import net.climaxmc.mysql.Rank;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class UtilPlayer {
     public static List<Player> getAll() {
@@ -17,6 +20,10 @@ public class UtilPlayer {
         Bukkit.getOnlinePlayers().forEach(players::add);
         players.removeIf(player -> player.getGameMode().equals(GameMode.SPECTATOR) && !includeSpectators);
         return players;
+    }
+
+    public static List<Player> getAll(Rank rank) {
+        return Bukkit.getOnlinePlayers().stream().filter(player -> ClimaxGames.getInstance().getPlayerData(player).hasRank(rank)).collect(Collectors.<Player>toList());
     }
 
     public static List<Player> getAllShuffled() {
