@@ -1,5 +1,6 @@
 package net.climaxmc.command.commands;
 
+import net.climaxmc.mysql.Rank;
 import net.climaxmc.command.Command;
 import net.climaxmc.game.Game;
 import net.climaxmc.utilities.*;

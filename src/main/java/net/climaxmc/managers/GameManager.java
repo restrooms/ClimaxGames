@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import lombok.*;
 import net.climaxmc.game.Game;
 import net.climaxmc.game.GameTeam;
+import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.utilities.C;
 import net.climaxmc.utilities.UtilPlayer;
 import org.bukkit.Location;
@@ -42,7 +43,13 @@ public class GameManager extends Manager {
         game.setState(Game.GameState.READY);
     }
 
+    /**
+     * Create the lobby scoreboard for a player
+     *
+     * @param player Player to update scoreboard of
+     */
     protected void initializeLobbyScoreboard(Player player) {
+        PlayerData playerData = plugin.getPlayerData(player);
         Scoreboard scoreboard = plugin.getServer().getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("GameLobby", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -51,7 +58,7 @@ public class GameManager extends Manager {
         objective.getScore("").setScore(9);
         objective.getScore(C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
         objective.getScore(" ").setScore(7);
-        objective.getScore(C.GOLD + C.BOLD + "Money" + C.WHITE + " \u00bb " + C.YELLOW + "$" + 0).setScore(6);
+        objective.getScore(C.GOLD + C.BOLD + "cCoins" + C.WHITE + " \u00bb " + C.YELLOW + playerData.getCoins()).setScore(6);
         objective.getScore("  ").setScore(5);
         objective.getScore(C.RED + C.BOLD + "Kit" + C.WHITE + " \u00bb " + game.getPlayerKits().get(player.getUniqueId()).getName()).setScore(4);
         objective.getScore("   ").setScore(3);

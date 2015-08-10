@@ -1,7 +1,7 @@
 package net.climaxmc.command;
 
 import net.climaxmc.ClimaxGames;
-import net.climaxmc.utilities.Rank;
+import net.climaxmc.mysql.Rank;
 import org.bukkit.entity.Player;
 
 /**

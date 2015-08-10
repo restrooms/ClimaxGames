@@ -1,5 +1,7 @@
 package net.climaxmc.utilities;
 
+import net.climaxmc.mysql.Rank;
+
 public class F {
     private static String prefix(String prefix) {
         return C.GOLD + C.BOLD + prefix + C.WHITE + "\u00bb ";

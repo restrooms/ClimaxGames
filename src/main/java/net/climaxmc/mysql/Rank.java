@@ -1,4 +1,6 @@
-package net.climaxmc.utilities;
+package net.climaxmc.mysql;
+
+import net.climaxmc.utilities.C;
 
 /**
  * Represents a rank
@@ -8,6 +10,7 @@ public enum Rank {
     DEVELOPER("Dev", C.GOLD, 120),
     ADMINISTRATOR("Admin", C.RED, 100),
     MODERATOR("Mod", C.LIGHT_PURPLE, 80),
+    HEAD_BUILDER("HeadBuilder", C.AQUA, 70),
     BUILDER("Builder", C.AQUA, 60),
     HELPER("Helper", C.GREEN, 40),
     TRUSTED("Trusted", C.DARK_AQUA, 20),

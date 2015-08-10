@@ -148,6 +148,12 @@ public class GamePlayerManager extends Manager {
     }
 
     @EventHandler
+    public void onPlayerLogin(PlayerLoginEvent event) {
+        Player player = event.getPlayer();
+        plugin.getMySQL().createPlayerData(player.getUniqueId(), player.getName());
+    }
+
+    @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
         event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + player.getName());
@@ -172,7 +178,7 @@ public class GamePlayerManager extends Manager {
             });
         }
         manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
-        manager.initializeLobbyScoreboard(player);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> manager.initializeLobbyScoreboard(player), 2); // Slightly hacky
     }
 
     @EventHandler
