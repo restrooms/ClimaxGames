@@ -10,7 +10,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import java.util.*;
+
 public class BasicGunAbility extends Ability {
+    private Set<UUID> reloading = new HashSet<>();
+
     public BasicGunAbility() {
         super("Basic Gun");
     }
@@ -29,19 +33,16 @@ public class BasicGunAbility extends Ability {
 
         event.setCancelled(true);
 
-        ItemStack snowballs = null;
-        for (ItemStack itemStack : player.getInventory().getContents()) {
-            if (itemStack.getType().equals(Material.SNOW_BALL)) {
-                snowballs = itemStack;
-            }
-        }
+        ItemStack snowballs = player.getInventory().getItem(2);
         if (snowballs != null && snowballs.getAmount() > 0) {
             Projectile snowball = player.launchProjectile(Snowball.class);
             snowball.setVelocity(snowball.getVelocity().multiply(2));
             player.getWorld().playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 1.5f, 1.5f);
             snowballs.setAmount(snowballs.getAmount() - 1);
-        } else {
+            player.getInventory().setItem(2, snowballs);
+        } else if (!reloading.contains(player.getUniqueId())) {
             UtilChat.sendActionBar(player, C.RED + "Reloading...");
+            reloading.add(player.getUniqueId());
             new BukkitRunnable() {
                 private int timer = 12;
 
@@ -56,6 +57,7 @@ public class BasicGunAbility extends Ability {
                     } else if (timer == 0) {
                         player.playSound(player.getLocation(), Sound.PISTON_RETRACT, 1F, 1.3F);
                         UtilChat.sendActionBar(player, C.GREEN + "Done!");
+                        player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 32));
                         cancel();
                         return;
                     }

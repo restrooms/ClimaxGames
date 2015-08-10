@@ -10,7 +10,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
 
+import java.util.*;
+
 public class AdvancedGunAbility extends Ability {
+    private Set<UUID> reloading = new HashSet<>();
+
     public AdvancedGunAbility() {
         super("Advanced Gun");
     }
@@ -27,12 +31,7 @@ public class AdvancedGunAbility extends Ability {
             return;
         }
 
-        ItemStack snowballs = null;
-        for (ItemStack itemStack : player.getInventory().getContents()) {
-            if (itemStack.getType().equals(Material.SNOW_BALL)) {
-                snowballs = itemStack;
-            }
-        }
+        ItemStack snowballs = player.getInventory().getItem(2);
         if (snowballs != null && snowballs.getAmount() > 0) {
             for (int i = 0; i < 8; ++i) {
                 Vector rand = new Vector(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
@@ -41,9 +40,11 @@ public class AdvancedGunAbility extends Ability {
                 snowball.setVelocity(snowball.getVelocity().multiply(1).add(rand));
                 player.getWorld().playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 0.8f, 1.0f);
                 snowballs.setAmount(snowballs.getAmount() - 1);
+                player.getInventory().setItem(2, snowballs);
             }
-        } else {
+        } else if (!reloading.contains(player.getUniqueId())) {
             UtilChat.sendActionBar(player, C.RED + "Reloading...");
+            reloading.add(player.getUniqueId());
             new BukkitRunnable() {
                 private int timer = 4;
 
@@ -54,6 +55,7 @@ public class AdvancedGunAbility extends Ability {
                     } else if (timer == 0) {
                         player.playSound(player.getLocation(), Sound.PISTON_RETRACT, 1F, 1.3F);
                         UtilChat.sendActionBar(player, C.GREEN + "Done!");
+                        player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 32));
                         cancel();
                         return;
                     }

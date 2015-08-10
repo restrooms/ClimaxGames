@@ -57,7 +57,7 @@ public abstract class Game implements Listener {
      * Attempt to start the countdown
      */
     public void startCountdown() {
-        if (!GameCountdown.isStarted() && !state.equals(GameState.READY)) {
+        if (!GameCountdown.isStarted() && state.equals(GameState.READY)) {
             new GameCountdown().runTaskTimer(plugin, 0, 20);
         }
     }
