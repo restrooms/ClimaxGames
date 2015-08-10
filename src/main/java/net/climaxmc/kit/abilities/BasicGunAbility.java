@@ -29,7 +29,12 @@ public class BasicGunAbility extends Ability {
 
         event.setCancelled(true);
 
-        ItemStack snowballs = player.getInventory().getItem(3);
+        ItemStack snowballs = null;
+        for (ItemStack itemStack : player.getInventory().getContents()) {
+            if (itemStack.getType().equals(Material.SNOW_BALL)) {
+                snowballs = itemStack;
+            }
+        }
         if (snowballs != null && snowballs.getAmount() > 0) {
             Projectile snowball = player.launchProjectile(Snowball.class);
             snowball.setVelocity(snowball.getVelocity().multiply(2));

@@ -27,7 +27,12 @@ public class AdvancedGunAbility extends Ability {
             return;
         }
 
-        ItemStack snowballs = player.getInventory().getItem(3);
+        ItemStack snowballs = null;
+        for (ItemStack itemStack : player.getInventory().getContents()) {
+            if (itemStack.getType().equals(Material.SNOW_BALL)) {
+                snowballs = itemStack;
+            }
+        }
         if (snowballs != null && snowballs.getAmount() > 0) {
             for (int i = 0; i < 8; ++i) {
                 Vector rand = new Vector(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
