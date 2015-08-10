@@ -48,7 +48,6 @@ public class AdvancedGunAbility extends Ability {
                         player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1F, 0.3F);
                     } else if (timer == 0) {
                         player.playSound(player.getLocation(), Sound.PISTON_RETRACT, 1F, 1.3F);
-                        player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 32));
                         UtilChat.sendActionBar(player, C.GREEN + "Done!");
                         cancel();
                         return;
