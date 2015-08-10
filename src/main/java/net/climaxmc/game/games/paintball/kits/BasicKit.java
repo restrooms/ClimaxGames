@@ -7,6 +7,7 @@ import net.climaxmc.utilities.C;
 import net.climaxmc.utilities.I;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class BasicKit extends Kit {
     public BasicKit() {
@@ -21,5 +22,6 @@ public class BasicKit extends Kit {
         player.getInventory().setBoots(new I(Material.LEATHER_BOOTS).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
         player.getInventory().addItem(new I(Material.GOLD_BARDING).name(C.GOLD + "Basic Gun"));
         player.getInventory().addItem(new I(Material.POTION).name(C.BLUE + "Revive Potion"));
+        player.getInventory().addItem(new ItemStack(Material.SNOW_BALL, 32));
     }
 }
