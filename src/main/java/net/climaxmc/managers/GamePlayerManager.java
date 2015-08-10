@@ -1,10 +1,10 @@
 package net.climaxmc.managers;
 
+import net.climaxmc.command.commands.punishments.PunishType;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
 import net.climaxmc.kit.Kit;
-import net.climaxmc.mysql.PlayerData;
-import net.climaxmc.mysql.Rank;
+import net.climaxmc.mysql.*;
 import net.climaxmc.utilities.*;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.*;
@@ -147,6 +147,20 @@ public class GamePlayerManager extends Manager {
             location.setPitch(event.getTo().getPitch());
             event.setTo(location);
         }
+    }
+
+    @EventHandler
+    public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
+        PlayerData playerData = plugin.getPlayerData(event.getUniqueId());
+
+        if (playerData == null) {
+            return;
+        }
+
+        playerData.getPunishments().stream().filter(punishment -> punishment.getType().equals(PunishType.BAN)).forEach(punishment -> {
+            PlayerData punisherData = plugin.getMySQL().getPlayerData(punishment.getPunisherID());
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, F.message("Punishments", C.RED + "You were permanently banned by " + punisherData.getName() + " for " + punishment.getReason() + "."));
+        });
     }
 
     @EventHandler
@@ -337,8 +351,12 @@ public class GamePlayerManager extends Manager {
     }
 
     @EventHandler
-    public void onFireBreak(PlayerInteractEvent event) {
-        if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE) && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType().equals(Material.TRAP_DOOR)) {
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (!manager.getGame().hasStarted()) {
+            event.setCancelled(true);
+        }
+
+        if (manager.getGame().isCancelInteract() || !event.getPlayer().getGameMode().equals(GameMode.CREATIVE) && event.getAction() == Action.RIGHT_CLICK_BLOCK && event.getClickedBlock().getType().equals(Material.TRAP_DOOR)) {
             event.setCancelled(true);
         }
 

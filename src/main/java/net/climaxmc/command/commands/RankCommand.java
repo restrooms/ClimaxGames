@@ -3,7 +3,6 @@ package net.climaxmc.command.commands;
 import net.climaxmc.command.Command;
 import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.mysql.Rank;
-import net.climaxmc.utilities.C;
 import net.climaxmc.utilities.F;
 import org.bukkit.entity.Player;
 
@@ -21,17 +20,17 @@ public class RankCommand extends Command {
         PlayerData targetData = plugin.getMySQL().getPlayerData(args[0]);
 
         if (targetData == null) {
-            return C.RED + "That player has never joined!";
+            return F.message("Administration", "That player has never joined!");
         }
 
         Rank rank = Rank.fromString(args[1]);
 
         if (rank == null) {
-            return C.RED + "That is not a valid rank!";
+            return F.message("Administration", "That is not a valid rank!");
         }
 
         targetData.setRank(rank);
 
-        return C.GREEN + targetData.getName() + "'s rank has been set to " + rank.toString() + "!";
+        return F.message("Administration", targetData.getName() + "'s rank has been set to " + rank.toString() + "!");
     }
 }

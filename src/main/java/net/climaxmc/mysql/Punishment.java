@@ -9,6 +9,7 @@ import net.climaxmc.command.commands.punishments.PunishType;
 public class Punishment {
     private int playerID;
     private PunishType type;
-    private long time;
     private long expireTime;
+    private int punisherID;
+    private String reason;
 }

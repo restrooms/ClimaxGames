@@ -155,9 +155,13 @@ public class MySQL {
                 int coins = data.getInt("coins");
                 playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>());
 
-                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS);
+                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
-                    playerData.getPunishments().add(new Punishment(id, PunishType.valueOf(punishments.getString("type")), punishments.getTimestamp("time").getTime(), punishments.getTime("expiretime").getTime()));
+                    PunishType type = PunishType.valueOf(punishments.getString("type"));
+                    long expireTime = punishments.getTimestamp("expiretime").getTime();
+                    int punisherID = punishments.getInt("punisherid");
+                    String reason = punishments.getString("reason");
+                    playerData.getPunishments().add(new Punishment(id, type, expireTime, punisherID, reason));
                 }
             }
         } catch (SQLException e) {
@@ -195,9 +199,53 @@ public class MySQL {
                 int coins = data.getInt("coins");
                 playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>());
 
-                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS);
+                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
-                    playerData.getPunishments().add(new Punishment(id, PunishType.valueOf(punishments.getString("type")), punishments.getTimestamp("time").getTime(), punishments.getTime("expiretime").getTime()));
+                    PunishType type = PunishType.valueOf(punishments.getString("type"));
+                    long expireTime = punishments.getTimestamp("expiretime").getTime();
+                    int punisherID = punishments.getInt("punisherid");
+                    String reason = punishments.getString("reason");
+                    playerData.getPunishments().add(new Punishment(id, type, expireTime, punisherID, reason));
+                }
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Could not get player data! " + e.getMessage());
+        }
+
+        return playerData;
+    }
+
+    /**
+     * Get player data
+     *
+     * @param id ID of the player to get data of
+     * @return Data of player
+     */
+    public PlayerData getPlayerData(int id) {
+        ResultSet data = executeQuery(AccountQueries.GET_PLAYERDATA_ID, id);
+
+        if (data == null) {
+            return null;
+        }
+
+        PlayerData playerData = null;
+
+        try {
+            if (data.next()) {
+                UUID uuid = UUID.fromString(data.getString("uuid"));
+                String name = data.getString("name");
+                String ip = data.getString("ip");
+                Rank rank = Rank.valueOf(data.getString("rank"));
+                int coins = data.getInt("coins");
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>());
+
+                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
+                while (punishments != null && punishments.next()) {
+                    PunishType type = PunishType.valueOf(punishments.getString("type"));
+                    long expireTime = punishments.getTimestamp("expiretime").getTime();
+                    int punisherID = punishments.getInt("punisherid");
+                    String reason = punishments.getString("reason");
+                    playerData.getPunishments().add(new Punishment(id, type, expireTime, punisherID, reason));
                 }
             }
         } catch (SQLException e) {

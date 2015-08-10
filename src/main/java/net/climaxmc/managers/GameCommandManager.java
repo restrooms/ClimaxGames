@@ -4,6 +4,7 @@ import com.google.common.collect.Sets;
 import net.climaxmc.command.Command;
 import net.climaxmc.command.commands.GameCommand;
 import net.climaxmc.command.commands.RankCommand;
+import net.climaxmc.command.commands.punishments.BanCommand;
 import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.utilities.F;
 import org.bukkit.entity.Player;
@@ -22,7 +23,8 @@ public class GameCommandManager extends Manager {
     private void initializeCommands() {
         commands = Sets.newHashSet(
                 new GameCommand(),
-                new RankCommand()
+                new RankCommand(),
+                new BanCommand()
         );
     }
 

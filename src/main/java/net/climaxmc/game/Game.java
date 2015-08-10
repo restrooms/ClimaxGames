@@ -26,6 +26,7 @@ public abstract class Game implements Listener {
     protected int maxPlayers = 16;
     protected boolean respawnOnDeath = false;
     protected boolean fallDamage = false;
+    protected boolean cancelInteract = true;
     protected List<String> places = new ArrayList<>();
 
     private String name;

@@ -3,6 +3,7 @@ package net.climaxmc.mysql;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
 
@@ -93,5 +94,6 @@ public class PlayerData {
      */
     public void addPunishment(Punishment punishment) {
         punishments.add(punishment);
+        mySQL.executeUpdate(AccountQueries.CREATE_PUNISHMENT, id, punishment.getType().name(), new Timestamp(punishment.getExpireTime()), punishment.getPunisherID(), punishment.getReason());
     }
 }
