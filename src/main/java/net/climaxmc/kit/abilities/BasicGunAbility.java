@@ -43,9 +43,9 @@ public class BasicGunAbility extends Ability {
                 @Override
                 public void run() {
                     if (timer == 12) {
-                        player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1F, 0.3F);
+                        player.playSound(player.getLocation(), Sound.CLICK, 1F, 0.3F);
                     } else if (timer == 4) {
-                        player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1F, 0.1F);
+                        player.playSound(player.getLocation(), Sound.CLICK, 1F, 0.1F);
                     } else if (timer == 1) {
                         player.playSound(player.getLocation(), Sound.PISTON_RETRACT, 1F, 1.3F);
                     } else if (timer == 0) {

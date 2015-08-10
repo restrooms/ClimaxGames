@@ -40,12 +40,12 @@ public class AdvancedGunAbility extends Ability {
         } else {
             UtilChat.sendActionBar(player, C.RED + "Reloading...");
             new BukkitRunnable() {
-                private int timer = 5;
+                private int timer = 4;
 
                 @Override
                 public void run() {
-                    if (timer > 1) {
-                        player.playSound(player.getLocation(), Sound.WOOD_CLICK, 1F, 0.3F);
+                    if (timer > 0){
+                        player.playSound(player.getLocation(), Sound.CLICK, 1F, 0.3F);
                     } else if (timer == 0) {
                         player.playSound(player.getLocation(), Sound.PISTON_RETRACT, 1F, 1.3F);
                         UtilChat.sendActionBar(player, C.GREEN + "Done!");
