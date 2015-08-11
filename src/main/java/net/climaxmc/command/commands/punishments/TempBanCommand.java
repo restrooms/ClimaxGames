@@ -55,7 +55,7 @@ public class TempBanCommand extends Command {
         final String finalReason = reason;
         final long finalTime = time;
         targetData.addPunishment(new Punishment(targetData.getId(), PunishType.BAN, System.currentTimeMillis(), time, playerData.getId(), reason));
-        UtilPlayer.getAll(Rank.HELPER).forEach(staff -> player.sendMessage(F.message("Punishments", C.RED + player.getName() + " has temporarily banned " + targetData.getName() + " for " + Time.toString(finalTime) + " for " + finalReason + ".")));
+        UtilPlayer.getAll(Rank.HELPER).forEach(staff -> staff.sendMessage(F.message("Punishments", C.RED + player.getName() + " has temporarily banned " + targetData.getName() + " for " + Time.toString(finalTime) + " for " + finalReason + ".")));
 
         OfflinePlayer target = plugin.getServer().getPlayer(targetData.getUuid());
         if (target.isOnline()) {

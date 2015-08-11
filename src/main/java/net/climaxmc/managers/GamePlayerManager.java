@@ -210,18 +210,20 @@ public class GamePlayerManager extends Manager {
         Player player = event.getPlayer();
         event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + player.getName());
 
-        UtilPlayer.getAll().forEach(players -> {
-            Scoreboard scoreboard = players.getScoreboard();
-            if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
-                Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
-                for (String entry : scoreboard.getEntries()) {
-                    scoreboard.getScores(entry).stream().filter(score -> score.getScore() == 8).forEach(score -> {
-                        scoreboard.resetScores(score.getEntry());
-                        objective.getScore(C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
-                    });
+        if (UtilPlayer.getAll() != null) {
+            UtilPlayer.getAll().forEach(players -> {
+                Scoreboard scoreboard = players.getScoreboard();
+                if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
+                    Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
+                    for (String entry : scoreboard.getEntries()) {
+                        scoreboard.getScores(entry).stream().filter(score -> score.getScore() == 8).forEach(score -> {
+                            scoreboard.resetScores(score.getEntry());
+                            objective.getScore(C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
+                        });
+                    }
                 }
-            }
-        });
+            });
+        }
 
         plugin.clearCache(plugin.getPlayerData(player));
     }
