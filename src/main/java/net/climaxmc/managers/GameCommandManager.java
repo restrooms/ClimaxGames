@@ -29,7 +29,10 @@ public class GameCommandManager extends Manager {
                 new TempBanCommand(),
                 new MuteCommand(),
                 new TempMuteCommand(),
-                new UnBanCommand()
+                new KickCommand(),
+                new WarnCommand(),
+                new UnBanCommand(),
+                new UnMuteCommand()
         );
     }
 
@@ -58,7 +61,6 @@ public class GameCommandManager extends Manager {
                     } else {
                         player.sendMessage(F.denyPermissions(possibleCommand.getRank()));
                     }
-
                 }
             }
         }

@@ -4,12 +4,11 @@ import net.climaxmc.command.Command;
 import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.mysql.Rank;
 import net.climaxmc.utilities.*;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class TempMuteCommand extends Command {
     public TempMuteCommand() {
-        super(new String[] {"tempmute"}, Rank.MODERATOR, F.message("Punishments", "/tempmute <player> <time (d/h/m)> <reason>"));
+        super(new String[] {"tempmute"}, Rank.HELPER, F.message("Punishments", "/tempmute <player> <time (d/h/m)> <reason>"));
     }
 
     @Override
@@ -55,11 +54,11 @@ public class TempMuteCommand extends Command {
         final String finalReason = reason;
         final long finalTime = time;
         targetData.addPunishment(new Punishment(targetData.getId(), PunishType.MUTE, System.currentTimeMillis(), time, playerData.getId(), reason));
-        UtilPlayer.getAll(Rank.HELPER).forEach(staff -> staff.sendMessage(F.message("Punishments", C.RED + player.getName() + " has temporarily muted " + targetData.getName() + " for " + Time.toString(finalTime) + " for " + finalReason + ".")));
+        UtilPlayer.getAll(Rank.HELPER).forEach(staff -> staff.sendMessage(F.message("Punishments", C.RED + player.getName() + " temporarily muted " + targetData.getName() + " for " + Time.toString(finalTime) + " for " + finalReason + ".")));
 
-        OfflinePlayer target = plugin.getServer().getPlayer(targetData.getUuid());
-        if (target != null && target.isOnline()) {
-            target.getPlayer().sendMessage(F.message("Punishments", C.RED + "You were temporarily muted by " + player.getName() + " for " + Time.toString(time) + " for " + reason + ".\n"
+        Player target = plugin.getServer().getPlayer(targetData.getUuid());
+        if (target != null) {
+            target.sendMessage(F.message("Punishments", C.RED + "You were temporarily muted by " + player.getName() + " for " + Time.toString(time) + " for " + reason + ".\n"
                     + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
         }
 

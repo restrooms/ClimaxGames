@@ -1,9 +1,9 @@
 package net.climaxmc.command.commands.punishments;
 
 import net.climaxmc.command.Command;
-import net.climaxmc.mysql.*;
+import net.climaxmc.mysql.PlayerData;
+import net.climaxmc.mysql.Rank;
 import net.climaxmc.utilities.*;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class BanCommand extends Command {
@@ -32,11 +32,11 @@ public class BanCommand extends Command {
         final String finalReason = reason;
 
         targetData.addPunishment(new Punishment(targetData.getId(), PunishType.BAN, System.currentTimeMillis(), -1, playerData.getId(), reason));
-        UtilPlayer.getAll(Rank.HELPER).forEach(staff -> staff.sendMessage(F.message("Punishments", C.RED + player.getName() + " has permanently banned " + targetData.getName() + " for " + finalReason + ".")));
+        UtilPlayer.getAll(Rank.HELPER).forEach(staff -> staff.sendMessage(F.message("Punishments", C.RED + player.getName() + " permanently banned " + targetData.getName() + " for " + finalReason + ".")));
 
-        OfflinePlayer target = plugin.getServer().getPlayer(targetData.getUuid());
-        if (target != null && target.isOnline()) {
-            target.getPlayer().kickPlayer(F.message("Punishments", C.RED + "You were permanently banned by " + player.getName() + " for " + reason + ".\n"
+        Player target = plugin.getServer().getPlayer(targetData.getUuid());
+        if (target != null) {
+            target.kickPlayer(F.message("Punishments", C.RED + "You were permanently banned by " + player.getName() + " for " + reason + ".\n"
                     + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
         }
 

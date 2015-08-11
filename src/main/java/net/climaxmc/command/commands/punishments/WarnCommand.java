@@ -6,12 +6,13 @@ import net.climaxmc.mysql.Rank;
 import net.climaxmc.utilities.*;
 import org.bukkit.entity.Player;
 
-public class MuteCommand extends Command {
-    public MuteCommand() {
-        super(new String[] {"mute"}, Rank.MODERATOR, F.message("Punishments", "/mute <player> <reason>"));
+public class WarnCommand extends Command {
+    public WarnCommand() {
+        super(new String[] {"warn"}, Rank.HELPER, F.message("Punishments", "/warn <player> <reason>"));
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public String execute(Player player, String[] args) {
         if (args.length < 2) {
             return usage;
@@ -31,13 +32,14 @@ public class MuteCommand extends Command {
         reason = reason.trim();
         final String finalReason = reason;
 
-        targetData.addPunishment(new Punishment(targetData.getId(), PunishType.MUTE, System.currentTimeMillis(), -1, playerData.getId(), reason));
-        UtilPlayer.getAll(Rank.HELPER).forEach(staff -> staff.sendMessage(F.message("Punishments", C.RED + player.getName() + " permanently muted " + targetData.getName() + " for " + finalReason + ".")));
-
         Player target = plugin.getServer().getPlayer(targetData.getUuid());
         if (target != null) {
-            target.sendMessage(F.message("Punishments", C.RED + "You were permanently muted by " + player.getName() + " for " + reason + ".\n"
-                    + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
+            targetData.addPunishment(new Punishment(targetData.getId(), PunishType.WARNING, System.currentTimeMillis(), -1, playerData.getId(), reason));
+            UtilPlayer.getAll(Rank.HELPER).forEach(staff -> staff.sendMessage(F.message("Punishments", C.RED + player.getName() + " warned " + targetData.getName() + " for " + finalReason + ".")));
+            target.sendTitle(C.RED + C.BOLD + "Warning", C.RED + reason);
+            UtilChat.sendActionBar(target, C.RED + "From " + player.getName());
+        } else {
+            return F.message("Punishments", "That player is not online!");
         }
 
         return null;

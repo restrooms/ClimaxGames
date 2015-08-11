@@ -97,6 +97,11 @@ public class PlayerData {
         mySQL.executeUpdate(AccountQueries.CREATE_PUNISHMENT, id, punishment.getType().name(), punishment.getTime(), punishment.getExpiration(), punishment.getPunisherID(), punishment.getReason());
     }
 
+    /**
+     * Removes a punishment from the player
+     *
+     * @param punishment Punishment to remove
+     */
     public void removePunishment(Punishment punishment) {
         punishments.remove(punishment);
         mySQL.executeUpdate(AccountQueries.UPDATE_PUNISHMENT_TIME, 0, id, punishment.getType().name(), punishment.getTime());
