@@ -4,7 +4,8 @@ import lombok.*;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public enum Time {
-    MINUTES(1000 * 60, 'm'),
+    SECONDS(1000, 's'),
+    MINUTES(SECONDS.milliseconds * 60, 'm'),
     HOURS(MINUTES.milliseconds * 60, 'h'),
     DAYS(HOURS.milliseconds * 24, 'd');
 
@@ -21,17 +22,21 @@ public enum Time {
         return null;
     }
 
-    public static String toReadableString(long milliseconds) {
+    public static String toString(long milliseconds) {
+        long seconds = (milliseconds / SECONDS.milliseconds) % 60;
         long minutes = (milliseconds / MINUTES.milliseconds) % 60;
         long hours = (milliseconds / HOURS.milliseconds) % 24;
         long days = (milliseconds / DAYS.milliseconds) % 24;
 
         if (days <= 0) {
             if (hours <= 0) {
-                return minutes + " minutes";
+                if (minutes <= 0) {
+                    return seconds + " seconds";
+                }
+                return minutes + " minutes and " + seconds + " seconds";
             }
-            return hours + " hours and " + minutes + " minutes";
+            return hours + " hours, " + minutes + " minutes, and " + seconds + " seconds";
         }
-        return days + " days, " + hours + " hours, and " + minutes + " minutes";
+        return days + " days, " + hours + " hours, " + minutes + " minutes, and " + seconds + " seconds";
     }
 }

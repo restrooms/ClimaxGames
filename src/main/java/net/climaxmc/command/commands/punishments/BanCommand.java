@@ -31,7 +31,7 @@ public class BanCommand extends Command {
         reason = reason.trim();
         final String finalReason = reason;
 
-        targetData.addPunishment(new Punishment(targetData.getId(), PunishType.BAN, -1, playerData.getId(), reason));
+        targetData.addPunishment(new Punishment(targetData.getId(), PunishType.BAN, System.currentTimeMillis(), -1, playerData.getId(), reason));
         UtilPlayer.getAll(Rank.HELPER).forEach(staff -> player.sendMessage(F.message("Punishments", C.RED + player.getName() + " has permanently banned " + targetData.getName() + " for " + finalReason + ".")));
 
         OfflinePlayer target = plugin.getServer().getPlayer(targetData.getUuid());

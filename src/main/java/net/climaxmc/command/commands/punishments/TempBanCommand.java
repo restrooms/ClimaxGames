@@ -25,7 +25,26 @@ public class TempBanCommand extends Command {
             return F.message("Punishments", "That player has never joined!");
         }
 
-        long time = 0;
+        long time;
+
+        String timeString = args[1];
+        char timeChar = Character.toLowerCase(timeString.charAt(timeString.length() - 1));
+        Time timeUnit;
+        String timeNumeral = timeString.substring(0, timeString.length() - 1);
+
+        try {
+            time = Long.parseLong(timeNumeral);
+        } catch (NumberFormatException e) {
+            return F.message("Punishments", "That is not a valid time!");
+        }
+
+        timeUnit = Time.fromId(timeChar);
+
+        if (timeUnit == null) {
+            return F.message("Punishments", "Incorrect time unit! Please use one of the following: m, h, d");
+        }
+
+        time = time * timeUnit.getMilliseconds();
 
         String reason = "";
         for (int i = 2; i < args.length; i++) {
@@ -34,12 +53,13 @@ public class TempBanCommand extends Command {
         reason = reason.trim();
 
         final String finalReason = reason;
-        targetData.addPunishment(new Punishment(targetData.getId(), PunishType.BAN, -1, playerData.getId(), reason));
-        UtilPlayer.getAll(Rank.HELPER).forEach(staff -> player.sendMessage(F.message("Punishments", C.RED + player.getName() + " has permanently banned " + targetData.getName() + " for " + Time.toReadableString(time) + " for " + finalReason + ".")));
+        final long finalTime = time;
+        targetData.addPunishment(new Punishment(targetData.getId(), PunishType.BAN, System.currentTimeMillis(), time, playerData.getId(), reason));
+        UtilPlayer.getAll(Rank.HELPER).forEach(staff -> player.sendMessage(F.message("Punishments", C.RED + player.getName() + " has temporarily banned " + targetData.getName() + " for " + Time.toString(finalTime) + " for " + finalReason + ".")));
 
         OfflinePlayer target = plugin.getServer().getPlayer(targetData.getUuid());
         if (target.isOnline()) {
-            target.getPlayer().kickPlayer(F.message("Punishments", C.RED + "You were temporarily banned by " + player.getName() + " for " + Time.toReadableString(time) + " for " + reason + "."));
+            target.getPlayer().kickPlayer(F.message("Punishments", C.RED + "You were temporarily banned by " + player.getName() + " for " + Time.toString(time) + " for " + reason + "."));
         }
 
         return null;

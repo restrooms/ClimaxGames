@@ -158,10 +158,11 @@ public class MySQL {
                 ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
                     PunishType type = PunishType.valueOf(punishments.getString("type"));
-                    long expiration = punishments.getTimestamp("expiration").getTime();
+                    long time = punishments.getLong("time");
+                    long expiration = punishments.getLong("expiration");
                     int punisherID = punishments.getInt("punisherid");
                     String reason = punishments.getString("reason");
-                    playerData.getPunishments().add(new Punishment(id, type, expiration, punisherID, reason));
+                    playerData.getPunishments().add(new Punishment(id, type, time, expiration, punisherID, reason));
                 }
             }
         } catch (SQLException e) {
@@ -202,10 +203,11 @@ public class MySQL {
                 ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
                     PunishType type = PunishType.valueOf(punishments.getString("type"));
-                    long expiration = punishments.getTimestamp("expiration").getTime();
+                    long time = punishments.getLong("time");
+                    long expiration = punishments.getLong("expiration");
                     int punisherID = punishments.getInt("punisherid");
                     String reason = punishments.getString("reason");
-                    playerData.getPunishments().add(new Punishment(id, type, expiration, punisherID, reason));
+                    playerData.getPunishments().add(new Punishment(id, type, time, expiration, punisherID, reason));
                 }
             }
         } catch (SQLException e) {
@@ -242,10 +244,11 @@ public class MySQL {
                 ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
                     PunishType type = PunishType.valueOf(punishments.getString("type"));
-                    long expiration = punishments.getTimestamp("expiration").getTime();
+                    long time = punishments.getLong("time");
+                    long expiration = punishments.getLong("expiration");
                     int punisherID = punishments.getInt("punisherid");
                     String reason = punishments.getString("reason");
-                    playerData.getPunishments().add(new Punishment(id, type, expiration, punisherID, reason));
+                    playerData.getPunishments().add(new Punishment(id, type, time, expiration, punisherID, reason));
                 }
             }
         } catch (SQLException e) {
