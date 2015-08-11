@@ -19,7 +19,7 @@ public class TempBanCommand extends Command {
         }
 
         PlayerData playerData = plugin.getPlayerData(player);
-        PlayerData targetData = plugin.getMySQL().getPlayerData(args[0]);
+        PlayerData targetData = plugin.getPlayerData(args[0]);
 
         if (targetData == null) {
             return F.message("Punishments", "That player has never joined!");
@@ -59,7 +59,8 @@ public class TempBanCommand extends Command {
 
         OfflinePlayer target = plugin.getServer().getPlayer(targetData.getUuid());
         if (target.isOnline()) {
-            target.getPlayer().kickPlayer(F.message("Punishments", C.RED + "You were temporarily banned by " + player.getName() + " for " + Time.toString(time) + " for " + reason + "."));
+            target.getPlayer().kickPlayer(F.message("Punishments", C.RED + "You were temporarily banned by " + player.getName() + " for " + Time.toString(time) + " for " + reason + ".\n"
+                    + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
         }
 
         return null;

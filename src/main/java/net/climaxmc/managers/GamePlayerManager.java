@@ -160,7 +160,7 @@ public class GamePlayerManager extends Manager {
         }
 
         playerData.getPunishments().stream().filter(punishment -> punishment.getType().equals(PunishType.BAN)).forEach(punishment -> {
-            PlayerData punisherData = plugin.getMySQL().getPlayerData(punishment.getPunisherID());
+            PlayerData punisherData = plugin.getPlayerData(punishment.getPunisherID());
             if (System.currentTimeMillis() <= (punishment.getTime() + punishment.getExpiration())) {
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, F.message("Punishments", C.RED + "You were temporarily banned by " + punisherData.getName()
                         + " for " + punishment.getReason() + ".\n"
@@ -207,7 +207,8 @@ public class GamePlayerManager extends Manager {
 
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event) {
-        event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + event.getPlayer().getName());
+        Player player = event.getPlayer();
+        event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + player.getName());
 
         UtilPlayer.getAll().forEach(players -> {
             Scoreboard scoreboard = players.getScoreboard();
@@ -221,6 +222,8 @@ public class GamePlayerManager extends Manager {
                 }
             }
         });
+
+        plugin.clearCache(plugin.getPlayerData(player));
     }
 
     @EventHandler
@@ -248,6 +251,22 @@ public class GamePlayerManager extends Manager {
         } else {
             event.setFormat(C.GRAY + "%s" + C.RESET + ": %s");
         }
+
+        playerData.getPunishments().stream().filter(punishment -> punishment.getType().equals(PunishType.MUTE)).forEach(punishment -> {
+            PlayerData punisherData = plugin.getPlayerData(punishment.getPunisherID());
+            if (System.currentTimeMillis() <= (punishment.getTime() + punishment.getExpiration())) {
+                event.setCancelled(true);
+                player.sendMessage(F.message("Punishments", C.RED + "You were temporarily muted by " + punisherData.getName()
+                        + " for " + punishment.getReason() + ".\n"
+                        + "You have " + Time.toString(punishment.getTime() + punishment.getExpiration() - System.currentTimeMillis()) + " left in your mute.\n"
+                        + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
+            } else if (punishment.getExpiration() == -1) {
+                event.setCancelled(true);
+                player.sendMessage(F.message("Punishments", C.RED + "You were permanently muted by " + punisherData.getName()
+                        + " for " + punishment.getReason() + ".\n"
+                        + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
+            }
+        });
     }
 
     @EventHandler

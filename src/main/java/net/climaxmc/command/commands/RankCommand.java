@@ -17,7 +17,7 @@ public class RankCommand extends Command {
             return usage;
         }
 
-        PlayerData targetData = plugin.getMySQL().getPlayerData(args[0]);
+        PlayerData targetData = plugin.getPlayerData(args[0]);
 
         if (targetData == null) {
             return F.message("Administration", "That player has never joined!");

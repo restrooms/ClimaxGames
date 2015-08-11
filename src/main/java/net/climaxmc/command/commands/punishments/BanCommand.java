@@ -18,7 +18,7 @@ public class BanCommand extends Command {
         }
 
         PlayerData playerData = plugin.getPlayerData(player);
-        PlayerData targetData = plugin.getMySQL().getPlayerData(args[0]);
+        PlayerData targetData = plugin.getPlayerData(args[0]);
 
         if (targetData == null) {
             return F.message("Punishments", "That player has never joined!");
@@ -36,7 +36,8 @@ public class BanCommand extends Command {
 
         OfflinePlayer target = plugin.getServer().getPlayer(targetData.getUuid());
         if (target.isOnline()) {
-            target.getPlayer().kickPlayer(F.message("Punishments", C.RED + "You were permanently banned by " + player.getName() + " for " + reason + "."));
+            target.getPlayer().kickPlayer(F.message("Punishments", C.RED + "You were permanently banned by " + player.getName() + " for " + reason + ".\n"
+                    + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
         }
 
         return null;

@@ -20,7 +20,7 @@ public class ClimaxGames extends JavaPlugin {
     private GameManager manager;
     private Updater updater;
 
-    private Map<UUID, PlayerData> cachedPlayerData = new HashMap<>();
+    private Set<PlayerData> cachedPlayerData = new HashSet<>();
 
     @Override
     public void onEnable() {
@@ -53,9 +53,56 @@ public class ClimaxGames extends JavaPlugin {
      * @return Data of player
      */
     public PlayerData getPlayerData(UUID playerUUID) {
-        if (cachedPlayerData.containsKey(playerUUID)) {
-            return cachedPlayerData.get(playerUUID);
+        for (PlayerData playerData : cachedPlayerData) {
+            if (playerData.getUuid().equals(playerUUID)) {
+                return playerData;
+            }
         }
-        return mySQL.getPlayerData(playerUUID);
+        PlayerData playerData = mySQL.getPlayerData(playerUUID);
+        cachedPlayerData.add(playerData);
+        return playerData;
+    }
+
+    /**
+     * Gets the data of a player
+     *
+     * @param playerName Name of the player to get data of
+     * @return Data of player
+     */
+    public PlayerData getPlayerData(String playerName) {
+        for (PlayerData playerData : cachedPlayerData) {
+            if (playerData.getName().equalsIgnoreCase(playerName)) {
+                return playerData;
+            }
+        }
+        PlayerData playerData = mySQL.getPlayerData(playerName);
+        cachedPlayerData.add(playerData);
+        return playerData;
+    }
+
+    /**
+     * Gets the data of a player
+     *
+     * @param playerID ID of the player to get data of
+     * @return Data of player
+     */
+    public PlayerData getPlayerData(int playerID) {
+        for (PlayerData playerData : cachedPlayerData) {
+            if (playerData.getId() == playerID) {
+                return playerData;
+            }
+        }
+        PlayerData playerData = mySQL.getPlayerData(playerID);
+        cachedPlayerData.add(playerData);
+        return playerData;
+    }
+
+    /**
+     * Clears the data of a player
+     *
+     * @param playerData Player data to clear
+     */
+    public void clearCache(PlayerData playerData) {
+        cachedPlayerData.remove(playerData);
     }
 }

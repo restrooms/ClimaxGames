@@ -3,6 +3,7 @@ package net.climaxmc.mysql;
 import lombok.Getter;
 import net.climaxmc.command.commands.punishments.PunishType;
 import net.climaxmc.command.commands.punishments.Punishment;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -74,6 +75,9 @@ public class MySQL {
      */
     public ResultSet executeQuery(String query, Object... values) {
         try {
+            if (query.equals(AccountQueries.GET_PLAYERDATA_ID) || query.equals(AccountQueries.GET_PLAYERDATA_NAME) || query.equals(AccountQueries.GET_PLAYERDATA_UUID)) {
+                Bukkit.broadcastMessage("Querying player data!");
+            }
             if (connection == null || connection.isClosed()) {
                 connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + name, username, password);
             }
@@ -124,6 +128,7 @@ public class MySQL {
      * @param player Player to create data of
      */
     public void createPlayerData(Player player) {
+        Bukkit.broadcastMessage("Creating player data!");
         executeUpdate(AccountQueries.CREATE_PLAYERDATA, player.getUniqueId().toString(), player.getName(), player.getAddress().getHostString());
     }
 
@@ -266,6 +271,7 @@ public class MySQL {
      * @param uuid   UUID of the player to update
      */
     public void updatePlayerData(String column, Object to, UUID uuid) {
+        Bukkit.broadcastMessage("Updating player data!");
         executeUpdate("UPDATE `players` SET " + column + " = ? WHERE uuid = ?;", to, uuid.toString());
     }
 }
