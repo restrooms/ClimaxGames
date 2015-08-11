@@ -3,6 +3,8 @@ package net.climaxmc.mysql;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.climaxmc.command.commands.punishments.Punishment;
+import net.climaxmc.events.PlayerBalanceChangeEvent;
+import org.bukkit.Bukkit;
 
 import java.util.List;
 import java.util.UUID;
@@ -57,6 +59,7 @@ public class PlayerData {
      */
     public void setCoins(int coins) {
         mySQL.updatePlayerData("coins", this.coins = coins, uuid);
+        Bukkit.getServer().getPluginManager().callEvent(new PlayerBalanceChangeEvent(uuid, this.coins));
     }
 
     /**

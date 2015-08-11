@@ -3,6 +3,7 @@ package net.climaxmc.managers;
 import net.climaxmc.command.commands.punishments.PunishType;
 import net.climaxmc.command.commands.punishments.Time;
 import net.climaxmc.events.GameStateChangeEvent;
+import net.climaxmc.events.PlayerBalanceChangeEvent;
 import net.climaxmc.game.Game;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.mysql.PlayerData;
@@ -20,7 +21,6 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
-import org.bukkit.scoreboard.*;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -84,18 +84,7 @@ public class GamePlayerManager extends Manager {
 
         UtilChat.sendActionBar(player, F.message("Kit", "Selected: " + kit.getName()));
 
-        Scoreboard scoreboard = player.getScoreboard();
-        if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
-            Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
-            for (String entry : scoreboard.getEntries()) {
-                for (Score score : scoreboard.getScores(entry)) {
-                    if (score.getScore() == 4) {
-                        scoreboard.resetScores(score.getEntry());
-                        objective.getScore(C.RED + C.BOLD + "Kit " + C.WHITE + "\u00bb " + kit.getName()).setScore(4);
-                    }
-                }
-            }
-        }
+        manager.setPlayerLobbyScoreboardValue(player, 4, C.RED + C.BOLD + "Kit " + C.WHITE + "\u00bb " + kit.getName());
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -188,18 +177,7 @@ public class GamePlayerManager extends Manager {
         } else {
             player.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
             manager.getGame().startCountdown();
-            UtilPlayer.getAll().forEach(players -> {
-                Scoreboard scoreboard = players.getScoreboard();
-                if (scoreboard != null && scoreboard.getObjective(DisplaySlot.SIDEBAR) != null && scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
-                    Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
-                    for (String entry : scoreboard.getEntries()) {
-                        scoreboard.getScores(entry).stream().filter(score -> score.getScore() == 8).forEach(score -> {
-                            scoreboard.resetScores(score.getEntry());
-                            objective.getScore(C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
-                        });
-                    }
-                }
-            });
+            UtilPlayer.getAll().forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
         }
         manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> manager.initializeLobbyScoreboard(player), 2); // Slightly hacky
@@ -211,18 +189,7 @@ public class GamePlayerManager extends Manager {
         event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + player.getName());
 
         if (UtilPlayer.getAll() != null) {
-            UtilPlayer.getAll().forEach(players -> {
-                Scoreboard scoreboard = players.getScoreboard();
-                if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
-                    Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
-                    for (String entry : scoreboard.getEntries()) {
-                        scoreboard.getScores(entry).stream().filter(score -> score.getScore() == 8).forEach(score -> {
-                            scoreboard.resetScores(score.getEntry());
-                            objective.getScore(C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()).setScore(8);
-                        });
-                    }
-                }
-            });
+            UtilPlayer.getAll().forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
         }
 
         plugin.clearCache(plugin.getPlayerData(player));
@@ -404,6 +371,14 @@ public class GamePlayerManager extends Manager {
             if (event.getClickedBlock() != null && event.getClickedBlock().getRelative(face) != null && event.getClickedBlock().getRelative(face).getType().equals(Material.FIRE)) {
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler
+    public void onPlayerBalanceChangeUpdateScoreboard(PlayerBalanceChangeEvent event) {
+        OfflinePlayer player = event.getPlayer();
+        if (player.isOnline()) {
+            manager.setPlayerLobbyScoreboardValue(player.getPlayer(), 8, C.RED + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins" + C.WHITE + " \u00bb " + C.YELLOW + event.getAmount());
         }
     }
 }

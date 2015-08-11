@@ -1,10 +1,14 @@
 package net.climaxmc.game;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import lombok.*;
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
+import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.utilities.*;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -34,7 +38,8 @@ public abstract class Game implements Listener {
     private GameState state = GameState.READY;
     @Setter
     private WorldConfig worldConfig = new WorldConfig("None", "None", new ArrayList<>());
-    private HashMap<UUID, Kit> playerKits = new HashMap<>();
+    private Map<UUID, Kit> playerKits = new HashMap<>();
+    private Map<UUID, Multimap<String, Integer>> coinEarnings = new HashMap<>();
 
     /**
      * Defines a game
@@ -102,12 +107,12 @@ public abstract class Game implements Listener {
     public void announceEnd(List<String> places) {
         plugin.getServer().broadcastMessage(F.topLine());
         int i = 0;
-        for (String playerName : places) {
+        for (String place : places) {
             if (i == 3) {
                 return;
             }
 
-            plugin.getServer().broadcastMessage(C.BOLD + "#" + ++i + " " + C.BLUE + playerName);
+            plugin.getServer().broadcastMessage(C.BOLD + "#" + ++i + " " + C.BLUE + place);
         }
         plugin.getServer().broadcastMessage("");
         plugin.getServer().broadcastMessage(C.BLUE + C.BOLD + worldConfig.getMapName() + C.GRAY + " \u00bb by " + C.WHITE + C.BOLD + "Arcane Builds");
@@ -173,8 +178,39 @@ public abstract class Game implements Listener {
         }
 
         announceEnd(places);
-
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> setState(GameState.READY), 120L);
+        plugin.getServer().getScheduler().runTaskLater(plugin, this::giveCoins, 40);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> setState(GameState.READY), 120);
         plugin.getServer().getScheduler().cancelTask(endCheckTask.getTaskId());
+    }
+
+    private void giveCoins() {
+        if (coinEarnings.size() == 0) {
+            return;
+        }
+        coinEarnings.forEach((playerUUID, coinEarning) -> {
+            Player player = plugin.getServer().getPlayer(playerUUID);
+            if (player == null) {
+                return;
+            }
+            PlayerData playerData = plugin.getPlayerData(player);
+            player.sendMessage(F.topLine());
+            player.sendMessage(C.RED + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins:");
+            for (String reason : coinEarning.keys()) {
+                for (Integer amount : coinEarning.get(reason)) {
+                    player.sendMessage(C.GRAY + reason + " " + C.STRIKETHROUGH + "--" + C.GOLD + " " + amount + " " + C.RED + "C" + C.GOLD + "Coins");
+                    playerData.depositCoins(amount);
+                }
+            }
+            player.sendMessage(F.bottomLine());
+            player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 2);
+        });
+    }
+
+    protected void addCoins(Player player, String reason, int amount) {
+        if (!coinEarnings.containsKey(player.getUniqueId())) {
+            coinEarnings.put(player.getUniqueId(), HashMultimap.<String, Integer>create());
+        }
+
+        coinEarnings.get(player.getUniqueId()).put(reason, amount);
     }
 }

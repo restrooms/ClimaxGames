@@ -55,6 +55,11 @@ public class Paintball extends Game.TeamGame {
         if (player.getHealth() - event.getFinalDamage() <= 0) {
             deadPlayers.put(player.getUniqueId(), new DeadPlayer(this, player));
         }
+
+        Player killer = player.getKiller();
+        if (killer != null) {
+            addCoins(killer, "Killing " + player.getName(), 10);
+        }
     }
 
     @EventHandler
