@@ -26,7 +26,8 @@ public class GameCommandManager extends Manager {
                 new RankCommand(),
                 new BanCommand(),
                 new TempBanCommand(),
-                new MuteCommand()
+                new MuteCommand(),
+                new TempMuteCommand()
         );
     }
 

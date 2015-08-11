@@ -4,6 +4,7 @@ import net.climaxmc.command.Command;
 import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.mysql.Rank;
 import net.climaxmc.utilities.*;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 public class MuteCommand extends Command {
@@ -33,6 +34,12 @@ public class MuteCommand extends Command {
 
         targetData.addPunishment(new Punishment(targetData.getId(), PunishType.MUTE, System.currentTimeMillis(), -1, playerData.getId(), reason));
         UtilPlayer.getAll(Rank.HELPER).forEach(staff -> staff.sendMessage(F.message("Punishments", C.RED + player.getName() + " has permanently muted " + targetData.getName() + " for " + finalReason + ".")));
+
+        OfflinePlayer target = plugin.getServer().getPlayer(targetData.getUuid());
+        if (target.isOnline()) {
+            target.getPlayer().sendMessage(F.message("Punishments", C.RED + "You were permanently muted by " + player.getName() + " for " + reason + ".\n"
+                    + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
+        }
 
         return null;
     }
