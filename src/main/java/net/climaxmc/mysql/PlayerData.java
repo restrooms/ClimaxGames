@@ -96,4 +96,9 @@ public class PlayerData {
         punishments.add(punishment);
         mySQL.executeUpdate(AccountQueries.CREATE_PUNISHMENT, id, punishment.getType().name(), punishment.getTime(), punishment.getExpiration(), punishment.getPunisherID(), punishment.getReason());
     }
+
+    public void removePunishment(Punishment punishment) {
+        punishments.remove(punishment);
+        mySQL.executeUpdate(AccountQueries.UPDATE_PUNISHMENT_TIME, 0, id, punishment.getType().name(), punishment.getTime());
+    }
 }

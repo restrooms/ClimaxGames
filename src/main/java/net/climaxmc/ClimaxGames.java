@@ -54,7 +54,7 @@ public class ClimaxGames extends JavaPlugin {
      */
     public PlayerData getPlayerData(UUID playerUUID) {
         for (PlayerData playerData : cachedPlayerData) {
-            if (playerData.getUuid().equals(playerUUID)) {
+            if (playerData.getUuid() != null && playerData.getUuid().equals(playerUUID)) {
                 return playerData;
             }
         }
@@ -71,7 +71,7 @@ public class ClimaxGames extends JavaPlugin {
      */
     public PlayerData getPlayerData(String playerName) {
         for (PlayerData playerData : cachedPlayerData) {
-            if (playerData.getName().equalsIgnoreCase(playerName)) {
+            if (playerData.getName() != null && playerData.getName().equalsIgnoreCase(playerName)) {
                 return playerData;
             }
         }

@@ -267,6 +267,6 @@ public class MySQL {
      * @param uuid   UUID of the player to update
      */
     public void updatePlayerData(String column, Object to, UUID uuid) {
-        executeUpdate("UPDATE `players` SET " + column + " = ? WHERE uuid = ?;", to, uuid.toString());
+        executeUpdate("UPDATE `players` SET `" + column + "` = ? WHERE `uuid` = ?;", to, uuid.toString());
     }
 }

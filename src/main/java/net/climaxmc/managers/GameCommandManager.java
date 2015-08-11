@@ -7,6 +7,7 @@ import net.climaxmc.command.commands.RankCommand;
 import net.climaxmc.command.commands.punishments.*;
 import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.utilities.F;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -27,18 +28,22 @@ public class GameCommandManager extends Manager {
                 new BanCommand(),
                 new TempBanCommand(),
                 new MuteCommand(),
-                new TempMuteCommand()
+                new TempMuteCommand(),
+                new UnBanCommand()
         );
     }
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent event) {
         String message = event.getMessage();
-        String[] args = message.substring(message.indexOf(' ') + 1).split(" ");
-        String command = getFirstWord(message);
+        String[] args = new String[0];
+        if (message.contains(" ")) {
+            message = message.split(" ")[0];
+            args = StringUtils.substringAfter(message, " ").split(" ");
+        }
         for (Command possibleCommand : commands) {
             for (String name : possibleCommand.getNames()) {
-                if (command.equalsIgnoreCase("/" + name)) {
+                if (message.equalsIgnoreCase("/" + name)) {
                     Player player = event.getPlayer();
                     PlayerData playerData = plugin.getPlayerData(player);
 
@@ -55,15 +60,6 @@ public class GameCommandManager extends Manager {
                     event.setCancelled(true);
                 }
             }
-        }
-    }
-
-
-    private String getFirstWord(String text) {
-        if (text.indexOf(' ') > -1) {
-            return text.substring(0, text.indexOf(' '));
-        } else {
-            return text;
         }
     }
 }

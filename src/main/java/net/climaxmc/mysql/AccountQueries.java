@@ -8,4 +8,5 @@ public class AccountQueries {
 
     public static final String CREATE_PUNISHMENT = "INSERT IGNORE INTO `punishments` (`playerid`, `type`, `time`, `expiration`, `punisherid`, `reason`) VALUES (?, ?, ?, ?, ?, ?);";
     public static final String GET_PUNISHMENTS = "SELECT * FROM `punishments` WHERE `playerid` = ?;";
+    public static final String UPDATE_PUNISHMENT_TIME = "UPDATE `punishments` SET `expiration` = ? WHERE `playerid` = ? AND `type` = ? AND `time` = ?;";
 }
