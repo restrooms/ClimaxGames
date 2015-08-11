@@ -35,7 +35,7 @@ public class BanCommand extends Command {
         UtilPlayer.getAll(Rank.HELPER).forEach(staff -> staff.sendMessage(F.message("Punishments", C.RED + player.getName() + " has permanently banned " + targetData.getName() + " for " + finalReason + ".")));
 
         OfflinePlayer target = plugin.getServer().getPlayer(targetData.getUuid());
-        if (target.isOnline()) {
+        if (target != null && target.isOnline()) {
             target.getPlayer().kickPlayer(F.message("Punishments", C.RED + "You were permanently banned by " + player.getName() + " for " + reason + ".\n"
                     + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
         }

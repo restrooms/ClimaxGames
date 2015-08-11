@@ -38,12 +38,14 @@ public class GameCommandManager extends Manager {
         String message = event.getMessage();
         String[] args = new String[0];
         if (message.contains(" ")) {
-            message = message.split(" ")[0];
             args = StringUtils.substringAfter(message, " ").split(" ");
+            message = message.split(" ")[0];
         }
         for (Command possibleCommand : commands) {
             for (String name : possibleCommand.getNames()) {
                 if (message.equalsIgnoreCase("/" + name)) {
+                    event.setCancelled(true);
+
                     Player player = event.getPlayer();
                     PlayerData playerData = plugin.getPlayerData(player);
 
@@ -57,7 +59,6 @@ public class GameCommandManager extends Manager {
                         player.sendMessage(F.denyPermissions(possibleCommand.getRank()));
                     }
 
-                    event.setCancelled(true);
                 }
             }
         }
