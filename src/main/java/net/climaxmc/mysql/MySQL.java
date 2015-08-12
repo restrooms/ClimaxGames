@@ -76,6 +76,7 @@ public class MySQL {
     public ResultSet executeQuery(String query, Object... values) {
         try {
             if (connection == null || connection.isClosed()) {
+
                 connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + name, username, password);
             }
 
@@ -88,6 +89,9 @@ public class MySQL {
 
             return statement.executeQuery();
         } catch (SQLException e) {
+            if (e instanceof SQLTimeoutException) {
+                return executeQuery(query, values);
+            }
             plugin.getLogger().severe("Could not execute MySQL query! " + e.getMessage());
             return null;
         }
@@ -114,6 +118,10 @@ public class MySQL {
 
                 statement.executeUpdate();
             } catch (SQLException e) {
+                if (e instanceof SQLTimeoutException) {
+                    executeUpdate(query, values);
+                    return;
+                }
                 plugin.getLogger().severe("Could not execute MySQL query! " + e.getMessage());
             }
         });
