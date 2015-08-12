@@ -21,6 +21,7 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.scoreboard.DisplaySlot;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -97,6 +98,7 @@ public class GamePlayerManager extends Manager {
             if (!manager.getGame().getPlayerKits().containsKey(player.getUniqueId())) {
                 manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
             }
+            player.setScoreboard(plugin.getServer().getScoreboardManager().getMainScoreboard());
         });
 
         manager.getGame().getWorldConfig().getTeams().forEach(team -> {
@@ -161,6 +163,10 @@ public class GamePlayerManager extends Manager {
                         + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
             }
         });
+
+        if (UtilPlayer.getAll().size() >= manager.getGame().getMaxPlayers() && playerData.getRank() == Rank.DEFAULT) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, C.RED + "Server is full!");
+        }
     }
 
     @EventHandler
@@ -177,7 +183,8 @@ public class GamePlayerManager extends Manager {
         } else {
             player.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
             manager.getGame().startCountdown();
-            UtilPlayer.getAll().forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
+            UtilPlayer.getAll().stream().filter(players -> players.getScoreboard() != null && players.getScoreboard().getObjective(DisplaySlot.SIDEBAR) != null)
+                    .forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
         }
         manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> manager.initializeLobbyScoreboard(player), 2); // Slightly hacky
@@ -189,7 +196,7 @@ public class GamePlayerManager extends Manager {
         event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + player.getName());
 
         if (UtilPlayer.getAll() != null) {
-            UtilPlayer.getAll().forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
+            UtilPlayer.getAll().stream().filter(players -> players.getScoreboard() != null).forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
         }
 
         plugin.clearCache(plugin.getPlayerData(player));

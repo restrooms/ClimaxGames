@@ -9,6 +9,8 @@ import net.climaxmc.utilities.C;
 import net.climaxmc.utilities.UtilPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.server.ServerListPingEvent;
 import org.bukkit.scoreboard.*;
 
 import java.util.*;
@@ -43,6 +45,12 @@ public class GameManager extends Manager {
         game.setState(Game.GameState.READY);
     }
 
+    @EventHandler
+    public void onServerListPing(ServerListPingEvent event) {
+        event.setMaxPlayers(game.getMaxPlayers());
+        event.setMotd(C.GREEN + game.getName());
+    }
+
     /**
      * Create the lobby scoreboard for a player
      *
@@ -69,6 +77,13 @@ public class GameManager extends Manager {
         player.setScoreboard(scoreboard);
     }
 
+    /**
+     * Set a value on the player's lobby scoreboard
+     *
+     * @param player Player to set value of
+     * @param scoreID ID of scoreboard score
+     * @param text Text to set score to
+     */
     protected void setPlayerLobbyScoreboardValue(Player player, int scoreID, String text) {
         Scoreboard scoreboard = player.getScoreboard();
         if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {

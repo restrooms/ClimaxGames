@@ -67,7 +67,7 @@ public abstract class Game implements Listener {
         }
     }
 
-    public abstract void checkEnd();
+    protected abstract void checkEnd();
 
     /**
      * Gets the team of a player
@@ -137,40 +137,6 @@ public abstract class Game implements Listener {
         endCheckTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::checkEnd, 0, 5);
     }
 
-    /**
-     * Possible states of games
-     */
-    public enum GameState {
-        READY,
-        PREPARE,
-        IN_GAME,
-        END
-    }
-
-    public abstract static class TeamGame extends Game {
-        /**
-         * Defines a team game
-         *
-         * @param name Name of game
-         * @param kits Kits of game
-         */
-        public TeamGame(String name, Kit[] kits) {
-            super(name, kits);
-        }
-
-        @Override
-        public void checkEnd() {
-            ArrayList<String> teamsAlive = new ArrayList<>();
-            getWorldConfig().getTeams().stream().filter(team -> team.getPlayers(false).size() > 0).forEach(team -> teamsAlive.add(team.getColorCode() + C.BOLD + team.getName()));
-            if (teamsAlive.size() <= 1) {
-                if (teamsAlive.size() > 0) {
-                    places = teamsAlive;
-                }
-                setState(GameState.END);
-            }
-        }
-    }
-
     @EventHandler
     public void onGameAboutToEnd(GameStateChangeEvent event) {
         if (!event.getState().equals(GameState.END)) {
@@ -212,5 +178,39 @@ public abstract class Game implements Listener {
         }
 
         coinEarnings.get(player.getUniqueId()).put(reason, amount);
+    }
+
+    /**
+     * Possible states of games
+     */
+    public enum GameState {
+        READY,
+        PREPARE,
+        IN_GAME,
+        END
+    }
+
+    public abstract static class TeamGame extends Game {
+        /**
+         * Defines a team game
+         *
+         * @param name Name of game
+         * @param kits Kits of game
+         */
+        public TeamGame(String name, Kit[] kits) {
+            super(name, kits);
+        }
+
+        @Override
+        protected void checkEnd() {
+            ArrayList<String> teamsAlive = new ArrayList<>();
+            getWorldConfig().getTeams().stream().filter(team -> team.getPlayers(false).size() > 0).forEach(team -> teamsAlive.add(team.getColorCode() + C.BOLD + team.getName()));
+            if (teamsAlive.size() <= 1) {
+                if (teamsAlive.size() > 0) {
+                    places = teamsAlive;
+                }
+                setState(GameState.END);
+            }
+        }
     }
 }
