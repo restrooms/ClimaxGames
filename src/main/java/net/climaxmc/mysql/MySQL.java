@@ -3,12 +3,12 @@ package net.climaxmc.mysql;
 import lombok.Getter;
 import net.climaxmc.command.commands.punishments.PunishType;
 import net.climaxmc.command.commands.punishments.Punishment;
+import net.climaxmc.game.GameType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
 public class MySQL {
     private final JavaPlugin plugin;
@@ -133,7 +133,7 @@ public class MySQL {
      * @param player Player to create data of
      */
     public void createPlayerData(Player player) {
-        executeUpdate(AccountQueries.CREATE_PLAYERDATA, player.getUniqueId().toString(), player.getName(), player.getAddress().getHostString());
+        executeUpdate(DataQueries.CREATE_PLAYERDATA, player.getUniqueId().toString(), player.getName(), player.getAddress().getHostString());
     }
 
     /**
@@ -147,7 +147,7 @@ public class MySQL {
             return null;
         }
 
-        ResultSet data = executeQuery(AccountQueries.GET_PLAYERDATA_UUID, uuid.toString());
+        ResultSet data = executeQuery(DataQueries.GET_PLAYERDATA_UUID, uuid.toString());
 
         if (data == null) {
             return null;
@@ -162,9 +162,9 @@ public class MySQL {
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
-                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>());
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>(), new HashMap<>());
 
-                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
+                ResultSet punishments = executeQuery(DataQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
                     PunishType type = PunishType.valueOf(punishments.getString("type"));
                     long time = punishments.getLong("time");
@@ -172,6 +172,16 @@ public class MySQL {
                     int punisherID = punishments.getInt("punisherid");
                     String reason = punishments.getString("reason");
                     playerData.getPunishments().add(new Punishment(id, type, time, expiration, punisherID, reason));
+                }
+
+                ResultSet purchasedKits = executeQuery(DataQueries.GET_PURCHASED_KITS, id);
+                while (purchasedKits != null && purchasedKits.next()) {
+                    GameType gameType = GameType.fromID(purchasedKits.getInt("gameid"));
+                    String kitName = purchasedKits.getString("kitname");
+                    if (!playerData.getKits().containsKey(gameType)) {
+                        playerData.getKits().put(gameType, new HashSet<>());
+                    }
+                    playerData.getKits().get(gameType).add(kitName);
                 }
             }
         } catch (SQLException e) {
@@ -192,7 +202,7 @@ public class MySQL {
             return null;
         }
 
-        ResultSet data = executeQuery(AccountQueries.GET_PLAYERDATA_NAME, name);
+        ResultSet data = executeQuery(DataQueries.GET_PLAYERDATA_NAME, name);
 
         if (data == null) {
             return null;
@@ -207,9 +217,9 @@ public class MySQL {
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
-                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>());
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>(), new HashMap<>());
 
-                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
+                ResultSet punishments = executeQuery(DataQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
                     PunishType type = PunishType.valueOf(punishments.getString("type"));
                     long time = punishments.getLong("time");
@@ -233,7 +243,7 @@ public class MySQL {
      * @return Data of player
      */
     public PlayerData getPlayerData(int id) {
-        ResultSet data = executeQuery(AccountQueries.GET_PLAYERDATA_ID, id);
+        ResultSet data = executeQuery(DataQueries.GET_PLAYERDATA_ID, id);
 
         if (data == null) {
             return null;
@@ -248,9 +258,9 @@ public class MySQL {
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
-                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>());
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>(), new HashMap<>());
 
-                ResultSet punishments = executeQuery(AccountQueries.GET_PUNISHMENTS, id);
+                ResultSet punishments = executeQuery(DataQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
                     PunishType type = PunishType.valueOf(punishments.getString("type"));
                     long time = punishments.getLong("time");

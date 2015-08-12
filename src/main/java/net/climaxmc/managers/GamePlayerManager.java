@@ -57,6 +57,7 @@ public class GamePlayerManager extends Manager {
         selectKit(player, damaged);
     }
 
+    @SuppressWarnings("deprecation")
     private void selectKit(Player player, Entity entity) {
         Kit kit = null;
 
@@ -70,8 +71,18 @@ public class GamePlayerManager extends Manager {
             return;
         }
 
+        PlayerData playerData = plugin.getPlayerData(player);
+
         for (Kit possibleKit : manager.getGame().getKits()) {
             if (entity.getCustomName().contains("Kit") && entity.getName().split(" ")[0].contains(possibleKit.getName())) {
+                if (!playerData.hasKit(manager.getGame().getType(), possibleKit)) {
+                    if (playerData.getCoins() < possibleKit.getCost()) {
+                        UtilChat.sendActionBar(player, F.message("Kit", C.RED + "You do not have enough " + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins" + C.RED + " to complete that transaction!"));
+                        return;
+                    }
+                    playerData.purchaseKit(manager.getGame().getType(), possibleKit);
+                    player.sendTitle("", F.message("Kit", C.GREEN + "You have purchased kit " + possibleKit.getName() + "!"));
+                }
                 kit = possibleKit;
             }
         }
@@ -385,7 +396,7 @@ public class GamePlayerManager extends Manager {
     public void onPlayerBalanceChangeUpdateScoreboard(PlayerBalanceChangeEvent event) {
         OfflinePlayer player = event.getPlayer();
         if (player.isOnline()) {
-            manager.setPlayerLobbyScoreboardValue(player.getPlayer(), 8, C.RED + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins" + C.WHITE + " \u00bb " + C.YELLOW + event.getAmount());
+            manager.setPlayerLobbyScoreboardValue(player.getPlayer(), 6, C.RED + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins" + C.WHITE + " \u00bb " + C.YELLOW + event.getAmount());
         }
     }
 }

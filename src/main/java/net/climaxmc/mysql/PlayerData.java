@@ -4,10 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.climaxmc.command.commands.punishments.Punishment;
 import net.climaxmc.events.PlayerBalanceChangeEvent;
+import net.climaxmc.game.GameType;
+import net.climaxmc.kit.Kit;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Represents player data
@@ -24,6 +26,8 @@ public class PlayerData {
     private int coins;
 
     private List<Punishment> punishments;
+
+    private Map<GameType, Set<String>> kits;
 
     /**
      * Sets the player's name
@@ -97,7 +101,7 @@ public class PlayerData {
      */
     public void addPunishment(Punishment punishment) {
         punishments.add(punishment);
-        mySQL.executeUpdate(AccountQueries.CREATE_PUNISHMENT, id, punishment.getType().name(), punishment.getTime(), punishment.getExpiration(), punishment.getPunisherID(), punishment.getReason());
+        mySQL.executeUpdate(DataQueries.CREATE_PUNISHMENT, id, punishment.getType().name(), punishment.getTime(), punishment.getExpiration(), punishment.getPunisherID(), punishment.getReason());
     }
 
     /**
@@ -107,6 +111,33 @@ public class PlayerData {
      */
     public void removePunishment(Punishment punishment) {
         punishments.remove(punishment);
-        mySQL.executeUpdate(AccountQueries.UPDATE_PUNISHMENT_TIME, 0, id, punishment.getType().name(), punishment.getTime());
+        mySQL.executeUpdate(DataQueries.UPDATE_PUNISHMENT_TIME, 0, id, punishment.getType().name(), punishment.getTime());
+    }
+
+    /**
+     * Checks if the player has the specified kit
+     *
+     * @param gameType Game type of kit
+     * @param kit Kit to check
+     */
+    public boolean hasKit(GameType gameType, Kit kit) {
+        return kit.getCost() == 0 || (kits.containsKey(gameType) && kits.get(gameType).contains(kit.getName()));
+    }
+
+    /**
+     * Purchases a kit
+     *
+     * @param kit Kit to purchase
+     */
+    public void purchaseKit(GameType gameType, Kit kit) {
+        withdrawCoins(kit.getCost());
+        if (kits == null) {
+            kits = new HashMap<>();
+        }
+        if (!kits.containsKey(gameType)) {
+            kits.put(gameType, new HashSet<>());
+        }
+        kits.get(gameType).add(kit.getName());
+        mySQL.executeUpdate(DataQueries.PURCHASE_KIT, id, gameType.getId(), ChatColor.stripColor(kit.getName()));
     }
 }

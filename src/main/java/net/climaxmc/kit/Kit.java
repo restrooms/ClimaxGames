@@ -75,7 +75,7 @@ public abstract class Kit {
         UtilEnt.removeAI(villager);
         ArmorStand armorStand = location.getWorld().spawn(location, ArmorStand.class);
         armorStand.setVisible(false);
-        armorStand.setCustomName(C.GOLD + name + " Kit" + (cost == 0 ? "" : C.GREEN + " $" + cost));
+        armorStand.setCustomName(C.GOLD + name + " Kit " + (cost == 0 ? "" : C.GREEN + cost + C.RED + C.BOLD + " C" + C.GOLD + C.BOLD + "Coins"));
         armorStand.setCustomNameVisible(true);
         return villager;
     }

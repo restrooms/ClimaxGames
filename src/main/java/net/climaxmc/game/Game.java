@@ -34,6 +34,7 @@ public abstract class Game implements Listener {
     protected List<String> places = new ArrayList<>();
 
     private String name;
+    private GameType type;
     private Kit[] kits;
     private GameState state = GameState.READY;
     @Setter
@@ -47,8 +48,9 @@ public abstract class Game implements Listener {
      * @param name Name of game
      * @param kits Kits of game
      */
-    public Game(String name, Kit[] kits) {
+    public Game(String name, GameType type, Kit[] kits) {
         this.name = name;
+        this.type = type;
         this.kits = kits;
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
@@ -197,8 +199,8 @@ public abstract class Game implements Listener {
          * @param name Name of game
          * @param kits Kits of game
          */
-        public TeamGame(String name, Kit[] kits) {
-            super(name, kits);
+        public TeamGame(String name, GameType type, Kit[] kits) {
+            super(name, type, kits);
         }
 
         @Override

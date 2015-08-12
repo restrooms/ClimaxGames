@@ -1,7 +1,6 @@
 package net.climaxmc.game.games.paintball;
 
-import net.climaxmc.game.Game;
-import net.climaxmc.game.GameTeam;
+import net.climaxmc.game.*;
 import net.climaxmc.game.games.paintball.kits.AdvancedKit;
 import net.climaxmc.game.games.paintball.kits.BasicKit;
 import net.climaxmc.kit.Kit;
@@ -20,7 +19,7 @@ public class Paintball extends Game.TeamGame {
     private HashMap<UUID, DeadPlayer> deadPlayers = new HashMap<>();
 
     public Paintball() {
-        super("Paintball", new Kit[]{new BasicKit(), new AdvancedKit()});
+        super("Paintball", GameType.PAINTBALL, new Kit[]{new BasicKit(), new AdvancedKit()});
     }
 
     @EventHandler
