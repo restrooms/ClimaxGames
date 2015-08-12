@@ -228,6 +228,16 @@ public class MySQL {
                     String reason = punishments.getString("reason");
                     playerData.getPunishments().add(new Punishment(id, type, time, expiration, punisherID, reason));
                 }
+
+                ResultSet purchasedKits = executeQuery(DataQueries.GET_PURCHASED_KITS, id);
+                while (purchasedKits != null && purchasedKits.next()) {
+                    GameType gameType = GameType.fromID(purchasedKits.getInt("gameid"));
+                    String kitName = purchasedKits.getString("kitname");
+                    if (!playerData.getKits().containsKey(gameType)) {
+                        playerData.getKits().put(gameType, new HashSet<>());
+                    }
+                    playerData.getKits().get(gameType).add(kitName);
+                }
             }
         } catch (SQLException e) {
             plugin.getLogger().severe("Could not get player data! " + e.getMessage());
@@ -268,6 +278,16 @@ public class MySQL {
                     int punisherID = punishments.getInt("punisherid");
                     String reason = punishments.getString("reason");
                     playerData.getPunishments().add(new Punishment(id, type, time, expiration, punisherID, reason));
+                }
+
+                ResultSet purchasedKits = executeQuery(DataQueries.GET_PURCHASED_KITS, id);
+                while (purchasedKits != null && purchasedKits.next()) {
+                    GameType gameType = GameType.fromID(purchasedKits.getInt("gameid"));
+                    String kitName = purchasedKits.getString("kitname");
+                    if (!playerData.getKits().containsKey(gameType)) {
+                        playerData.getKits().put(gameType, new HashSet<>());
+                    }
+                    playerData.getKits().get(gameType).add(kitName);
                 }
             }
         } catch (SQLException e) {

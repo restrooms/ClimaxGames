@@ -6,8 +6,7 @@ import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.events.PlayerBalanceChangeEvent;
 import net.climaxmc.game.Game;
 import net.climaxmc.kit.Kit;
-import net.climaxmc.mysql.PlayerData;
-import net.climaxmc.mysql.Rank;
+import net.climaxmc.mysql.*;
 import net.climaxmc.utilities.*;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.*;
@@ -23,8 +22,9 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.scoreboard.DisplaySlot;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.*;
 
 public class GamePlayerManager extends Manager {
     GamePlayerManager() {
@@ -161,7 +161,25 @@ public class GamePlayerManager extends Manager {
             return;
         }
 
-        playerData.getPunishments().stream().filter(punishment -> punishment.getType().equals(PunishType.BAN)).forEach(punishment -> {
+        if (!playerData.getIp().equals(event.getAddress().getHostAddress())) {
+            playerData.setIP(event.getAddress().getHostAddress());
+        }
+
+        Set<UUID> ipMatchingPlayers = new HashSet<>();
+        try {
+            ResultSet uuids = plugin.getMySQL().executeQuery(DataQueries.GET_PLAYER_UUID_FROM_IP, event.getAddress().getHostAddress());
+            while (uuids != null && uuids.next()) {
+                ipMatchingPlayers.add(UUID.fromString(uuids.getString("uuid")));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        Set<PlayerData> matchingData = new HashSet<>();
+        ipMatchingPlayers.stream().filter(uuid -> plugin.getPlayerData(uuid).getPunishments().stream().anyMatch(punishment -> punishment.getType().equals(PunishType.BAN))).forEach(uuid -> matchingData.add(plugin.getPlayerData(uuid)));
+        if (playerData.getPunishments().stream().anyMatch(punishment -> punishment.getType().equals(PunishType.BAN))) {
+            matchingData.add(playerData);
+        }
+        matchingData.forEach(data -> data.getPunishments().forEach(punishment -> {
             PlayerData punisherData = plugin.getPlayerData(punishment.getPunisherID());
             if (System.currentTimeMillis() <= (punishment.getTime() + punishment.getExpiration())) {
                 event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, F.message("Punishments", C.RED + "You were temporarily banned by " + punisherData.getName()
@@ -173,7 +191,7 @@ public class GamePlayerManager extends Manager {
                         + " for " + punishment.getReason() + ".\n"
                         + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
             }
-        });
+        }));
 
         if (UtilPlayer.getAll().size() >= manager.getGame().getMaxPlayers() && playerData.getRank() == Rank.DEFAULT) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, C.RED + "Server is full!");
