@@ -166,7 +166,8 @@ public class MySQL {
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
-                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>(), new HashMap<>());
+                String server = data.getString("servername");
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, server, new ArrayList<>(), new HashMap<>());
 
                 ResultSet punishments = executeQuery(DataQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
@@ -221,7 +222,8 @@ public class MySQL {
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
-                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>(), new HashMap<>());
+                String server = data.getString("servername");
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, server, new ArrayList<>(), new HashMap<>());
 
                 ResultSet punishments = executeQuery(DataQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
@@ -272,7 +274,8 @@ public class MySQL {
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
-                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, new ArrayList<>(), new HashMap<>());
+                String server = data.getString("servername");
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, server, new ArrayList<>(), new HashMap<>());
 
                 ResultSet punishments = executeQuery(DataQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {

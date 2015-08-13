@@ -20,6 +20,8 @@ public class ClimaxGames extends JavaPlugin {
     private GameManager manager;
 
     private Set<PlayerData> cachedPlayerData = new HashSet<>();
+    @Getter
+    private int serverID;
 
     @Override
     public void onEnable() {
@@ -29,7 +31,7 @@ public class ClimaxGames extends JavaPlugin {
         manager = new GameManager();
         new Updater(this);
 
-        mySQL.createServer(manager.getGame().getType());
+        serverID = mySQL.createServer(manager.getGame().getType());
     }
 
     @Override

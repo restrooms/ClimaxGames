@@ -24,9 +24,8 @@ public class PlayerData {
     private String ip;
     private Rank rank;
     private int coins;
-
+    private String server;
     private List<Punishment> punishments;
-
     private Map<GameType, Set<String>> kits;
 
     /**
@@ -92,6 +91,15 @@ public class PlayerData {
      */
     public boolean hasRank(Rank rank) {
         return this.rank.getPermissionLevel() >= rank.getPermissionLevel();
+    }
+
+    /**
+     * Sets the server that the player is currently on
+     *
+     * @param server Server that the player is currently on
+     */
+    public void setServer(String server) {
+        mySQL.updatePlayerData("servername", this.server = server, uuid);
     }
 
     /**

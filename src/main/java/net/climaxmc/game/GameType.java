@@ -11,13 +11,23 @@ public enum GameType {
     private final int id;
     private final Class<? extends Game> game;
     private final String name;
-    private final String prefix;
+    private final String abbreviation;
     @Setter
     private boolean enabled;
 
     public static GameType fromID(int id) {
         for (GameType type : values()) {
             if (type.getId() == id) {
+                return type;
+            }
+        }
+
+        return null;
+    }
+
+    public static GameType fromAbbreviation(String abbreviation) {
+        for (GameType type : values()) {
+            if (type.getAbbreviation().equals(abbreviation)) {
                 return type;
             }
         }

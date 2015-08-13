@@ -216,7 +216,11 @@ public class GamePlayerManager extends Manager {
                     .forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
         }
         manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> manager.initializeLobbyScoreboard(player), 2); // Slightly hacky
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            manager.initializeLobbyScoreboard(player);
+            plugin.getPlayerData(player).setServer(manager.getGame().getType().getAbbreviation() + "-" + plugin.getServerID() + 1);
+            player.sendMessage(manager.getGame().getType().getAbbreviation() + " " + plugin.getServerID());
+        }, 2); // Slightly hacky
     }
 
     @EventHandler
@@ -228,6 +232,7 @@ public class GamePlayerManager extends Manager {
             UtilPlayer.getAll().stream().filter(players -> players.getScoreboard() != null).forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
         }
 
+        plugin.getPlayerData(player).setServer(null);
         plugin.clearCache(plugin.getPlayerData(player));
     }
 
