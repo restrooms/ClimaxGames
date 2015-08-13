@@ -121,7 +121,15 @@ public class PlayerData {
      * @param kit Kit to check
      */
     public boolean hasKit(GameType gameType, Kit kit) {
-        return kit.getCost() == 0 || (kits.containsKey(gameType) && kits.get(gameType).contains(kit.getName()));
+        boolean has = false;
+        if (kits.containsKey(gameType)) {
+            for (String kitName : kits.get(gameType)) {
+                if (ChatColor.stripColor(kitName).equals(kit.getName())) {
+                    has = true;
+                }
+            }
+        }
+        return kit.getCost() == 0 || has;
     }
 
     /**
@@ -137,7 +145,7 @@ public class PlayerData {
         if (!kits.containsKey(gameType)) {
             kits.put(gameType, new HashSet<>());
         }
-        kits.get(gameType).add(kit.getName());
+        kits.get(gameType).add(ChatColor.stripColor(kit.getName()));
         mySQL.executeUpdate(DataQueries.PURCHASE_KIT, id, gameType.getId(), ChatColor.stripColor(kit.getName()));
     }
 }

@@ -174,7 +174,7 @@ public abstract class Game implements Listener {
         });
     }
 
-    protected void addCoins(Player player, String reason, int amount) {
+    public void addCoins(Player player, String reason, int amount) {
         if (!coinEarnings.containsKey(player.getUniqueId())) {
             coinEarnings.put(player.getUniqueId(), HashMultimap.<String, Integer>create());
         }

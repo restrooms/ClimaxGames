@@ -74,7 +74,7 @@ public class GamePlayerManager extends Manager {
         PlayerData playerData = plugin.getPlayerData(player);
 
         for (Kit possibleKit : manager.getGame().getKits()) {
-            if (entity.getCustomName().contains("Kit") && entity.getName().split(" ")[0].contains(possibleKit.getName())) {
+            if (entity.getCustomName().contains("Kit") && entity.getCustomName().contains(possibleKit.getName())) {
                 if (!playerData.hasKit(manager.getGame().getType(), possibleKit)) {
                     if (playerData.getCoins() < possibleKit.getCost()) {
                         UtilChat.sendActionBar(player, F.message("Kit", C.RED + "You do not have enough " + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins" + C.RED + " to complete that transaction!"));
@@ -308,6 +308,11 @@ public class GamePlayerManager extends Manager {
             } else if (!manager.getGame().isRespawnOnDeath() && player.getHealth() - event.getFinalDamage() <= 0) {
                 event.setCancelled(true);
                 player.setGameMode(GameMode.SPECTATOR);
+                Player killer = player.getKiller();
+                if (killer != null) {
+                    plugin.getServer().broadcastMessage(C.RED + player.getName() + C.GRAY + " was killed by " + C.GREEN + killer.getName());
+                    manager.getGame().addCoins(killer, "Killing " + player.getName(), 10);
+                }
             }
         }
     }
