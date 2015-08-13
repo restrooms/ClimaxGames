@@ -18,7 +18,6 @@ public class ClimaxGames extends JavaPlugin {
     private MySQL mySQL;
     @Getter
     private GameManager manager;
-    private Updater updater;
 
     private Set<PlayerData> cachedPlayerData = new HashSet<>();
 
@@ -28,11 +27,14 @@ public class ClimaxGames extends JavaPlugin {
 
         mySQL = new MySQL(this, "localhost", 3306, "climax", "plugin", "rR6nCbqaFTPCZqHA");
         manager = new GameManager();
-        updater = new Updater(this);
+        new Updater(this);
+
+        mySQL.createServer(manager.getGame().getType());
     }
 
     @Override
     public void onDisable() {
+        mySQL.deleteServer();
         mySQL.closeConnection();
     }
 

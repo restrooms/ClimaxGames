@@ -6,11 +6,12 @@ import net.climaxmc.game.games.paintball.Paintball;
 @Getter
 @RequiredArgsConstructor(access = AccessLevel.PROTECTED)
 public enum GameType {
-    PAINTBALL(1, Paintball.class, "Paintball");
+    PAINTBALL(1, Paintball.class, "Paintball", "PB");
 
     private final int id;
     private final Class<? extends Game> game;
     private final String name;
+    private final String prefix;
     @Setter
     private boolean enabled;
 

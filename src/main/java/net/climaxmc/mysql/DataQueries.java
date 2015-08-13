@@ -14,4 +14,7 @@ public class DataQueries {
     public static final String PURCHASE_KIT = "INSERT IGNORE INTO `kitpurchases` (`playerid`, `gameid`, `kitname`) VALUES (?, ?, ?);";
     public static final String GET_PURCHASED_KITS = "SELECT * FROM `kitpurchases` WHERE `playerid` = ?;";
 
+    public static final String CREATE_SERVER = "INSERT IGNORE INTO `servers` (`gameid`, `serverid`, `ip`, `port`, `players`) VALUES (?, (SELECT MIN(`t1`.`serverid` + 1) AS nextID FROM `servers` `t1` LEFT JOIN `servers` `t2` ON `t1`.`serverid` + 1 = `t2`.`serverid` WHERE `t2`.`serverid` IS NULL), ?, ?, ?);";
+    public static final String GET_SERVER_ID = "SELECT `serverid` FROM `servers` WHERE `ip` = ? AND `port` = ?;";
+    public static final String DELETE_SERVER = "DELETE FROM `servers` WHERE `ip` = ? AND `port` = ?;";
 }

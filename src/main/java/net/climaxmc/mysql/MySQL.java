@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.climaxmc.command.commands.punishments.PunishType;
 import net.climaxmc.command.commands.punishments.Punishment;
 import net.climaxmc.game.GameType;
+import net.climaxmc.utilities.UtilPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -64,7 +65,11 @@ public class MySQL {
      * @param runnable Runnable to run async
      */
     private void runAsync(Runnable runnable) {
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, runnable);
+        if (plugin.isEnabled()) {
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, runnable);
+        } else {
+            runnable.run();
+        }
     }
 
     /**
@@ -76,7 +81,6 @@ public class MySQL {
     public ResultSet executeQuery(String query, Object... values) {
         try {
             if (connection == null || connection.isClosed()) {
-
                 connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + name, username, password);
             }
 
@@ -306,5 +310,31 @@ public class MySQL {
      */
     public void updatePlayerData(String column, Object to, UUID uuid) {
         executeUpdate("UPDATE `players` SET `" + column + "` = ? WHERE `uuid` = ?;", to, uuid.toString());
+    }
+
+    /**
+     * Creates the server row in MySQL
+     *
+     * @param gameType Type of game to create server as
+     * @return ID of server
+     */
+    public int createServer(GameType gameType) {
+        executeUpdate(DataQueries.CREATE_SERVER, gameType.getId(), plugin.getServer().getIp(), plugin.getServer().getPort(), UtilPlayer.getAll().size());
+        ResultSet serverIDResult = executeQuery(DataQueries.GET_SERVER_ID, plugin.getServer().getIp(), plugin.getServer().getPort());
+        try {
+            if (serverIDResult != null && serverIDResult.next()) {
+                return serverIDResult.getInt("serverid");
+            }
+        } catch (SQLException e) {
+            plugin.getLogger().severe("Could not get server ID! " + e.getMessage());
+        }
+        return -1;
+    }
+
+    /**
+     * Deletes the server row in MySQL
+     */
+    public void deleteServer() {
+        executeUpdate(DataQueries.DELETE_SERVER, plugin.getServer().getIp(), plugin.getServer().getPort());
     }
 }

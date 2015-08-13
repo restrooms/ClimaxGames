@@ -87,7 +87,7 @@ public class Paintball extends Game.TeamGame {
             return;
         }
 
-        event.setDamage(3);
+        event.setDamage(7);
     }
 
     @EventHandler
