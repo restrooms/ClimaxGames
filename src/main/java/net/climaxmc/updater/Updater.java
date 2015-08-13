@@ -10,7 +10,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
 import java.io.*;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class Updater implements Listener {
     private ClimaxGames plugin;
@@ -27,7 +28,7 @@ public class Updater implements Listener {
         }
 
         boolean windows = System.getProperty("os.name").startsWith("Windows");
-        File file = new File((windows ? "C:" : File.separator + "tmp") + File.separator + "update" + File.separator);
+        File file = new File((windows ? "C:" : File.separator + "tmp") + File.separator + "update" + File.separator + "ClimaxGames.jar");
         File oldFile = new File("plugins" + File.separator + "ClimaxGames.jar");
 
         if (!file.exists() || !oldFile.exists()) {
@@ -49,7 +50,7 @@ public class Updater implements Listener {
                 UtilPlugin.unload(plugin);
 
                 try {
-                    Files.copy(Paths.get(file.getPath()), Paths.get(plugin.getServer().getUpdateFolderFile().getParentFile().getPath() + File.separator + "ClimaxGames.jar"), StandardCopyOption.REPLACE_EXISTING);
+                    Files.copy(file.toPath(), oldFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     plugin.getLogger().severe("Could not copy update! " + e.getMessage());
                 }
