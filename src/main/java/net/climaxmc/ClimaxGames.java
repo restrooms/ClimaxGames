@@ -21,6 +21,8 @@ public class ClimaxGames extends JavaPlugin {
 
     private Set<PlayerData> cachedPlayerData = new HashSet<>();
     @Getter
+    private Map<UUID, Long> playerOnTimes = new HashMap<>();
+    @Getter
     private int serverID;
 
     @Override
@@ -36,7 +38,7 @@ public class ClimaxGames extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        mySQL.deleteServer();
+        mySQL.deleteServer(serverID);
         mySQL.closeConnection();
     }
 

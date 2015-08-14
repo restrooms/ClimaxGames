@@ -218,9 +218,10 @@ public class GamePlayerManager extends Manager {
         manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             manager.initializeLobbyScoreboard(player);
-            plugin.getPlayerData(player).setServer(manager.getGame().getType().getAbbreviation() + "-" + plugin.getServerID() + 1);
+            plugin.getPlayerData(player).setServerID(plugin.getServerID());
             player.sendMessage(manager.getGame().getType().getAbbreviation() + " " + plugin.getServerID());
         }, 2); // Slightly hacky
+        plugin.getPlayerOnTimes().put(player.getUniqueId(), System.currentTimeMillis());
     }
 
     @EventHandler
@@ -232,8 +233,12 @@ public class GamePlayerManager extends Manager {
             UtilPlayer.getAll().stream().filter(players -> players.getScoreboard() != null).forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
         }
 
-        plugin.getPlayerData(player).setServer(null);
-        plugin.clearCache(plugin.getPlayerData(player));
+        PlayerData playerData = plugin.getPlayerData(player);
+        if (plugin.getPlayerOnTimes().containsKey(player.getUniqueId())) {
+            playerData.setPlayTime(playerData.getPlayTime() + (System.currentTimeMillis() - plugin.getPlayerOnTimes().get(player.getUniqueId())));
+        }
+        playerData.setServerID(null);
+        plugin.clearCache(playerData);
     }
 
     @EventHandler

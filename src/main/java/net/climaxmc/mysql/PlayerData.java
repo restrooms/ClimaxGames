@@ -24,7 +24,8 @@ public class PlayerData {
     private String ip;
     private Rank rank;
     private int coins;
-    private String server;
+    private long playTime;
+    private Integer serverID;
     private List<Punishment> punishments;
     private Map<GameType, Set<String>> kits;
 
@@ -94,12 +95,21 @@ public class PlayerData {
     }
 
     /**
+     * Sets the player's play time
+     *
+     * @param playTime Play time to set to
+     */
+    public void setPlayTime(long playTime) {
+        mySQL.updatePlayerData("playtime", this.playTime = playTime, uuid);
+    }
+
+    /**
      * Sets the server that the player is currently on
      *
-     * @param server Server that the player is currently on
+     * @param serverID ID of server that the player is currently on
      */
-    public void setServer(String server) {
-        mySQL.updatePlayerData("servername", this.server = server, uuid);
+    public void setServerID(Integer serverID) {
+        mySQL.updatePlayerData("serverid", this.serverID = serverID, uuid);
     }
 
     /**

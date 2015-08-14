@@ -166,8 +166,9 @@ public class MySQL {
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
-                String server = data.getString("servername");
-                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, server, new ArrayList<>(), new HashMap<>());
+                long ontime = data.getLong("playtime");
+                Integer server = data.getInt("serverid");
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, ontime, server, new ArrayList<>(), new HashMap<>());
 
                 ResultSet punishments = executeQuery(DataQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
@@ -222,8 +223,9 @@ public class MySQL {
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
-                String server = data.getString("servername");
-                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, server, new ArrayList<>(), new HashMap<>());
+                long ontime = data.getLong("playtime");
+                Integer server = data.getInt("serverid");
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, ontime, server, new ArrayList<>(), new HashMap<>());
 
                 ResultSet punishments = executeQuery(DataQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
@@ -274,8 +276,9 @@ public class MySQL {
                 String ip = data.getString("ip");
                 Rank rank = Rank.valueOf(data.getString("rank"));
                 int coins = data.getInt("coins");
-                String server = data.getString("servername");
-                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, server, new ArrayList<>(), new HashMap<>());
+                long ontime = data.getLong("playtime");
+                Integer server = data.getInt("serverid");
+                playerData = new PlayerData(this, id, uuid, name, ip, rank, coins, ontime, server, new ArrayList<>(), new HashMap<>());
 
                 ResultSet punishments = executeQuery(DataQueries.GET_PUNISHMENTS, id);
                 while (punishments != null && punishments.next()) {
@@ -326,7 +329,7 @@ public class MySQL {
         ResultSet serverIDResult = executeQuery(DataQueries.GET_SERVER_ID, plugin.getServer().getIp(), plugin.getServer().getPort());
         try {
             if (serverIDResult != null && serverIDResult.next()) {
-                return serverIDResult.getInt("serverid");
+                return serverIDResult.getInt("globalid");
             }
         } catch (SQLException e) {
             plugin.getLogger().severe("Could not get server ID! " + e.getMessage());
@@ -336,8 +339,10 @@ public class MySQL {
 
     /**
      * Deletes the server row in MySQL
+     *
+     * @param serverID The global server ID
      */
-    public void deleteServer() {
-        executeUpdate(DataQueries.DELETE_SERVER, plugin.getServer().getIp(), plugin.getServer().getPort());
+    public void deleteServer(int serverID) {
+        executeUpdate(DataQueries.DELETE_SERVER, serverID);
     }
 }
