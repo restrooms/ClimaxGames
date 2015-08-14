@@ -5,6 +5,7 @@ import net.climaxmc.managers.GameManager;
 import net.climaxmc.mysql.MySQL;
 import net.climaxmc.mysql.PlayerData;
 import net.climaxmc.updater.Updater;
+import net.climaxmc.utilities.UtilPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,11 +35,13 @@ public class ClimaxGames extends JavaPlugin {
         new Updater(this);
 
         serverID = mySQL.createServer(manager.getGame().getType());
+        UtilPlayer.getAll().forEach(player -> getPlayerData(player).setServerID(serverID));
     }
 
     @Override
     public void onDisable() {
-        mySQL.deleteServer(serverID);
+        UtilPlayer.getAll().forEach(player -> getPlayerData(player).setServerID(null));
+        mySQL.deleteServer();
         mySQL.closeConnection();
     }
 

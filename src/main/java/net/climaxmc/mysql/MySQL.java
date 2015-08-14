@@ -339,10 +339,8 @@ public class MySQL {
 
     /**
      * Deletes the server row in MySQL
-     *
-     * @param serverID The global server ID
      */
-    public void deleteServer(int serverID) {
-        executeUpdate(DataQueries.DELETE_SERVER, serverID);
+    public void deleteServer() {
+        executeUpdate(DataQueries.DELETE_SERVER, plugin.getServer().getIp(), plugin.getServer().getPort());
     }
 }

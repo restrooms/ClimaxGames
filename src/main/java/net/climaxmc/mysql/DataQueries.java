@@ -18,5 +18,5 @@ public class DataQueries {
             "(SELECT MIN(`t1`.`globalid` + 1) AS nextID FROM `servers` `t1` LEFT JOIN `servers` `t2` ON `t1`.`globalid` + 1 = `t2`.`globalid` WHERE `t2`.`globalid` IS NULL), ?, " +
             "(SELECT MIN(`t1`.`serverid` + 1) AS nextID FROM `servers` `t1` LEFT JOIN `servers` `t2` ON `t1`.`serverid` + 1 = `t2`.`serverid` WHERE `t2`.`serverid` IS NULL), ?, ?, ?);";
     public static final String GET_SERVER_ID = "SELECT `globalid` FROM `servers` WHERE `ip` = ? AND `port` = ?;";
-    public static final String DELETE_SERVER = "DELETE FROM `servers` WHERE `globalid` = ?;";
+    public static final String DELETE_SERVER = "DELETE FROM `servers` WHERE `ip` = ? AND `port` = ?;";
 }
