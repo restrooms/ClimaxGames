@@ -34,14 +34,17 @@ public class ClimaxGames extends JavaPlugin {
         manager = new GameManager();
         new Updater(this);
 
-        serverID = mySQL.createServer(manager.getGame().getType());
-        UtilPlayer.getAll().forEach(player -> getPlayerData(player).setServerID(serverID));
+        mySQL.createServer(manager.getGame().getType());
+        getServer().getScheduler().runTaskLater(this, () -> {
+            serverID = mySQL.getServerID();
+            UtilPlayer.getAll().forEach(player -> getPlayerData(player).setServerID(serverID));
+        }, 2);
     }
 
     @Override
     public void onDisable() {
         UtilPlayer.getAll().forEach(player -> getPlayerData(player).setServerID(null));
-        mySQL.deleteServer();
+        mySQL.deleteServer(serverID);
         mySQL.closeConnection();
     }
 

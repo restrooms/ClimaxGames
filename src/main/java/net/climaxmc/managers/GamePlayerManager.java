@@ -219,9 +219,9 @@ public class GamePlayerManager extends Manager {
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             manager.initializeLobbyScoreboard(player);
             plugin.getPlayerData(player).setServerID(plugin.getServerID());
-            player.sendMessage(manager.getGame().getType().getAbbreviation() + " " + plugin.getServerID());
         }, 2); // Slightly hacky
         plugin.getPlayerOnTimes().put(player.getUniqueId(), System.currentTimeMillis());
+        plugin.getMySQL().updateServerPlayers(UtilPlayer.getAll().size(), plugin.getServerID());
     }
 
     @EventHandler
@@ -239,6 +239,7 @@ public class GamePlayerManager extends Manager {
         }
         playerData.setServerID(null);
         plugin.clearCache(playerData);
+        plugin.getMySQL().updateServerPlayers(UtilPlayer.getAll().size() - 1, plugin.getServerID());
     }
 
     @EventHandler

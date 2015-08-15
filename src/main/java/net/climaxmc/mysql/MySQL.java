@@ -322,10 +322,17 @@ public class MySQL {
      * Creates the server row in MySQL
      *
      * @param gameType Type of game to create server as
+     */
+    public void createServer(GameType gameType) {
+        executeUpdate(DataQueries.CREATE_SERVER, gameType.getId(), plugin.getServer().getIp(), plugin.getServer().getPort(), UtilPlayer.getAll().size());
+    }
+
+    /**
+     * Gets the server ID
+     *
      * @return ID of server
      */
-    public int createServer(GameType gameType) {
-        executeUpdate(DataQueries.CREATE_SERVER, gameType.getId(), plugin.getServer().getIp(), plugin.getServer().getPort(), UtilPlayer.getAll().size());
+    public int getServerID() {
         ResultSet serverIDResult = executeQuery(DataQueries.GET_SERVER_ID, plugin.getServer().getIp(), plugin.getServer().getPort());
         try {
             if (serverIDResult != null && serverIDResult.next()) {
@@ -339,8 +346,14 @@ public class MySQL {
 
     /**
      * Deletes the server row in MySQL
+     *
+     * @param serverID ID of server to delete
      */
-    public void deleteServer() {
-        executeUpdate(DataQueries.DELETE_SERVER, plugin.getServer().getIp(), plugin.getServer().getPort());
+    public void deleteServer(int serverID) {
+        executeUpdate(DataQueries.DELETE_SERVER, serverID);
+    }
+
+    public void updateServerPlayers(int players, int serverID) {
+        executeUpdate(DataQueries.UPDATE_PLAYERS_ONLINE, players, serverID);
     }
 }
