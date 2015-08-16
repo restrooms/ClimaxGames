@@ -5,7 +5,6 @@ import net.climaxmc.command.commands.punishments.PunishType;
 import net.climaxmc.command.commands.punishments.Punishment;
 import net.climaxmc.game.GameType;
 import net.climaxmc.utilities.UtilPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.sql.*;
@@ -137,10 +136,12 @@ public class MySQL {
     /**
      * Create player data
      *
-     * @param player Player to create data of
+     * @param uuid UUID of player
+     * @param name Name of player
+     * @param ip IP of player
      */
-    public void createPlayerData(Player player) {
-        executeUpdate(DataQueries.CREATE_PLAYERDATA, player.getUniqueId().toString(), player.getName(), player.getAddress().getHostString());
+    public void createPlayerData(UUID uuid, String name, String ip) {
+        executeUpdate(DataQueries.CREATE_PLAYERDATA, uuid.toString(), name, ip);
     }
 
     /**

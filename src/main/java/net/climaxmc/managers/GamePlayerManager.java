@@ -160,7 +160,8 @@ public class GamePlayerManager extends Manager {
         PlayerData playerData = plugin.getPlayerData(event.getUniqueId());
 
         if (playerData == null) {
-            return;
+            plugin.getMySQL().createPlayerData(event.getUniqueId(), event.getName(), event.getAddress().getHostAddress());
+            playerData = plugin.getPlayerData(event.getUniqueId());
         }
 
         if (!playerData.getIp().equals(event.getAddress().getHostAddress())) {
@@ -203,9 +204,6 @@ public class GamePlayerManager extends Manager {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (plugin.getPlayerData(player) == null) {
-            plugin.getMySQL().createPlayerData(player);
-        }
         event.setJoinMessage(C.DARK_AQUA + "Join" + C.DARK_GRAY + "\u00bb " + player.getName());
         UtilPlayer.reset(player);
         if (manager.getGame().hasStarted()) {
