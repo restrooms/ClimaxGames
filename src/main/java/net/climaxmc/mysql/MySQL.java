@@ -47,6 +47,9 @@ public class MySQL {
         }
     }
 
+    /**
+     * Closes the MySQL connection
+     */
     public void closeConnection() {
         if (connection != null) {
             try {
@@ -73,7 +76,7 @@ public class MySQL {
     }
 
     /**
-     * Executes a MySQL query
+     * Executes a MySQL query (NON-ASYNC)
      *
      * @param query  The query to run on the database
      * @param values The values to insert into the query
@@ -346,11 +349,9 @@ public class MySQL {
 
     /**
      * Deletes the server row in MySQL
-     *
-     * @param serverID ID of server to delete
      */
-    public void deleteServer(int serverID) {
-        executeUpdate(DataQueries.DELETE_SERVER, serverID);
+    public void deleteServer() {
+        executeUpdate(DataQueries.DELETE_SERVER, plugin.getServer().getIp(), plugin.getServer().getPort());
     }
 
     public void updateServerPlayers(int players, int serverID) {

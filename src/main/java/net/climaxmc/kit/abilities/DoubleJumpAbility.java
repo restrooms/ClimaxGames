@@ -15,14 +15,19 @@ public class DoubleJumpAbility extends Ability {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
+
+        if (!plugin.getManager().getGame().hasStarted()) {
+            if (player.getGameMode().equals(GameMode.SURVIVAL) || player.getGameMode().equals(GameMode.ADVENTURE)) {
+                player.setAllowFlight(false);
+                player.setFlying(false);
+            }
+            return;
+        }
+
         if (player.getGameMode() != GameMode.CREATIVE && player.getGameMode() != GameMode.SPECTATOR) {
             if (player.getLocation().getBlock().getRelative(0, -1, 0).getType() != Material.AIR && !player.isFlying()) {
                 player.setAllowFlight(true);
             }
-        }
-        if (!plugin.getManager().getGame().hasStarted() && !player.getGameMode().equals(GameMode.SPECTATOR)) {
-            player.setFlying(false);
-            player.setAllowFlight(false);
         }
     }
 

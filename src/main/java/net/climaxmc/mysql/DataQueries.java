@@ -15,9 +15,9 @@ public class DataQueries {
     public static final String GET_PURCHASED_KITS = "SELECT * FROM `kitpurchases` WHERE `playerid` = ?;";
 
     public static final String CREATE_SERVER = "INSERT IGNORE INTO `servers` (`globalid`, `gameid`, `serverid`, `ip`, `port`, `players`) VALUES (" +
-            "(SELECT MIN(`t1`.`globalid` + 1) AS nextID FROM `servers` `t1` LEFT JOIN `servers` `t2` ON `t1`.`globalid` + 1 = `t2`.`globalid` WHERE `t2`.`globalid` IS NULL), ?, " +
-            "(SELECT MIN(`t1`.`serverid` + 1) AS nextID FROM `servers` `t1` LEFT JOIN `servers` `t2` ON `t1`.`serverid` + 1 = `t2`.`serverid` WHERE `t2`.`serverid` IS NULL), ?, ?, ?);";
+            "(SELECT `a`.`globalid` + 1 FROM (SELECT 0 AS `globalid` UNION SELECT `globalid` FROM `servers` ORDER BY `globalid`) AS `a` LEFT JOIN `servers` AS `b` ON `b`.`globalid` = `a`.`globalid` + 1 WHERE `b`.`globalid` IS NULL LIMIT 1), ?, " +
+            "(SELECT `a`.`serverid` + 1 FROM (SELECT 0 AS `serverid` UNION SELECT `serverid` FROM `servers` ORDER BY `serverid`) AS `a` LEFT JOIN `servers` AS `b` ON `b`.`serverid` = `a`.`serverid` + 1 WHERE `b`.`serverid` IS NULL LIMIT 1), ?, ?, ?);";
     public static final String GET_SERVER_ID = "SELECT `globalid` FROM `servers` WHERE `ip` = ? AND `port` = ?;";
     public static final String UPDATE_PLAYERS_ONLINE = "UPDATE `servers` SET `players` = ? WHERE `globalid` = ?;";
-    public static final String DELETE_SERVER = "DELETE FROM `servers` WHERE `globalid` = ?;";
+    public static final String DELETE_SERVER = "DELETE FROM `servers` WHERE `ip` = ? AND `port` = ?;";
 }

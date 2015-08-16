@@ -44,7 +44,7 @@ public class ClimaxGames extends JavaPlugin {
     @Override
     public void onDisable() {
         UtilPlayer.getAll().forEach(player -> getPlayerData(player).setServerID(null));
-        mySQL.deleteServer(serverID);
+        mySQL.deleteServer();
         mySQL.closeConnection();
     }
 

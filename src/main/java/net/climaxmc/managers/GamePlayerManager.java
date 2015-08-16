@@ -116,8 +116,10 @@ public class GamePlayerManager extends Manager {
             int i = 0;
             for (UUID playerUUID : team.getPlayers()) {
                 Player player = plugin.getServer().getPlayer(playerUUID);
-                player.teleport(team.getSpawns().get(++i));
-                manager.getGame().getPlayerKits().get(playerUUID).apply(player);
+                if (player != null) {
+                    player.teleport(team.getSpawns().get(++i));
+                    manager.getGame().getPlayerKits().get(playerUUID).apply(player);
+                }
             }
         });
 

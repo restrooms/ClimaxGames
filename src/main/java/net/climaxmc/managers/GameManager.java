@@ -86,13 +86,15 @@ public class GameManager extends Manager {
      */
     protected void setPlayerLobbyScoreboardValue(Player player, int scoreID, String text) {
         Scoreboard scoreboard = player.getScoreboard();
-        if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
-            Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
-            for (String entry : scoreboard.getEntries()) {
-                scoreboard.getScores(entry).stream().filter(score -> score.getScore() == scoreID).forEach(score -> {
-                    scoreboard.resetScores(score.getEntry());
-                    objective.getScore(text).setScore(scoreID);
-                });
+        if (scoreboard != null && scoreboard.getObjective(DisplaySlot.SIDEBAR) != null) {
+            if (scoreboard.getObjective(DisplaySlot.SIDEBAR).getName().equals("GameLobby")) {
+                Objective objective = scoreboard.getObjective(DisplaySlot.SIDEBAR);
+                for (String entry : scoreboard.getEntries()) {
+                    scoreboard.getScores(entry).stream().filter(score -> score.getScore() == scoreID).forEach(score -> {
+                        scoreboard.resetScores(score.getEntry());
+                        objective.getScore(text).setScore(scoreID);
+                    });
+                }
             }
         }
     }
