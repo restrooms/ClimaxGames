@@ -1,7 +1,6 @@
 package net.climaxmc;
 
 import lombok.Getter;
-import net.climaxmc.commands.GameCommand;
 import net.climaxmc.core.ClimaxCore;
 import net.climaxmc.managers.GameManager;
 import net.climaxmc.updater.Updater;
@@ -17,12 +16,9 @@ public class ClimaxGames extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
         manager = new GameManager();
-        new Updater(this);
-
         ClimaxCore.onEnable(this, manager.getGame().getType());
-        ClimaxCore.getCommandManager().addCommands(new GameCommand());
+        new Updater(this);
     }
 
     @Override
