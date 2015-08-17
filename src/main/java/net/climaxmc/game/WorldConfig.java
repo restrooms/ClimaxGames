@@ -1,4 +1,4 @@
-package net.climaxmc.utilities;
+package net.climaxmc.game;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

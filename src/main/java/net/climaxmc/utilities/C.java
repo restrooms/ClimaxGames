@@ -1,6 +1,5 @@
 package net.climaxmc.utilities;
 
-import net.climaxmc.ClimaxGames;
 import org.bukkit.Color;
 
 import java.lang.reflect.Field;
@@ -42,7 +41,7 @@ public class C {
                         try {
                             return (String) field.get(null);
                         } catch (IllegalAccessException e) {
-                            ClimaxGames.getInstance().getLogger().warning("Could not get color!");
+                            return WHITE;
                         }
                     }
                 }

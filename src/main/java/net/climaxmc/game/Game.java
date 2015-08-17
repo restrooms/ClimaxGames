@@ -172,6 +172,7 @@ public abstract class Game implements Listener {
             player.sendMessage(F.bottomLine());
             player.playSound(player.getLocation(), Sound.LEVEL_UP, 1, 2);
         });
+        coinEarnings.clear();
     }
 
     public void addCoins(Player player, String reason, int amount) {

@@ -13,6 +13,12 @@ public class GameCountdown extends BukkitRunnable {
 
     @Override
     public void run() {
+        if (!game.getState().equals(Game.GameState.READY)) {
+            started = false;
+            cancel();
+            return;
+        }
+
         if (UtilPlayer.getAll().size() < game.getMinPlayers()) {
             started = false;
 
@@ -33,9 +39,7 @@ public class GameCountdown extends BukkitRunnable {
 
         started = true;
 
-        UtilPlayer.getAll().forEach(player -> {
-            UtilChat.sendActionBar(player, F.message("Countdown", C.YELLOW + "The game will start in " + C.RED + timer + C.YELLOW + " seconds."));
-        });
+        UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, F.message("Countdown", C.YELLOW + "The game will start in " + C.RED + timer + C.YELLOW + " seconds.")));
 
         timer--;
     }
