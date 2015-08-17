@@ -2,11 +2,16 @@ package net.climaxmc.kit;
 
 import lombok.Data;
 import net.climaxmc.ClimaxGames;
-import net.climaxmc.utilities.*;
+import net.climaxmc.core.ClimaxCore;
+import net.climaxmc.core.mysql.*;
+import net.climaxmc.core.utilities.*;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.*;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashSet;
 
 /**
  * Represents a kit
@@ -58,7 +63,7 @@ public abstract class Kit {
     }
 
     public void apply(Player player) {
-        UtilInv.clear(player);
+        UtilPlayer.clearInventory(player);
         giveItems(player);
         plugin.getManager().getGame().getPlayerKits().put(player.getUniqueId(), this);
     }
@@ -72,7 +77,7 @@ public abstract class Kit {
         villager.setAdult();
         villager.setAgeLock(true);
         villager.setProfession(Villager.Profession.LIBRARIAN);
-        UtilEnt.removeAI(villager);
+        UtilEntity.removeAI(villager);
         ArmorStand armorStand = location.getWorld().spawn(location, ArmorStand.class);
         armorStand.setVisible(false);
         armorStand.setCustomName(C.GOLD + name + " Kit " + (cost == 0 ? "" : C.GREEN + cost + C.RED + C.BOLD + " C" + C.GOLD + C.BOLD + "Coins"));
@@ -95,5 +100,38 @@ public abstract class Kit {
         player.sendMessage(F.bottomLine());
 
         player.playSound(player.getLocation(), Sound.NOTE_PIANO, 2, 3);
+    }
+
+    /**
+     * Checks if the player has the specified kit
+     *
+     * @param player Player to check
+     */
+    public boolean hasKit(Player player, GameType gameType) {
+        PlayerData playerData = ClimaxCore.getPlayerData(player);
+        boolean has = false;
+        if (playerData.getKits().containsKey(gameType)) {
+            for (String kitName : playerData.getKits().get(gameType)) {
+                if (ChatColor.stripColor(kitName).equals(name)) {
+                    has = true;
+                }
+            }
+        }
+        return cost == 0 || has;
+    }
+
+    /**
+     * Purchases a kit
+     *
+     * @param player Player who purchased kit
+     */
+    public void purchaseKit(Player player, GameType gameType) {
+        PlayerData playerData = ClimaxCore.getPlayerData(player);
+        playerData.withdrawCoins(cost);
+        if (!playerData.getKits().containsKey(gameType)) {
+            playerData.getKits().put(gameType, new HashSet<>());
+        }
+        playerData.getKits().get(gameType).add(ChatColor.stripColor(name));
+        ClimaxCore.getMySQL().executeUpdate(DataQueries.PURCHASE_KIT, playerData.getId(), gameType.getId(), ChatColor.stripColor(name));
     }
 }

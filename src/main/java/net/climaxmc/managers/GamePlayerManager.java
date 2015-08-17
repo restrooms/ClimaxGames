@@ -1,13 +1,13 @@
 package net.climaxmc.managers;
 
-import net.climaxmc.command.commands.punishments.PunishType;
-import net.climaxmc.command.commands.punishments.Time;
+import net.climaxmc.core.ClimaxCore;
+import net.climaxmc.core.events.PlayerBalanceChangeEvent;
+import net.climaxmc.core.mysql.PlayerData;
+import net.climaxmc.core.mysql.Rank;
+import net.climaxmc.core.utilities.*;
 import net.climaxmc.events.GameStateChangeEvent;
-import net.climaxmc.events.PlayerBalanceChangeEvent;
 import net.climaxmc.game.Game;
 import net.climaxmc.kit.Kit;
-import net.climaxmc.mysql.*;
-import net.climaxmc.utilities.*;
 import org.apache.commons.lang.math.RandomUtils;
 import org.bukkit.*;
 import org.bukkit.block.BlockFace;
@@ -22,9 +22,8 @@ import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.scoreboard.DisplaySlot;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.*;
+import java.util.Optional;
+import java.util.UUID;
 
 public class GamePlayerManager extends Manager {
     GamePlayerManager() {
@@ -71,16 +70,16 @@ public class GamePlayerManager extends Manager {
             return;
         }
 
-        PlayerData playerData = plugin.getPlayerData(player);
+        PlayerData playerData = ClimaxCore.getPlayerData(player);
 
         for (Kit possibleKit : manager.getGame().getKits()) {
             if (entity.getCustomName().contains("Kit") && entity.getCustomName().contains(possibleKit.getName())) {
-                if (!playerData.hasKit(manager.getGame().getType(), possibleKit)) {
+                if (!possibleKit.hasKit(player, manager.getGame().getType())) {
                     if (playerData.getCoins() < possibleKit.getCost()) {
-                        UtilChat.sendActionBar(player, F.message("Kit", C.RED + "You do not have enough " + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins" + C.RED + " to complete that transaction!"));
+                        UtilPlayer.sendActionBar(player, F.message("Kit", C.RED + "You do not have enough " + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins" + C.RED + " to complete that transaction!"));
                         return;
                     }
-                    playerData.purchaseKit(manager.getGame().getType(), possibleKit);
+                    possibleKit.purchaseKit(player, manager.getGame().getType());
                     player.sendTitle("", F.message("Kit", C.GREEN + "You have purchased kit " + possibleKit.getName() + "!"));
                 }
                 kit = possibleKit;
@@ -94,7 +93,7 @@ public class GamePlayerManager extends Manager {
         kit.apply(player);
         kit.displayDescription(player);
 
-        UtilChat.sendActionBar(player, F.message("Kit", "Selected: " + kit.getName()));
+        UtilPlayer.sendActionBar(player, F.message("Kit", "Selected: " + kit.getName()));
 
         manager.setPlayerLobbyScoreboardValue(player, 4, C.RED + C.BOLD + "Kit " + C.WHITE + "\u00bb " + kit.getName());
     }
@@ -123,12 +122,12 @@ public class GamePlayerManager extends Manager {
             }
         });
 
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "4")), 20);
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "3")), 40);
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "2")), 60);
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, "1")), 80);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilPlayer.sendActionBar(player, "4")), 20);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilPlayer.sendActionBar(player, "3")), 40);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilPlayer.sendActionBar(player, "2")), 60);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> UtilPlayer.getAll().forEach(player -> UtilPlayer.sendActionBar(player, "1")), 80);
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, C.BOLD + "GOOO"));
+            UtilPlayer.getAll().forEach(player -> UtilPlayer.sendActionBar(player, C.BOLD + "GOOO"));
             manager.getGame().setState(Game.GameState.IN_GAME);
         }, 100);
     }
@@ -157,45 +156,7 @@ public class GamePlayerManager extends Manager {
 
     @EventHandler
     public void onAsyncPlayerPreLogin(AsyncPlayerPreLoginEvent event) {
-        PlayerData playerData = plugin.getPlayerData(event.getUniqueId());
-
-        if (playerData == null) {
-            plugin.getMySQL().createPlayerData(event.getUniqueId(), event.getName(), event.getAddress().getHostAddress());
-            playerData = plugin.getPlayerData(event.getUniqueId());
-        }
-
-        if (!playerData.getIp().equals(event.getAddress().getHostAddress())) {
-            playerData.setIP(event.getAddress().getHostAddress());
-        }
-
-        Set<UUID> ipMatchingPlayers = new HashSet<>();
-        try {
-            ResultSet uuids = plugin.getMySQL().executeQuery(DataQueries.GET_PLAYER_UUID_FROM_IP, event.getAddress().getHostAddress());
-            while (uuids != null && uuids.next()) {
-                ipMatchingPlayers.add(UUID.fromString(uuids.getString("uuid")));
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        Set<PlayerData> matchingData = new HashSet<>();
-        ipMatchingPlayers.stream().filter(uuid -> plugin.getPlayerData(uuid).getPunishments().stream().anyMatch(punishment -> punishment.getType().equals(PunishType.BAN))).forEach(uuid -> matchingData.add(plugin.getPlayerData(uuid)));
-        if (playerData.getPunishments().stream().anyMatch(punishment -> punishment.getType().equals(PunishType.BAN))) {
-            matchingData.add(playerData);
-        }
-        matchingData.forEach(data -> data.getPunishments().forEach(punishment -> {
-            PlayerData punisherData = plugin.getPlayerData(punishment.getPunisherID());
-            if (System.currentTimeMillis() <= (punishment.getTime() + punishment.getExpiration())) {
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, F.message("Punishments", C.RED + "You were temporarily banned by " + punisherData.getName()
-                        + " for " + punishment.getReason() + ".\n"
-                        + "You have " + Time.toString(punishment.getTime() + punishment.getExpiration() - System.currentTimeMillis()) + " left in your ban.\n"
-                        + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
-            } else if (punishment.getExpiration() == -1) {
-                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_BANNED, F.message("Punishments", C.RED + "You were permanently banned by " + punisherData.getName()
-                        + " for " + punishment.getReason() + ".\n"
-                        + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
-            }
-        }));
-
+        PlayerData playerData = ClimaxCore.getPlayerData(event.getUniqueId());
         if (UtilPlayer.getAll().size() >= manager.getGame().getMaxPlayers() && playerData.getRank() == Rank.DEFAULT) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, C.RED + "Server is full!");
         }
@@ -216,12 +177,7 @@ public class GamePlayerManager extends Manager {
                     .forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
         }
         manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            manager.initializeLobbyScoreboard(player);
-            plugin.getPlayerData(player).setServerID(plugin.getServerID());
-        }, 2); // Slightly hacky
-        plugin.getPlayerOnTimes().put(player.getUniqueId(), System.currentTimeMillis());
-        plugin.getMySQL().updateServerPlayers(UtilPlayer.getAll().size(), plugin.getServerID());
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> manager.initializeLobbyScoreboard(player), 2); // Slightly hacky
     }
 
     @EventHandler
@@ -229,17 +185,7 @@ public class GamePlayerManager extends Manager {
         Player player = event.getPlayer();
         event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + player.getName());
 
-        if (UtilPlayer.getAll() != null) {
-            UtilPlayer.getAll().stream().filter(players -> players.getScoreboard() != null).forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
-        }
-
-        PlayerData playerData = plugin.getPlayerData(player);
-        if (plugin.getPlayerOnTimes().containsKey(player.getUniqueId())) {
-            playerData.setPlayTime(playerData.getPlayTime() + (System.currentTimeMillis() - plugin.getPlayerOnTimes().get(player.getUniqueId())));
-        }
-        playerData.setServerID(null);
-        plugin.clearCache(playerData);
-        plugin.getMySQL().updateServerPlayers(UtilPlayer.getAll().size() - 1, plugin.getServerID());
+        UtilPlayer.getAll().stream().filter(players -> players.getScoreboard() != null).forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
     }
 
     @EventHandler
@@ -256,33 +202,6 @@ public class GamePlayerManager extends Manager {
         } else {
             event.setRespawnLocation(plugin.getServer().getWorld("world").getSpawnLocation());
         }
-    }
-
-    @EventHandler
-    public void onPlayerChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
-        PlayerData playerData = plugin.getPlayerData(player);
-        if (playerData.hasRank(Rank.NINJA)) {
-            event.setFormat(C.DARK_GRAY + C.BOLD + "{" + playerData.getRank().getPrefix() + C.DARK_GRAY + C.BOLD + "} " + C.GRAY + "%s" + C.RESET + ": %s");
-        } else {
-            event.setFormat(C.GRAY + "%s" + C.RESET + ": %s");
-        }
-
-        playerData.getPunishments().stream().filter(punishment -> punishment.getType().equals(PunishType.MUTE)).forEach(punishment -> {
-            PlayerData punisherData = plugin.getPlayerData(punishment.getPunisherID());
-            if (System.currentTimeMillis() <= (punishment.getTime() + punishment.getExpiration())) {
-                event.setCancelled(true);
-                player.sendMessage(F.message("Punishments", C.RED + "You were temporarily muted by " + punisherData.getName()
-                        + " for " + punishment.getReason() + ".\n"
-                        + "You have " + Time.toString(punishment.getTime() + punishment.getExpiration() - System.currentTimeMillis()) + " left in your mute.\n"
-                        + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
-            } else if (punishment.getExpiration() == -1) {
-                event.setCancelled(true);
-                player.sendMessage(F.message("Punishments", C.RED + "You were permanently muted by " + punisherData.getName()
-                        + " for " + punishment.getReason() + ".\n"
-                        + "Appeal on forum.climaxmc.net if you believe that this is in error!"));
-            }
-        });
     }
 
     @EventHandler

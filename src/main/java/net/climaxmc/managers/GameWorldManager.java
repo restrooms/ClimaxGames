@@ -1,8 +1,9 @@
 package net.climaxmc.managers;
 
+import net.climaxmc.core.utilities.C;
+import net.climaxmc.core.utilities.UtilPlayer;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.*;
-import net.climaxmc.utilities.*;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 import org.apache.commons.io.FileUtils;
@@ -16,7 +17,8 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameWorldManager extends Manager {
     private File mapsFolder;
@@ -133,7 +135,7 @@ public class GameWorldManager extends Manager {
     }
 
     @EventHandler
-    public void onEntityCombut(EntityCombustEvent event) {
+    public void onEntityCombust(EntityCombustEvent event) {
         event.setCancelled(true);
     }
 }

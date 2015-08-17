@@ -1,10 +1,10 @@
 package net.climaxmc.game.games.paintball.kits;
 
+import net.climaxmc.core.utilities.C;
+import net.climaxmc.core.utilities.I;
 import net.climaxmc.kit.Ability;
 import net.climaxmc.kit.Kit;
 import net.climaxmc.kit.abilities.DoubleJumpAbility;
-import net.climaxmc.utilities.C;
-import net.climaxmc.utilities.I;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 

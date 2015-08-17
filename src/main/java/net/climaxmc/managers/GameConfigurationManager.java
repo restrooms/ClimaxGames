@@ -1,6 +1,8 @@
 package net.climaxmc.managers;
 
-import net.climaxmc.game.GameType;
+import net.climaxmc.core.mysql.GameType;
+import net.climaxmc.game.Game;
+import net.climaxmc.game.games.paintball.Paintball;
 
 import java.io.*;
 
@@ -31,12 +33,7 @@ public class GameConfigurationManager extends Manager {
                     boolean enabled = Boolean.valueOf(tokens[1]);
 
                     if (enabled) {
-                        try {
-                            manager.setGame(type.getGame().newInstance());
-                        } catch (InstantiationException | IllegalAccessException e) {
-                            plugin.getLogger().severe("Could not create game instance!");
-                        }
-
+                        manager.setGame(getGameFromType(type));
                         gameEnabled = true;
                     }
                 }
@@ -66,5 +63,12 @@ public class GameConfigurationManager extends Manager {
         } catch (IOException e) {
             plugin.getLogger().severe("Could not create/save game settings configuration!");
         }
+    }
+
+    private Game getGameFromType(GameType type) {
+        if (type == GameType.PAINTBALL) {
+            return new Paintball();
+        }
+        return null;
     }
 }

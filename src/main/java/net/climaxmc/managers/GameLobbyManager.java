@@ -1,7 +1,7 @@
 package net.climaxmc.managers;
 
+import net.climaxmc.core.utilities.UtilPlayer;
 import net.climaxmc.kit.Kit;
-import net.climaxmc.utilities.UtilPlayer;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 

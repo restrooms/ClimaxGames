@@ -4,10 +4,13 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import lombok.*;
 import net.climaxmc.ClimaxGames;
+import net.climaxmc.core.ClimaxCore;
+import net.climaxmc.core.mysql.GameType;
+import net.climaxmc.core.mysql.PlayerData;
+import net.climaxmc.core.utilities.C;
+import net.climaxmc.core.utilities.F;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
-import net.climaxmc.mysql.PlayerData;
-import net.climaxmc.utilities.*;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -160,7 +163,7 @@ public abstract class Game implements Listener {
             if (player == null) {
                 return;
             }
-            PlayerData playerData = plugin.getPlayerData(player);
+            PlayerData playerData = ClimaxCore.getPlayerData(player);
             player.sendMessage(F.topLine());
             player.sendMessage(C.RED + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins:");
             for (String reason : coinEarning.keys()) {

@@ -2,7 +2,7 @@ package net.climaxmc.game.games.paintball;
 
 import lombok.AccessLevel;
 import lombok.Getter;
-import net.climaxmc.utilities.UtilEnt;
+import net.climaxmc.core.utilities.UtilEntity;
 import org.bukkit.entity.*;
 
 @Getter
@@ -18,7 +18,7 @@ public class DeadPlayer {
         this.player = player;
 
         zombie = player.getWorld().spawn(player.getLocation(), Zombie.class);
-        UtilEnt.removeAI(zombie);
+        UtilEntity.removeAI(zombie);
         zombie.setBaby(false);
         zombie.setVillager(false);
         zombie.getEquipment().setArmorContents(player.getInventory().getArmorContents());

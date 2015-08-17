@@ -1,10 +1,10 @@
 package net.climaxmc.updater;
 
 import net.climaxmc.ClimaxGames;
+import net.climaxmc.core.utilities.F;
+import net.climaxmc.core.utilities.UtilPlugin;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.game.Game;
-import net.climaxmc.utilities.F;
-import net.climaxmc.utilities.UtilPlugin;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

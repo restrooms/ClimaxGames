@@ -2,11 +2,12 @@ package net.climaxmc.managers;
 
 import com.google.common.collect.Sets;
 import lombok.*;
+import net.climaxmc.core.ClimaxCore;
+import net.climaxmc.core.mysql.PlayerData;
+import net.climaxmc.core.utilities.C;
+import net.climaxmc.core.utilities.UtilPlayer;
 import net.climaxmc.game.Game;
 import net.climaxmc.game.GameTeam;
-import net.climaxmc.mysql.PlayerData;
-import net.climaxmc.utilities.C;
-import net.climaxmc.utilities.UtilPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,7 +37,6 @@ public class GameManager extends Manager {
                 new GameConfigurationManager(),
                 new GameWorldManager(),
                 new GameLobbyManager(),
-                new GameCommandManager(),
                 new GamePlayerManager()
         );
 
@@ -57,7 +57,7 @@ public class GameManager extends Manager {
      * @param player Player to update scoreboard of
      */
     protected void initializeLobbyScoreboard(Player player) {
-        PlayerData playerData = plugin.getPlayerData(player);
+        PlayerData playerData = ClimaxCore.getPlayerData(player);
         Scoreboard scoreboard = plugin.getServer().getScoreboardManager().getNewScoreboard();
         Objective objective = scoreboard.registerNewObjective("GameLobby", "dummy");
         objective.setDisplaySlot(DisplaySlot.SIDEBAR);

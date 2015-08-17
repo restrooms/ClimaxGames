@@ -1,7 +1,7 @@
 package net.climaxmc.kit;
 
 import net.climaxmc.ClimaxGames;
-import net.climaxmc.utilities.Cooldown;
+import net.climaxmc.core.utilities.Cooldown;
 import org.bukkit.event.Listener;
 
 import java.util.concurrent.TimeUnit;

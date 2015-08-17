@@ -2,7 +2,7 @@ package net.climaxmc.game;
 
 import lombok.Getter;
 import net.climaxmc.ClimaxGames;
-import net.climaxmc.utilities.*;
+import net.climaxmc.core.utilities.*;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameCountdown extends BukkitRunnable {
@@ -22,7 +22,7 @@ public class GameCountdown extends BukkitRunnable {
         if (UtilPlayer.getAll().size() < game.getMinPlayers()) {
             started = false;
 
-            UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, F.message("Countdown", "Not enough players to start the game.")));
+            UtilPlayer.getAll().forEach(player -> UtilPlayer.sendActionBar(player, F.message("Countdown", "Not enough players to start the game.")));
 
             cancel();
             return;
@@ -39,7 +39,7 @@ public class GameCountdown extends BukkitRunnable {
 
         started = true;
 
-        UtilPlayer.getAll().forEach(player -> UtilChat.sendActionBar(player, F.message("Countdown", C.YELLOW + "The game will start in " + C.RED + timer + C.YELLOW + " seconds.")));
+        UtilPlayer.getAll().forEach(player -> UtilPlayer.sendActionBar(player, F.message("Countdown", C.YELLOW + "The game will start in " + C.RED + timer + C.YELLOW + " seconds.")));
 
         timer--;
     }

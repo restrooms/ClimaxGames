@@ -1,9 +1,12 @@
-package net.climaxmc.command.commands;
+package net.climaxmc.commands;
 
-import net.climaxmc.mysql.Rank;
-import net.climaxmc.command.Command;
+import net.climaxmc.ClimaxGames;
+import net.climaxmc.core.command.Command;
+import net.climaxmc.core.mysql.Rank;
+import net.climaxmc.core.utilities.C;
+import net.climaxmc.core.utilities.F;
 import net.climaxmc.game.Game;
-import net.climaxmc.utilities.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 public class GameCommand extends Command {
@@ -17,14 +20,14 @@ public class GameCommand extends Command {
             return usage;
         }
 
-        Game game = plugin.getManager().getGame();
+        Game game = ClimaxGames.getInstance().getManager().getGame();
         if (args[0].equalsIgnoreCase("start")) {
             if (!game.getState().equals(Game.GameState.READY)) {
                 return C.BOLD + "The game has already started.";
             }
 
             game.setState(Game.GameState.PREPARE);
-            plugin.getServer().broadcastMessage(C.GOLD + C.BOLD + player.getName() + " started the game.");
+            Bukkit.broadcastMessage(C.GOLD + C.BOLD + player.getName() + " started the game.");
             return null;
         } else if (args[0].equalsIgnoreCase("stop")) {
             if (!game.getState().equals(Game.GameState.IN_GAME)) {
@@ -32,7 +35,7 @@ public class GameCommand extends Command {
             }
 
             game.setState(Game.GameState.END);
-            plugin.getServer().broadcastMessage(C.GOLD + C.BOLD + player.getName() + " stopped the game.");
+            Bukkit.broadcastMessage(C.GOLD + C.BOLD + player.getName() + " stopped the game.");
             return null;
         }
 
