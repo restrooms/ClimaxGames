@@ -4,6 +4,7 @@ import net.climaxmc.core.mysql.GameType;
 import net.climaxmc.core.utilities.C;
 import net.climaxmc.core.utilities.UtilPlayer;
 import net.climaxmc.game.Game;
+import net.climaxmc.game.GameTeam;
 import net.climaxmc.game.games.paintball.kits.DoubleJumpKit;
 import net.climaxmc.kit.Kit;
 import org.bukkit.*;
@@ -26,7 +27,7 @@ public class Paintball extends Game.TeamGame {
     }
 
     @EventHandler
-    public void onPlayerInteract(PlayerInteractEvent event) {
+    public void onPlayerLaunchSnowball(PlayerInteractEvent event) {
         Player player = event.getPlayer();
 
         if (!plugin.getManager().getGame().hasStarted() || !UtilPlayer.getAll(false).contains(player)) {
@@ -47,6 +48,22 @@ public class Paintball extends Game.TeamGame {
             snowballs.setAmount(snowballs.getAmount() - 1);
             player.getInventory().setItem(2, snowballs);
             reloading.remove(player.getUniqueId());
+            GameTeam team = getPlayerTeam(player);
+            new BukkitRunnable() {
+                @Override
+                @SuppressWarnings("deprecation")
+                public void run() {
+                    if (!snowball.isValid()) {
+                        cancel();
+                        return;
+                    }
+                    if (team.getName().equals("Blue")) {
+                        snowball.getWorld().spigot().playEffect(snowball.getLocation(), Effect.WATERDRIP);
+                    } else if (team.getName().equals("Red")) {
+                        snowball.getWorld().spigot().playEffect(snowball.getLocation(), Effect.LAVA_POP);
+                    }
+                }
+            }.runTaskTimer(plugin, 2, 1);
         } else if (!reloading.contains(player.getUniqueId())) {
             UtilPlayer.sendActionBar(player, C.RED + "Reloading...");
             reloading.add(player.getUniqueId());
@@ -74,7 +91,6 @@ public class Paintball extends Game.TeamGame {
         }
     }
 
-
     @EventHandler
     public void onPlayerDamageBySnowball(EntityDamageByEntityEvent event) {
         if (!event.getDamager().getType().equals(EntityType.SNOWBALL) || !event.getEntityType().equals(EntityType.PLAYER)) {
@@ -89,6 +105,7 @@ public class Paintball extends Game.TeamGame {
             return;
         }
 
+        shooter.playSound(shooter.getLocation(), Sound.NOTE_PLING, 1, 3);
         event.setDamage(7);
     }
 
