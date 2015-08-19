@@ -17,7 +17,6 @@ public class ClimaxGames extends JavaPlugin {
     public void onEnable() {
         instance = this;
         manager = new GameManager();
-        ClimaxCore.onEnable(this, manager.getGame().getType());
         new Updater(this);
     }
 

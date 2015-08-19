@@ -41,6 +41,8 @@ public class GameManager extends Manager {
                 new GamePlayerManager()
         );
 
+        ClimaxCore.onEnable(plugin, manager.getGame().getType());
+
         ClimaxCore.getCommandManager().addCommands(new GameCommand());
 
         managers.forEach(manager -> plugin.getServer().getPluginManager().registerEvents(manager, plugin));
