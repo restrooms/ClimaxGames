@@ -1,13 +1,13 @@
 package net.climaxmc.game.games.paintball;
 
 import net.climaxmc.core.mysql.GameType;
-import net.climaxmc.core.utilities.C;
-import net.climaxmc.core.utilities.UtilPlayer;
+import net.climaxmc.core.utilities.*;
 import net.climaxmc.game.Game;
 import net.climaxmc.game.GameTeam;
 import net.climaxmc.game.games.paintball.kits.DoubleJumpKit;
 import net.climaxmc.kit.Kit;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.*;
@@ -149,8 +149,28 @@ public class Paintball extends Game.TeamGame {
     }
 
     @EventHandler
-    public void onPlayerRevived(ProjectileHitEvent event) {
-
+    @SuppressWarnings("deprecation")
+    public void onSnowballLand(ProjectileHitEvent event) {
+        if (event.getEntity() instanceof ThrownPotion) {
+            return;
+        }
+        Player player = (Player) event.getEntity().getShooter();
+        byte color = 3;
+        if (getPlayerTeam(player).getName().equals("Red")) {
+            color = 14;
+        }
+        Location location = event.getEntity().getLocation().add(event.getEntity().getVelocity());
+        for (Block block : UtilBlock.getInRadius(location, 1.5).keySet()) {
+            if (!block.getType().equals(Material.STAINED_CLAY)) {
+                block.getWorld().getBlockAt(block.getLocation()).setType(Material.STAINED_CLAY);
+            }
+            block.setData(color);
+        }
+        if (color == 3) {
+            location.getWorld().playEffect(location, Effect.STEP_SOUND, 8);
+        } else {
+            location.getWorld().playEffect(location, Effect.STEP_SOUND, 10);
+        }
     }
 
     @EventHandler
