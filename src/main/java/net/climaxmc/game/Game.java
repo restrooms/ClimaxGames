@@ -139,7 +139,7 @@ public abstract class Game implements Listener {
             return;
         }
 
-        endCheckTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::checkEnd, 0, 5);
+        //endCheckTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::checkEnd, 0, 5);
     }
 
     @EventHandler

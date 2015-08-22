@@ -6,7 +6,7 @@ import net.climaxmc.core.utilities.UtilEntity;
 import org.bukkit.entity.*;
 
 @Getter
-public class DeadPlayer {
+class DeadPlayer {
     @Getter(value = AccessLevel.NONE)
     private Paintball paintball;
     private Zombie zombie;

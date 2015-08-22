@@ -14,13 +14,15 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.BlockIterator;
 
 import java.util.*;
 
 public class Paintball extends Game.TeamGame {
     private Set<UUID> revive = new HashSet<>();
-    private HashMap<UUID, DeadPlayer> deadPlayers = new HashMap<>();
+    private Map<UUID, DeadPlayer> deadPlayers = new HashMap<>();
     private Set<UUID> reloading = new HashSet<>();
+    private Set<Location> rollbackBlocks = new HashSet<>();
 
     public Paintball() {
         super("Paintball", GameType.PAINTBALL, new Kit[]{new DoubleJumpKit()});
@@ -154,23 +156,47 @@ public class Paintball extends Game.TeamGame {
         if (event.getEntity() instanceof ThrownPotion) {
             return;
         }
+
         Player player = (Player) event.getEntity().getShooter();
+
         byte color = 3;
         if (getPlayerTeam(player).getName().equals("Red")) {
             color = 14;
         }
-        Location location = event.getEntity().getLocation().add(event.getEntity().getVelocity());
-        for (Block block : UtilBlock.getInRadius(location, 1.5).keySet()) {
-            if (!block.getType().equals(Material.STAINED_CLAY)) {
-                block.getWorld().getBlockAt(block.getLocation()).setType(Material.STAINED_CLAY);
+
+        Projectile snowball = event.getEntity();
+        BlockIterator iterator = new BlockIterator(snowball.getWorld(), snowball.getLocation().toVector(), snowball.getVelocity().normalize(), 0.0D, 4);
+        Block hit = null;
+
+        while (iterator.hasNext()) {
+            hit = iterator.next();
+            if (hit.getTypeId() != 0) {
+                break;
             }
-            block.setData(color);
         }
-        if (color == 3) {
-            location.getWorld().playEffect(location, Effect.STEP_SOUND, 8);
-        } else {
-            location.getWorld().playEffect(location, Effect.STEP_SOUND, 10);
+
+        if (hit == null) {
+            return;
         }
+
+        Map<Location, OldBlock> blockMap = new HashMap<>();
+        for (Block block : UtilBlock.getInRadius(hit, 2).keySet()) {
+            if (!block.getType().equals(Material.AIR) && !rollbackBlocks.contains(block.getLocation())) {
+                blockMap.put(block.getLocation(), new OldBlock(block.getType(), block.getData()));
+                rollbackBlocks.add(block.getLocation());
+                block.setType(Material.STAINED_CLAY);
+                block.setData(color);
+            }
+        }
+
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            blockMap.forEach((location, oldBlock) -> {
+                rollbackBlocks.remove(location);
+                Block block = location.getWorld().getBlockAt(location);
+                block.setType(oldBlock.getType());
+                block.setData(oldBlock.getData());
+            });
+        }, 30);
     }
 
     @EventHandler
