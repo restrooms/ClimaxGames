@@ -27,6 +27,7 @@ public class Paintball extends Game.TeamGame {
 
     public Paintball() {
         super("Paintball", GameType.PAINTBALL, new Kit[]{new DoubleJumpKit()});
+        naturalRegeneration = false;
     }
 
     @EventHandler

@@ -13,7 +13,7 @@ class DeadPlayer {
     private ArmorStand armorStand;
     private Player player;
 
-    public DeadPlayer(Paintball paintball, Player player) {
+    DeadPlayer(Paintball paintball, Player player) {
         this.paintball = paintball;
         this.player = player;
 
