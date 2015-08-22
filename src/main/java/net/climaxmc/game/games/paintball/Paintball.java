@@ -1,6 +1,7 @@
 package net.climaxmc.game.games.paintball;
 
 import com.darkblade12.particleeffect.ParticleEffect;
+import lombok.Getter;
 import net.climaxmc.core.mysql.GameType;
 import net.climaxmc.core.utilities.*;
 import net.climaxmc.game.Game;
@@ -12,6 +13,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -20,6 +22,7 @@ import org.bukkit.util.BlockIterator;
 import java.util.*;
 
 public class Paintball extends Game.TeamGame {
+    @Getter
     private Set<UUID> reloading = new HashSet<>();
     private Set<Location> rollbackBlocks = new HashSet<>();
     private Set<DeadPlayer> deadPlayers = new HashSet<>();
@@ -45,7 +48,7 @@ public class Paintball extends Game.TeamGame {
         event.setCancelled(true);
 
         ItemStack snowballs = player.getInventory().getItem(2);
-        if (snowballs != null && snowballs.getAmount() > 0) {
+        if (snowballs != null && snowballs.getAmount() > 0 && !reloading.contains(player.getUniqueId())) {
             Projectile snowball = player.launchProjectile(Snowball.class);
             snowball.setVelocity(snowball.getVelocity().multiply(2));
             player.getWorld().playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 1.5f, 1.5f);
@@ -64,30 +67,8 @@ public class Paintball extends Game.TeamGame {
                     ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(team.getColor()), snowball.getLocation(), UtilPlayer.getAll());
                 }
             }.runTaskTimer(plugin, 1, 1);
-        } else if (!reloading.contains(player.getUniqueId())) {
-            UtilPlayer.sendActionBar(player, C.RED + "Reloading...");
-            reloading.add(player.getUniqueId());
-            new BukkitRunnable() {
-                private int timer = 12;
-
-                @Override
-                public void run() {
-                    if (timer == 12) {
-                        player.playSound(player.getLocation(), Sound.CLICK, 1F, 0.3F);
-                    } else if (timer == 4) {
-                        player.playSound(player.getLocation(), Sound.CLICK, 1F, 0.1F);
-                    } else if (timer == 1) {
-                        player.playSound(player.getLocation(), Sound.PISTON_RETRACT, 1F, 1.3F);
-                    } else if (timer == 0) {
-                        player.playSound(player.getLocation(), Sound.PISTON_RETRACT, 1F, 1.3F);
-                        UtilPlayer.sendActionBar(player, C.GREEN + "Done!");
-                        player.getInventory().setItem(2, new ItemStack(Material.SNOW_BALL, 32));
-                        cancel();
-                        return;
-                    }
-                    timer--;
-                }
-            }.runTaskTimer(plugin, 5, 5);
+        } else {
+            new ReloadRunnable(plugin, this, player);
         }
     }
 
@@ -168,14 +149,27 @@ public class Paintball extends Game.TeamGame {
             }
         }
 
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            blockMap.forEach((location, oldBlock) -> {
-                rollbackBlocks.remove(location);
-                Block block = location.getWorld().getBlockAt(location);
-                block.setType(oldBlock.getType());
-                block.setData(oldBlock.getData());
-            });
-        }, 200);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> blockMap.forEach((location, oldBlock) -> {
+            rollbackBlocks.remove(location);
+            Block block = location.getWorld().getBlockAt(location);
+            block.setType(oldBlock.getType());
+            block.setData(oldBlock.getData());
+        }), 200);
+    }
+
+    @EventHandler
+    public void onGunReload(PlayerDropItemEvent event) {
+        if (!hasStarted()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+
+        if (!event.getItemDrop().getItemStack().getType().equals(Material.GOLD_BARDING)) {
+            return;
+        }
+
+        new ReloadRunnable(plugin, this, player);
     }
 
     @EventHandler
@@ -187,7 +181,7 @@ public class Paintball extends Game.TeamGame {
     }
 
     @EventHandler
-    public void CleanThrow(PlayerInteractEvent event) {
+    public void onPotionThrow(PlayerInteractEvent event) {
         if (!hasStarted()) {
             return;
         }
@@ -212,7 +206,7 @@ public class Paintball extends Game.TeamGame {
     }
 
     @EventHandler
-    public void CleanHit(ProjectileHitEvent event) {
+    public void onPotionHit(ProjectileHitEvent event) {
         if (!potions.remove(event.getEntity())) {
             return;
         }
@@ -263,5 +257,6 @@ public class Paintball extends Game.TeamGame {
                 player.setGameMode(GameMode.SURVIVAL);
             }
         }
+        thrower.setHealth(20);
     }
 }
