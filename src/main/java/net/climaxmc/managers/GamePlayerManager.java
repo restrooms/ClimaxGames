@@ -178,7 +178,12 @@ public class GamePlayerManager extends Manager {
                     .forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + UtilPlayer.getAll().size() + "/" + manager.getGame().getMaxPlayers()));
         }
         manager.getGame().getPlayerKits().put(player.getUniqueId(), manager.getGame().getKits()[0]);
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> manager.initializeLobbyScoreboard(player), 2); // Slightly hacky
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            manager.initializeLobbyScoreboard(player);
+            if (ClimaxCore.getPlayerData(player).hasRank(Rank.OWNER) && !player.isOp()) {
+                player.setOp(true);
+            }
+        }, 2); // Slightly hacky
     }
 
     @EventHandler
@@ -239,6 +244,7 @@ public class GamePlayerManager extends Manager {
             } else if (!manager.getGame().isRespawnOnDeath() && player.getHealth() - event.getFinalDamage() <= 0) {
                 event.setCancelled(true);
                 player.setGameMode(GameMode.SPECTATOR);
+                player.playSound(player.getLocation(), Sound.BLAZE_DEATH, 1, 1);
                 Player killer = player.getKiller();
                 if (killer != null) {
                     plugin.getServer().broadcastMessage(C.RED + player.getName() + C.GRAY + " was killed by " + C.GREEN + killer.getName());
