@@ -356,7 +356,7 @@ public class GamePlayerManager extends Manager {
 
     @EventHandler
     public void onEntityRegainHealth(EntityRegainHealthEvent event) {
-        if (event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.REGEN)) {
+        if (event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.REGEN) && !manager.getGame().isNaturalRegeneration()) {
             event.setCancelled(true);
         }
     }

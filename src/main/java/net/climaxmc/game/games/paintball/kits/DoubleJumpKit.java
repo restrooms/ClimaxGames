@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 public class DoubleJumpKit extends Kit {
     public DoubleJumpKit() {
-        super(C.GOLD + "Double Jump", new String[] {"Maneuver with ease and", "Take out enemies with your pistol!"}, new Ability[]{new DoubleJumpAbility()}, new I(Material.GOLD_BARDING));
+        super(C.GOLD + "Double Jump", new String[] {"Maneuver with ease and", "Take out enemies with your pistol!", "Double press space to double jump."}, new Ability[]{new DoubleJumpAbility()}, new I(Material.GOLD_BARDING));
     }
 
     @Override

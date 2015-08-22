@@ -20,10 +20,10 @@ import org.bukkit.util.BlockIterator;
 import java.util.*;
 
 public class Paintball extends Game.TeamGame {
-    private Set<UUID> revive = new HashSet<>();
-    private Map<UUID, DeadPlayer> deadPlayers = new HashMap<>();
     private Set<UUID> reloading = new HashSet<>();
     private Set<Location> rollbackBlocks = new HashSet<>();
+    private Set<DeadPlayer> deadPlayers = new HashSet<>();
+    private Set<Projectile> potions = new HashSet<>();
 
     public Paintball() {
         super("Paintball", GameType.PAINTBALL, new Kit[]{new DoubleJumpKit()});
@@ -120,31 +120,12 @@ public class Paintball extends Game.TeamGame {
             return;
         }
 
-        if (player.getHealth() - event.getFinalDamage() <= 0) {
-            deadPlayers.put(player.getUniqueId(), new DeadPlayer(this, player));
-        }
-    }
-
-    @EventHandler
-    public void onPlayerRevive(PlayerInteractEvent event) {
-        Player player = event.getPlayer();
-
-        if (!hasStarted()) {
+        if (player.getHealth() - event.getFinalDamage() > 0) {
             return;
         }
 
-        if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-            return;
-        }
-
-        if (!player.getItemInHand().getType().equals(Material.POTION)) {
-            return;
-        }
-
-        revive.add(player.getUniqueId());
-        player.launchProjectile(ThrownPotion.class);
-
-        player.getInventory().remove(Material.POTION);
+        player.setGameMode(GameMode.SPECTATOR);
+        deadPlayers.add(new DeadPlayer(this, player));
     }
 
     @EventHandler
@@ -201,6 +182,85 @@ public class Paintball extends Game.TeamGame {
         Entity entity = event.getEntity();
         if (entity.getType().equals(EntityType.ZOMBIE)) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void CleanThrow(PlayerInteractEvent event) {
+        if (!hasStarted()) {
+            return;
+        }
+
+        Player player = event.getPlayer();
+
+        if (!player.getItemInHand().getType().equals(Material.POTION)) {
+            return;
+        }
+
+        if (!player.getGameMode().equals(GameMode.SURVIVAL)) {
+            return;
+        }
+
+        if (player.getItemInHand().getAmount() == 1) {
+            player.getInventory().remove(player.getItemInHand());
+        } else {
+            player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
+        }
+        ThrownPotion potion = player.launchProjectile(ThrownPotion.class);
+        potions.add(potion);
+    }
+
+    @EventHandler
+    public void CleanHit(ProjectileHitEvent event) {
+        if (!potions.remove(event.getEntity())) {
+            return;
+        }
+
+        if (event.getEntity().getShooter() == null) {
+            return;
+        }
+
+        if (!(event.getEntity().getShooter() instanceof Player)) {
+            return;
+        }
+
+        Player thrower = (Player) event.getEntity().getShooter();
+        GameTeam throwerTeam = getPlayerTeam(thrower);
+
+        if (throwerTeam == null) {
+            return;
+        }
+
+        Iterator<DeadPlayer> copyIterator = this.deadPlayers.iterator();
+        while (copyIterator.hasNext()) {
+            DeadPlayer copy = copyIterator.next();
+            GameTeam otherTeam = getPlayerTeam(copy.getPlayer());
+            if (otherTeam != null) {
+                if (!otherTeam.equals(throwerTeam)) {
+                    continue;
+                }
+                if (copy.getZombie().getLocation().add(0.0, 1.0, 0.0).subtract(event.getEntity().getLocation()).length() > 3.0) {
+                    continue;
+                }
+                copy.getPlayer().setGameMode(GameMode.SURVIVAL);
+                copy.getPlayer().teleport(copy.getZombie());
+                copy.getZombie().remove();
+                copy.getArmorStand().remove();
+                copyIterator.remove();
+                addCoins(thrower, "Revived " + copy.getPlayer().getName(), 4);
+            }
+        }
+        for (Player player : UtilPlayer.getAll()) {
+            GameTeam otherTeam2 = getPlayerTeam(player);
+            if (otherTeam2 != null) {
+                if (!otherTeam2.equals(throwerTeam)) {
+                    continue;
+                }
+                if (player.getLocation().add(0.0, 1.0, 0.0).subtract(event.getEntity().getLocation()).length() > 3.0) {
+                    continue;
+                }
+                player.setGameMode(GameMode.SURVIVAL);
+            }
         }
     }
 }
