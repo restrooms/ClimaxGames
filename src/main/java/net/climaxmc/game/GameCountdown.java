@@ -9,7 +9,7 @@ public class GameCountdown extends BukkitRunnable {
     @Getter
     private static boolean started = false;
     private Game game = ClimaxGames.getInstance().getManager().getGame();
-    private int timer = 20;
+    private int timer = 60;
 
     @Override
     public void run() {

@@ -50,7 +50,7 @@ public class Paintball extends Game.TeamGame {
         ItemStack snowballs = player.getInventory().getItem(2);
         if (snowballs != null && snowballs.getAmount() > 0 && !reloading.contains(player.getUniqueId())) {
             Projectile snowball = player.launchProjectile(Snowball.class);
-            snowball.setVelocity(snowball.getVelocity().multiply(2));
+            snowball.setVelocity(snowball.getVelocity().multiply(4));
             player.getWorld().playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 1.5f, 1.5f);
             snowballs.setAmount(snowballs.getAmount() - 1);
             player.getInventory().setItem(2, snowballs);

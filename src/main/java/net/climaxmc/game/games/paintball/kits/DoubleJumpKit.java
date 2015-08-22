@@ -7,6 +7,8 @@ import net.climaxmc.kit.Kit;
 import net.climaxmc.kit.abilities.DoubleJumpAbility;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 public class DoubleJumpKit extends Kit {
     public DoubleJumpKit() {
@@ -16,11 +18,13 @@ public class DoubleJumpKit extends Kit {
     @Override
     public void giveItems(Player player) {
         player.getInventory().addItem(new I(Material.GOLD_BARDING).name(C.GOLD + "Pistol"));
-        player.getInventory().addItem(new I(Material.POTION).name(C.BLUE + "Revive Potion").amount(5));
-        player.getInventory().addItem(new I(Material.SNOW_BALL).name(C.YELLOW + "Ammo").amount(32));
+        player.getInventory().addItem(new I(Material.POTION).name(C.BLUE + "Revive Potion").amount(2));
+        player.getInventory().addItem(new I(Material.SNOW_BALL).name(C.YELLOW + "Ammo").amount(64));
         player.getInventory().setHelmet(new I(Material.LEATHER_HELMET).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
         player.getInventory().setChestplate(new I(Material.LEATHER_CHESTPLATE).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
         player.getInventory().setLeggings(new I(Material.LEATHER_LEGGINGS).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
         player.getInventory().setBoots(new I(Material.LEATHER_BOOTS).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
+
+        player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0));
     }
 }

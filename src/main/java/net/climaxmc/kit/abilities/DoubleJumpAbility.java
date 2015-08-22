@@ -44,7 +44,7 @@ public class DoubleJumpAbility extends Ability {
             event.setCancelled(true);
             player.setAllowFlight(false);
             player.setFlying(false);
-            player.setVelocity(player.getLocation().getDirection().multiply(1.3).setY(1));
+            player.setVelocity(player.getLocation().getDirection().multiply(1.1).setY(0.5));
         }
     }
 }

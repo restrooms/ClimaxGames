@@ -73,7 +73,7 @@ public abstract class Game implements Listener {
         }
     }
 
-    protected abstract void checkEnd();
+    public abstract void checkEnd();
 
     /**
      * Gets the team of a player
@@ -188,6 +188,15 @@ public abstract class Game implements Listener {
         coinEarnings.get(player.getUniqueId()).put(reason, amount);
     }
 
+    @EventHandler
+    public void onGameReady(GameStateChangeEvent event) {
+        if (!event.getState().equals(GameState.READY)) {
+            return;
+        }
+
+        startCountdown();
+    }
+
     /**
      * Possible states of games
      */
@@ -210,7 +219,11 @@ public abstract class Game implements Listener {
         }
 
         @Override
-        protected void checkEnd() {
+        public void checkEnd() {
+            if (!hasStarted()) {
+                return;
+            }
+
             List<String> teamsAlive = new ArrayList<>();
             getWorldConfig().getTeams().stream().filter(team -> team.getPlayers(false).size() > 0).forEach(team -> teamsAlive.add(team.getColorCode() + C.BOLD + team.getName()));
             if (teamsAlive.size() <= 1) {
