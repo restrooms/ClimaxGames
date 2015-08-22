@@ -17,6 +17,9 @@ public class GameTeam {
     private String colorCode;
 
     public List<UUID> getPlayers(boolean includeSpectators) {
+        if (players == null || players.isEmpty()) {
+            return new ArrayList<>();
+        }
         return players.stream().filter(playerUUID -> includeSpectators || !Bukkit.getPlayer(playerUUID).getGameMode().equals(GameMode.SPECTATOR)).collect(Collectors.toList());
     }
 }

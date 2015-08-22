@@ -170,6 +170,7 @@ public class GamePlayerManager extends Manager {
         if (manager.getGame().hasStarted()) {
             player.teleport(plugin.getServer().getWorld(manager.getGame().getName()).getSpawnLocation());
             player.setGameMode(GameMode.SPECTATOR);
+            player.sendMessage(F.message("Spectate", "You have spawned in spectator mode."));
         } else {
             player.teleport(plugin.getServer().getWorld("world").getSpawnLocation());
             manager.getGame().startCountdown();
@@ -350,6 +351,13 @@ public class GamePlayerManager extends Manager {
         OfflinePlayer player = event.getPlayer();
         if (player.isOnline()) {
             manager.setPlayerLobbyScoreboardValue(player.getPlayer(), 6, C.RED + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins" + C.WHITE + " \u00bb " + C.YELLOW + event.getAmount());
+        }
+    }
+
+    @EventHandler
+    public void onEntityRegainHealth(EntityRegainHealthEvent event) {
+        if (event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.REGEN)) {
+            event.setCancelled(true);
         }
     }
 }

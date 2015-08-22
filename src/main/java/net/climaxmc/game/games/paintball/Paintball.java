@@ -1,5 +1,6 @@
 package net.climaxmc.game.games.paintball;
 
+import com.darkblade12.particleeffect.ParticleEffect;
 import net.climaxmc.core.mysql.GameType;
 import net.climaxmc.core.utilities.*;
 import net.climaxmc.game.Game;
@@ -59,13 +60,9 @@ public class Paintball extends Game.TeamGame {
                         cancel();
                         return;
                     }
-                    if (team.getName().equals("Blue")) {
-                        snowball.getWorld().spigot().playEffect(snowball.getLocation(), Effect.WATERDRIP);
-                    } else if (team.getName().equals("Red")) {
-                        snowball.getWorld().spigot().playEffect(snowball.getLocation(), Effect.LAVA_POP);
-                    }
+                    ParticleEffect.REDSTONE.display(new ParticleEffect.OrdinaryColor(team.getColor()), snowball.getLocation(), UtilPlayer.getAll());
                 }
-            }.runTaskTimer(plugin, 2, 1);
+            }.runTaskTimer(plugin, 1, 1);
         } else if (!reloading.contains(player.getUniqueId())) {
             UtilPlayer.sendActionBar(player, C.RED + "Reloading...");
             reloading.add(player.getUniqueId());
@@ -107,7 +104,7 @@ public class Paintball extends Game.TeamGame {
             return;
         }
 
-        shooter.playSound(shooter.getLocation(), Sound.NOTE_PLING, 1, 3);
+        shooter.playSound(shooter.getLocation(), Sound.NOTE_PLING, 1, 4);
         event.setDamage(7);
     }
 
@@ -181,7 +178,7 @@ public class Paintball extends Game.TeamGame {
 
         Map<Location, OldBlock> blockMap = new HashMap<>();
         for (Block block : UtilBlock.getInRadius(hit, 2).keySet()) {
-            if (!block.getType().equals(Material.AIR) && !rollbackBlocks.contains(block.getLocation())) {
+            if (!block.getType().equals(Material.AIR) && !block.getType().equals(Material.BARRIER) && !rollbackBlocks.contains(block.getLocation())) {
                 blockMap.put(block.getLocation(), new OldBlock(block.getType(), block.getData()));
                 rollbackBlocks.add(block.getLocation());
                 block.setType(Material.STAINED_CLAY);
@@ -196,7 +193,7 @@ public class Paintball extends Game.TeamGame {
                 block.setType(oldBlock.getType());
                 block.setData(oldBlock.getData());
             });
-        }, 30);
+        }, 200);
     }
 
     @EventHandler

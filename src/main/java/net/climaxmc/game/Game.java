@@ -34,6 +34,7 @@ public abstract class Game implements Listener {
     protected boolean respawnOnDeath = false;
     protected boolean fallDamage = false;
     protected boolean cancelInteract = true;
+    protected boolean naturalRegeneration = true;
     protected List<String> places = new ArrayList<>();
 
     private String name;
@@ -152,6 +153,7 @@ public abstract class Game implements Listener {
         plugin.getServer().getScheduler().runTaskLater(plugin, this::giveCoins, 40);
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> setState(GameState.READY), 120);
         plugin.getServer().getScheduler().cancelTask(endCheckTask.getTaskId());
+        worldConfig.getTeams().clear();
     }
 
     private void giveCoins() {
@@ -209,7 +211,7 @@ public abstract class Game implements Listener {
 
         @Override
         protected void checkEnd() {
-            ArrayList<String> teamsAlive = new ArrayList<>();
+            List<String> teamsAlive = new ArrayList<>();
             getWorldConfig().getTeams().stream().filter(team -> team.getPlayers(false).size() > 0).forEach(team -> teamsAlive.add(team.getColorCode() + C.BOLD + team.getName()));
             if (teamsAlive.size() <= 1) {
                 if (teamsAlive.size() > 0) {
