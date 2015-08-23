@@ -3,16 +3,17 @@ package net.climaxmc.game;
 import lombok.Getter;
 import net.climaxmc.ClimaxGames;
 import net.climaxmc.core.utilities.*;
+import org.bukkit.Sound;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class GameCountdown extends BukkitRunnable {
     @Getter
     private static boolean started = false;
-    private Game game = ClimaxGames.getInstance().getManager().getGame();
-    private int timer = 60;
+    private int timer = 45;
 
     @Override
     public void run() {
+        Game game = ClimaxGames.getInstance().getManager().getGame();
         if (!game.getState().equals(Game.GameState.READY)) {
             started = false;
             cancel();
@@ -28,6 +29,10 @@ public class GameCountdown extends BukkitRunnable {
             return;
         }
 
+        if (UtilPlayer.getAll().size() >= game.getMaxPlayers()) {
+            timer = 10;
+        }
+
         if (timer <= 0) {
             started = false;
 
@@ -35,6 +40,12 @@ public class GameCountdown extends BukkitRunnable {
 
             cancel();
             return;
+        }
+
+        if (timer == 1) {
+            UtilPlayer.getAll().forEach(player -> player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 3));
+        } else if (timer <= 10) {
+            UtilPlayer.getAll().forEach(player -> player.playSound(player.getLocation(), Sound.NOTE_PLING, 1, 1));
         }
 
         started = true;

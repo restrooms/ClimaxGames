@@ -151,7 +151,7 @@ public abstract class Game implements Listener {
 
         announceEnd(places);
         plugin.getServer().getScheduler().runTaskLater(plugin, this::giveCoins, 40);
-        plugin.getServer().getScheduler().runTaskLater(plugin, () -> setState(GameState.READY), 120);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> setState(GameState.READY), 160);
         plugin.getServer().getScheduler().cancelTask(endCheckTask.getTaskId());
         worldConfig.getTeams().clear();
     }

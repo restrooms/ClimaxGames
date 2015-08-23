@@ -19,7 +19,7 @@ public class DoubleJumpKit extends Kit {
     public void giveItems(Player player) {
         player.getInventory().addItem(new I(Material.GOLD_BARDING).name(C.GOLD + "Pistol"));
         player.getInventory().addItem(new I(Material.POTION).name(C.BLUE + "Revive Potion").amount(2));
-        player.getInventory().addItem(new I(Material.SNOW_BALL).name(C.YELLOW + "Ammo").amount(64));
+        player.getInventory().addItem(new I(Material.SNOW_BALL).name(C.YELLOW + "Ammo").amount(45));
         player.getInventory().setHelmet(new I(Material.LEATHER_HELMET).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
         player.getInventory().setChestplate(new I(Material.LEATHER_CHESTPLATE).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));
         player.getInventory().setLeggings(new I(Material.LEATHER_LEGGINGS).color(plugin.getManager().getGame().getPlayerTeam(player).getColor()));

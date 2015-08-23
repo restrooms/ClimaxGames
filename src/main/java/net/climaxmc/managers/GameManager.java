@@ -3,6 +3,7 @@ package net.climaxmc.managers;
 import com.google.common.collect.Sets;
 import lombok.*;
 import net.climaxmc.commands.GameCommand;
+import net.climaxmc.commands.PeiCommand;
 import net.climaxmc.core.ClimaxCore;
 import net.climaxmc.core.mysql.PlayerData;
 import net.climaxmc.core.utilities.C;
@@ -43,7 +44,7 @@ public class GameManager extends Manager {
 
         ClimaxCore.onEnable(plugin, manager.getGame().getType());
 
-        ClimaxCore.getCommandManager().addCommands(new GameCommand());
+        ClimaxCore.getCommandManager().addCommands(new GameCommand(), new PeiCommand());
 
         managers.forEach(manager -> plugin.getServer().getPluginManager().registerEvents(manager, plugin));
 

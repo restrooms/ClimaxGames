@@ -191,7 +191,13 @@ public class GamePlayerManager extends Manager {
         Player player = event.getPlayer();
         event.setQuitMessage(C.RED + "Quit" + C.DARK_GRAY + "\u00bb " + player.getName());
 
+        if (manager.getGame().hasStarted()) {
+            player.setGameMode(GameMode.SPECTATOR);
+        }
+
         UtilPlayer.getAll().stream().filter(players -> players.getScoreboard() != null).forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + (UtilPlayer.getAll().size() - 1) + "/" + manager.getGame().getMaxPlayers()));
+
+        manager.getGame().checkEnd();
     }
 
     @EventHandler

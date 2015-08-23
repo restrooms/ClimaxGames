@@ -12,6 +12,7 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -50,7 +51,7 @@ public class Paintball extends Game.TeamGame {
         ItemStack snowballs = player.getInventory().getItem(2);
         if (snowballs != null && snowballs.getAmount() > 0 && !reloading.contains(player.getUniqueId())) {
             Projectile snowball = player.launchProjectile(Snowball.class);
-            snowball.setVelocity(snowball.getVelocity().multiply(4));
+            snowball.setVelocity(snowball.getVelocity().normalize().multiply(4));
             player.getWorld().playSound(player.getLocation(), Sound.CHICKEN_EGG_POP, 1.5f, 1.5f);
             snowballs.setAmount(snowballs.getAmount() - 1);
             player.getInventory().setItem(2, snowballs);
@@ -87,10 +88,10 @@ public class Paintball extends Game.TeamGame {
         }
 
         shooter.playSound(shooter.getLocation(), Sound.NOTE_PLING, 1, 4);
-        event.setDamage(7);
+        event.setDamage(5);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerDeath(EntityDamageEvent event) {
         if (!(event.getEntity() instanceof Player)) {
             return;
@@ -141,7 +142,7 @@ public class Paintball extends Game.TeamGame {
 
         Map<Location, OldBlock> blockMap = new HashMap<>();
         for (Block block : UtilBlock.getInRadius(hit, 2).keySet()) {
-            if (!block.getType().equals(Material.AIR) && !block.getType().equals(Material.BARRIER) && !rollbackBlocks.contains(block.getLocation())) {
+            if (!block.getType().equals(Material.AIR) && !block.getType().equals(Material.BARRIER) && !block.getType().equals(Material.LADDER) && !rollbackBlocks.contains(block.getLocation())) {
                 blockMap.put(block.getLocation(), new OldBlock(block.getType(), block.getData()));
                 rollbackBlocks.add(block.getLocation());
                 block.setType(Material.STAINED_CLAY);
@@ -201,6 +202,7 @@ public class Paintball extends Game.TeamGame {
         } else {
             player.getItemInHand().setAmount(player.getItemInHand().getAmount() - 1);
         }
+
         ThrownPotion potion = player.launchProjectile(ThrownPotion.class);
         potions.add(potion);
     }
@@ -245,7 +247,7 @@ public class Paintball extends Game.TeamGame {
                 addCoins(thrower, "Revived " + copy.getPlayer().getName(), 4);
             }
         }
-        for (Player player : UtilPlayer.getAll()) {
+        /*for (Player player : UtilPlayer.getAll()) {
             GameTeam otherTeam2 = getPlayerTeam(player);
             if (otherTeam2 != null) {
                 if (!otherTeam2.equals(throwerTeam)) {
@@ -256,7 +258,7 @@ public class Paintball extends Game.TeamGame {
                 }
                 player.setGameMode(GameMode.SURVIVAL);
             }
-        }
+        }*/
         thrower.setHealth(20);
     }
 }
