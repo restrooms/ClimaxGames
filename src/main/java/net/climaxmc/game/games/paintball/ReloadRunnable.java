@@ -36,7 +36,7 @@ class ReloadRunnable extends BukkitRunnable {
         } else if (timer == 0) {
             player.playSound(player.getLocation(), Sound.PISTON_RETRACT, 1F, 1.3F);
             UtilPlayer.sendActionBar(player, C.GREEN + "Done!");
-            player.getInventory().setItem(2, new ItemStack(Material.SNOW_BALL, 32));
+            player.getInventory().setItem(2, new ItemStack(Material.SNOW_BALL, 45));
             paintball.getReloading().remove(player.getUniqueId());
             cancel();
             return;

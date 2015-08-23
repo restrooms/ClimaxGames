@@ -15,6 +15,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.util.*;
@@ -195,6 +196,13 @@ public abstract class Game implements Listener {
         }
 
         startCountdown();
+    }
+
+    @EventHandler
+    public void onEntityRegainHealth(EntityRegainHealthEvent event) {
+        if ((event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.REGEN) || event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.SATIATED)) && !naturalRegeneration) {
+            event.setCancelled(true);
+        }
     }
 
     /**

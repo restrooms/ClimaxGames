@@ -366,11 +366,4 @@ public class GamePlayerManager extends Manager {
             manager.setPlayerLobbyScoreboardValue(player.getPlayer(), 6, C.RED + C.BOLD + "C" + C.GOLD + C.BOLD + "Coins" + C.WHITE + " \u00bb " + C.YELLOW + event.getAmount());
         }
     }
-
-    @EventHandler
-    public void onEntityRegainHealth(EntityRegainHealthEvent event) {
-        if (event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.REGEN) && !manager.getGame().isNaturalRegeneration()) {
-            event.setCancelled(true);
-        }
-    }
 }
