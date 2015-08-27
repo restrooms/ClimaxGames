@@ -209,6 +209,14 @@ public class Paintball extends Game.TeamGame {
 
     @EventHandler
     public void onPotionHit(ProjectileHitEvent event) {
+        Player thrower = (Player) event.getEntity().getShooter();
+
+        if (event.getEntityType().equals(EntityType.SPLASH_POTION)) {
+            return;
+        }
+
+        thrower.setHealth(20);
+
         if (!potions.remove(event.getEntity())) {
             return;
         }
@@ -221,7 +229,6 @@ public class Paintball extends Game.TeamGame {
             return;
         }
 
-        Player thrower = (Player) event.getEntity().getShooter();
         GameTeam throwerTeam = getPlayerTeam(thrower);
 
         if (throwerTeam == null) {
@@ -259,6 +266,5 @@ public class Paintball extends Game.TeamGame {
                 player.setGameMode(GameMode.SURVIVAL);
             }
         }*/
-        thrower.setHealth(20);
     }
 }

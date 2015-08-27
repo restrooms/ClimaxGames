@@ -12,9 +12,11 @@ import net.climaxmc.core.utilities.F;
 import net.climaxmc.events.GameStateChangeEvent;
 import net.climaxmc.kit.Kit;
 import org.bukkit.Sound;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityRegainHealthEvent;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -36,6 +38,7 @@ public abstract class Game implements Listener {
     protected boolean fallDamage = false;
     protected boolean cancelInteract = true;
     protected boolean naturalRegeneration = true;
+    protected boolean pvp = true;
     protected List<String> places = new ArrayList<>();
 
     private String name;
@@ -201,6 +204,13 @@ public abstract class Game implements Listener {
     @EventHandler
     public void onEntityRegainHealth(EntityRegainHealthEvent event) {
         if ((event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.REGEN) || event.getRegainReason().equals(EntityRegainHealthEvent.RegainReason.SATIATED)) && !naturalRegeneration) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.getDamager().getType().equals(EntityType.PLAYER) && event.getEntityType().equals(EntityType.PLAYER) && !pvp) {
             event.setCancelled(true);
         }
     }
