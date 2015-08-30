@@ -29,8 +29,8 @@ public class GameCountdown extends BukkitRunnable {
             return;
         }
 
-        if (UtilPlayer.getAll().size() >= game.getMaxPlayers() && timer > 10) {
-            timer = 10;
+        if (UtilPlayer.getAll().size() >= game.getMaxPlayers() && timer > 15) {
+            timer = 15;
         }
 
         if (timer <= 0) {

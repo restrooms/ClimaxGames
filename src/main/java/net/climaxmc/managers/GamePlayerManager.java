@@ -116,7 +116,10 @@ public class GamePlayerManager extends Manager {
             for (UUID playerUUID : team.getPlayers()) {
                 Player player = plugin.getServer().getPlayer(playerUUID);
                 if (player != null) {
-                    player.teleport(team.getSpawns().get(++i));
+                    if (team.getSpawns().size() <= i++) {
+                        i = 1;
+                    }
+                    player.teleport(team.getSpawns().get(i));
                     manager.getGame().getPlayerKits().get(playerUUID).apply(player);
                 }
             }
@@ -196,8 +199,6 @@ public class GamePlayerManager extends Manager {
         }
 
         UtilPlayer.getAll().stream().filter(players -> players.getScoreboard() != null).forEach(players -> manager.setPlayerLobbyScoreboardValue(players, 8, C.RED + C.BOLD + "Players" + C.WHITE + " \u00bb " + C.YELLOW + (UtilPlayer.getAll().size() - 1) + "/" + manager.getGame().getMaxPlayers()));
-
-        manager.getGame().checkEnd();
     }
 
     @EventHandler
@@ -258,7 +259,6 @@ public class GamePlayerManager extends Manager {
                 }
             }
         }
-        manager.getGame().checkEnd();
     }
 
     @EventHandler

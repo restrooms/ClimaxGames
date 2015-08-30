@@ -7,6 +7,7 @@ import net.climaxmc.core.utilities.*;
 import net.climaxmc.game.Game;
 import net.climaxmc.game.GameTeam;
 import net.climaxmc.game.games.paintball.kits.DoubleJumpKit;
+import net.climaxmc.game.games.paintball.kits.GrenadeKit;
 import net.climaxmc.kit.Kit;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -30,8 +31,9 @@ public class Paintball extends Game.TeamGame {
     private Set<Projectile> potions = new HashSet<>();
 
     public Paintball() {
-        super("Paintball", GameType.PAINTBALL, new Kit[]{new DoubleJumpKit()});
+        super("Paintball", GameType.PAINTBALL, new Kit[]{new DoubleJumpKit(), new GrenadeKit()});
         naturalRegeneration = false;
+        pvp = false;
     }
 
     @EventHandler
@@ -211,23 +213,15 @@ public class Paintball extends Game.TeamGame {
     public void onPotionHit(ProjectileHitEvent event) {
         Player thrower = (Player) event.getEntity().getShooter();
 
-        if (event.getEntityType().equals(EntityType.SPLASH_POTION)) {
+        if (!event.getEntityType().equals(EntityType.SPLASH_POTION)) {
             return;
         }
-
-        thrower.setHealth(20);
 
         if (!potions.remove(event.getEntity())) {
             return;
         }
 
-        if (event.getEntity().getShooter() == null) {
-            return;
-        }
-
-        if (!(event.getEntity().getShooter() instanceof Player)) {
-            return;
-        }
+        thrower.setHealth(20);
 
         GameTeam throwerTeam = getPlayerTeam(thrower);
 
