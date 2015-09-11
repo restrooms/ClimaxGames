@@ -163,6 +163,9 @@ public class GamePlayerManager extends Manager {
         if (UtilPlayer.getAll().size() >= manager.getGame().getMaxPlayers() && playerData.getRank() == Rank.DEFAULT) {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, C.RED + "Server is full!");
         }
+        if (!playerData.hasRank(Rank.NINJA)) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, C.RED + "Server requires beta access! Buy a rank at donate.climaxmc.net today!");
+        }
     }
 
     @EventHandler
