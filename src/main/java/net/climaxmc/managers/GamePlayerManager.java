@@ -164,7 +164,7 @@ public class GamePlayerManager extends Manager {
             event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_FULL, C.RED + "Server is full!");
         }
         if (!playerData.hasRank(Rank.NINJA)) {
-            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, C.RED + "Server requires beta access! Buy a rank at donate.climaxmc.net today!");
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, C.RED + "Server requires beta access! Buy a rank at donate.climaxmc.net today! (Coming soon for non-donors)");
         }
     }
 
