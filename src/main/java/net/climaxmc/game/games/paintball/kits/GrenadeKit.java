@@ -4,12 +4,13 @@ import net.climaxmc.core.utilities.C;
 import net.climaxmc.core.utilities.I;
 import net.climaxmc.kit.Ability;
 import net.climaxmc.kit.Kit;
+import net.climaxmc.kit.abilities.GrenadeAbility;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 public class GrenadeKit extends Kit {
     public GrenadeKit() {
-        super(C.GOLD + "Grenade", new String[] {"Maneuver with ease and", "Take out enemies with your pistol!", "Double press space to double jump."}, new Ability[]{}, new I(Material.GOLD_BARDING));
+        super(C.GOLD + "Grenade", new String[] {"Maneuver with ease and", "Take out enemies with your pistol!", "Drop your TNT to cause an explosion."}, new Ability[]{new GrenadeAbility()}, new I(Material.GOLD_BARDING));
     }
 
     @Override
